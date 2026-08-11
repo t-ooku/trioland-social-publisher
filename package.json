@@ -1,0 +1,35 @@
+{
+  "name": "trioland-social-publisher",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node test/smoke.mjs"
+  },
+  "cloudflare": {
+    "bindings": {
+      "META_APP_ID": {
+        "description": "Meta for DevelopersのInstagram APIアプリID"
+      },
+      "META_APP_SECRET": {
+        "description": "Meta for DevelopersのInstagram APIアプリシークレット。公開しないでください。"
+      },
+      "ADMIN_TOKEN": {
+        "description": "投稿管理API専用の十分に長いランダム値"
+      },
+      "TOKEN_ENCRYPTION_KEY": {
+        "description": "Instagramトークン暗号化用の32バイトBase64値"
+      },
+      "MEDIA_SIGNING_SECRET": {
+        "description": "Meta取得用の短期メディアURL署名に使う十分に長いランダム値"
+      }
+    }
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "latest",
+    "vitest": "latest",
+    "wrangler": "latest"
+  }
+}
