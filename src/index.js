@@ -383,6 +383,10 @@ async function handleAdminRequest(request, env) {
     if (request.method === "GET" && url.pathname === "/admin") {
       return renderAdminDashboard(request, env, session);
     }
+    if (request.method === "GET" && url.pathname === "/admin/connect-instagram") {
+      const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
+      return redirect(authorizationUrl);
+    }
     if (request.method !== "POST") {
       return new Response("Method Not Allowed", { status: 405, headers: { allow: "GET, POST" } });
     }
@@ -514,7 +518,7 @@ ${notices.map((notice) => `<div class="notice ${notice.startsWith("エラー:") 
 
 <section><div class="section-head"><div><span class="step">1</span><h2>Instagram接続</h2></div><span class="pill ${instagramConnected ? "done" : ""}">${instagramConnected ? "完了" : "初回のみ"}</span></div>
 <p>Instagramプロアカウントを公式APIへ接続します。HOSHILUには影響しません。</p>
-<div class="actions"><form method="post" action="/admin/connect-instagram"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button type="submit">${instagramConnected ? "Instagramを再接続" : "Instagramを接続"}</button></form>${instagramConnected ? `<form method="post" action="/admin/refresh-token"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button class="secondary" type="submit">トークンを更新</button></form>` : ""}</div></section>
+<div class="actions"><a class="button" href="/admin/connect-instagram">${instagramConnected ? "Instagramを再接続" : "Instagramを接続"}</a>${instagramConnected ? `<form method="post" action="/admin/refresh-token"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button class="secondary" type="submit">トークンを更新</button></form>` : ""}</div></section>
 
 <section><div class="section-head"><div><span class="step">2</span><h2>承認済み素材を追加</h2></div><span class="pill">JPEG / PNG / MP4</span></div>
 <form method="post" action="/admin/upload" enctype="multipart/form-data" class="stack"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><label class="file-drop">画像または動画を選択<input type="file" name="file" accept="image/jpeg,image/png,video/mp4,video/quicktime" required></label><label class="check"><input type="checkbox" name="rightsConfirmed" value="true" required><span>映っている園児・人物・素材の掲載許諾を確認済みです</span></label><button type="submit">承認済み素材として保存</button></form></section>
