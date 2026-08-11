@@ -43,7 +43,9 @@ HOSHILUのWorker、Route、KV、R2、D1、Secretには接続しません。
 5. `POST /publish` で `IMAGE` または `REELS` を公開。
 6. 定期的に `POST /token/refresh` で長期トークンを更新。
 
-## 未実施
+## 導入状況
 
-Cloudflareへのデプロイ、Metaアプリ作成、Secret設定、Instagram OAuthは外部アカウント
-操作が必要なため、ローカル実装とは別に実施します。認証情報をチャットへ貼らないでください。
+- 2026-08-11: Cloudflare WorkerとGitHub Buildsの接続を完了。
+- 未実施: 初回GitHubビルドの完了確認、専用KV/R2/Secret設定、Metaアプリ設定、
+  Instagram OAuth接続。
+- 認証情報をGitHubやチャットへ保存しないでください。
