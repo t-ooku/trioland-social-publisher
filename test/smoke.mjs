@@ -26,6 +26,8 @@ assert.doesNotMatch(source, /JSON\.stringify\(\{\s*status: "pending",[\s\S]{0,16
 assert.doesNotMatch(source, /JSON\.stringify\(\{\s*status: "pending",[\s\S]{0,160}approvalSecret\s*:/);
 assert.match(source, /掲載許諾の確認が必要です/);
 assert.match(source, /公開実行の最終確認が必要です/);
+assert.match(source, /const container = await metaJson[\s\S]{0,180}await waitUntilFinished\(base, container\.id, token\.access_token\)/);
+assert.doesNotMatch(source, /if \(type === "REELS"\) await waitUntilFinished/);
 assert.match(source, /#トリオランド #駒沢大学駅 #三軒茶屋駅 #保育士募集 #園児募集/);
 assert.doesNotMatch(source, /ADMIN_TOKEN[^\n]*<input/i);
 assert.match(config, /"binding": "AUTH_KV"/);

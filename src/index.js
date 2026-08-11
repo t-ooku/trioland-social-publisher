@@ -230,7 +230,7 @@ async function publishApprovedMedia(request, env) {
     body: createParams,
   });
   const container = await metaJson(createResponse, "MEDIA_CONTAINER_CREATE_FAILED");
-  if (type === "REELS") await waitUntilFinished(base, container.id, token.access_token);
+  await waitUntilFinished(base, container.id, token.access_token);
 
   const publishResponse = await fetch(`${base}/${encodeURIComponent(token.user_id)}/media_publish`, {
     method: "POST",
