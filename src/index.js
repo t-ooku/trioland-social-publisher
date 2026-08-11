@@ -8,6 +8,11 @@ const JSON_HEADERS = {
   "cache-control": "no-store",
 };
 
+const FIXED_HASHTAGS = "#トリオランド #駒沢大学駅 #三軒茶屋駅 #保育士募集 #園児募集";
+const ADMIN_SESSION_COOKIE = "__Host-TRIOLAND_ADMIN_SESSION";
+const ADMIN_STATE_COOKIE = "__Host-TRIOLAND_ADMIN_STATE";
+const ADMIN_SESSION_TTL_SECONDS = 8 * 60 * 60;
+
 export const appHandler = {
   async fetch(request, env) {
     try {
@@ -35,6 +40,10 @@ export const appHandler = {
 
       if (request.method === "GET" && url.pathname === "/oauth/callback") {
         return oauthCallback(request, env);
+      }
+
+      if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
+        return handleAdminRequest(request, env);
       }
 
       await requireAdmin(request, env);
@@ -97,11 +106,11 @@ async function oauthStart(request, env) {
   return json({ authorizationUrl: await createInstagramAuthorizationUrl(env, new URL(request.url).origin) });
 }
 
-async function createInstagramAuthorizationUrl(env, origin) {
+async function createInstagramAuthorizationUrl(env, origin, returnTo = "") {
   assertMetaConfig(env);
   const redirectUri = `${origin}/oauth/callback`;
   const state = crypto.randomUUID();
-  await env.AUTH_KV.put(`oauth-state:${state}`, "1", { expirationTtl: 600 });
+  await env.AUTH_KV.put(`oauth-state:${state}`, JSON.stringify({ returnTo }), { expirationTtl: 600 });
   const params = new URLSearchParams({
     enable_fb_login: "0",
     force_authentication: "1",
@@ -122,7 +131,8 @@ async function oauthCallback(request, env) {
   const code = url.searchParams.get("code");
   if (!state || !code) throw problem("MISSING_OAUTH_CODE_OR_STATE");
   const stateKey = `oauth-state:${state}`;
-  if (!(await env.AUTH_KV.get(stateKey))) throw problem("INVALID_OR_EXPIRED_OAUTH_STATE", 401);
+  const rawState = await env.AUTH_KV.get(stateKey);
+  if (!rawState) throw problem("INVALID_OR_EXPIRED_OAUTH_STATE", 401);
   await env.AUTH_KV.delete(stateKey);
 
   const shortResponse = await fetch("https://api.instagram.com/oauth/access_token", {
@@ -151,6 +161,15 @@ async function oauthCallback(request, env) {
     user_id: String(profile.user_id || profile.id || shortToken.user_id),
     username: profile.username,
   });
+  let oauthState = {};
+  try {
+    oauthState = JSON.parse(rawState);
+  } catch {
+    oauthState = {};
+  }
+  if (oauthState.returnTo === "/admin") {
+    return redirect(`${url.origin}/admin?connected=1`);
+  }
   return new Response("Instagram API connection completed. You may close this window.", {
     status: 200,
     headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" },
@@ -349,6 +368,202 @@ function toBase64(bytes) {
 function fromBase64(value) {
   const binary = atob(value);
   return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+}
+
+async function handleAdminRequest(request, env) {
+  const url = new URL(request.url);
+  if (request.method === "GET" && url.pathname === "/admin/login") {
+    return startAdminLogin(env);
+  }
+
+  const session = await getAdminSession(request, env);
+  if (!session) return renderAdminLogin();
+
+  try {
+    if (request.method === "GET" && url.pathname === "/admin") {
+      return renderAdminDashboard(request, env, session);
+    }
+    if (request.method !== "POST") {
+      return new Response("Method Not Allowed", { status: 405, headers: { allow: "GET, POST" } });
+    }
+
+    const form = await request.formData();
+    requireAdminCsrf(form, session);
+
+    if (url.pathname === "/admin/logout") {
+      await env.AUTH_KV.delete(`admin-session:${session.token}`);
+      return redirect("/admin", clearCookie(ADMIN_SESSION_COOKIE));
+    }
+    if (url.pathname === "/admin/connect-instagram") {
+      const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
+      return redirect(authorizationUrl);
+    }
+    if (url.pathname === "/admin/upload") {
+      if (String(form.get("rightsConfirmed")) !== "true") throw problem("掲載許諾の確認が必要です", 409);
+      form.set("approved", "true");
+      const uploadRequest = new Request(request.url, { method: "POST", body: form });
+      const result = await uploadApprovedMedia(uploadRequest, env);
+      const uploaded = await result.json();
+      return redirect(`/admin?uploaded=${encodeURIComponent(uploaded.key)}`);
+    }
+    if (url.pathname === "/admin/publish") {
+      if (String(form.get("rightsConfirmed")) !== "true") throw problem("掲載許諾の確認が必要です", 409);
+      if (String(form.get("publishConfirmed")) !== "true") throw problem("公開実行の最終確認が必要です", 409);
+      const objectKey = String(form.get("objectKey") || "");
+      const mediaType = String(form.get("mediaType") || "").toUpperCase();
+      const caption = composeCaption(String(form.get("caption") || ""));
+      if (caption.length > 2200) throw problem("本文は固定ハッシュタグを含め2200文字以内にしてください", 400);
+      const publishRequest = new Request(request.url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          approved: true,
+          objectKey,
+          mediaType,
+          caption,
+          shareToFeed: form.get("shareToFeed") === "true",
+        }),
+      });
+      const result = await publishApprovedMedia(publishRequest, env);
+      const published = await result.json();
+      return redirect(`/admin?published=${encodeURIComponent(published.mediaId)}`);
+    }
+    if (url.pathname === "/admin/refresh-token") {
+      await refreshToken(env);
+      return redirect("/admin?refreshed=1");
+    }
+    throw problem("管理画面の操作が見つかりません", 404);
+  } catch (error) {
+    return renderAdminDashboard(request, env, session, error?.message || "操作に失敗しました", Number(error?.status || 500));
+  }
+}
+
+async function startAdminLogin(env) {
+  assertGithubConfig(env);
+  const state = randomToken();
+  await env.AUTH_KV.put(`admin-github-state:${state}`, "1", { expirationTtl: 600 });
+  const github = new URL("https://github.com/login/oauth/authorize");
+  github.search = new URLSearchParams({
+    client_id: env.GITHUB_CLIENT_ID,
+    redirect_uri: `${publicOrigin(env)}/github/callback`,
+    scope: "read:user",
+    state,
+  });
+  return redirect(github.toString(), setCookie(ADMIN_STATE_COOKIE, state, 600));
+}
+
+async function getAdminSession(request, env) {
+  const token = readCookie(request, ADMIN_SESSION_COOKIE);
+  if (!token) return null;
+  const raw = await env.AUTH_KV.get(`admin-session:${token}`);
+  if (!raw) return null;
+  try {
+    const session = JSON.parse(raw);
+    return { ...session, token };
+  } catch {
+    return null;
+  }
+}
+
+function requireAdminCsrf(form, session) {
+  const csrf = String(form.get("csrf") || "");
+  if (!csrf || !session.csrf || !constantTimeEqual(csrf, session.csrf)) throw problem("CSRF_VALIDATION_FAILED", 400);
+}
+
+async function renderAdminDashboard(request, env, session, errorMessage = "", status = 200) {
+  const url = new URL(request.url);
+  const instagramConnected = Boolean(await env.AUTH_KV.get("instagram-token"));
+  const listing = await env.MEDIA_BUCKET.list({
+    prefix: "approved/",
+    limit: 50,
+    include: ["httpMetadata", "customMetadata"],
+  });
+  const mediaRows = await Promise.all(listing.objects
+    .filter((object) => object.customMetadata?.approved === "true")
+    .sort((a, b) => b.uploaded.getTime() - a.uploaded.getTime())
+    .map(async (object) => ({
+      key: object.key,
+      size: object.size,
+      uploaded: object.uploaded,
+      contentType: object.httpMetadata?.contentType || "application/octet-stream",
+      originalName: object.customMetadata?.originalName || object.key.split("/").pop(),
+      previewUrl: await signedMediaUrl(request.url, object.key, env, 900),
+    })));
+
+  const notices = [];
+  if (url.searchParams.get("connected") === "1") notices.push("Instagram公式APIの接続が完了しました。");
+  if (url.searchParams.get("uploaded")) notices.push("承認済み素材を保存しました。内容を確認してから投稿してください。");
+  if (url.searchParams.get("published")) notices.push(`Instagramへの投稿が完了しました。Media ID: ${url.searchParams.get("published")}`);
+  if (url.searchParams.get("refreshed") === "1") notices.push("Instagramアクセストークンを更新しました。");
+  if (errorMessage) notices.push(`エラー: ${errorMessage}`);
+
+  const mediaOptions = mediaRows.length ? mediaRows.map((media, index) => `
+    <label class="media-item">
+      <input type="radio" name="objectKey" value="${escapeHtml(media.key)}" ${index === 0 ? "checked" : ""} required>
+      <span class="media-copy"><strong>${escapeHtml(media.originalName)}</strong><small>${escapeHtml(media.contentType)}・${formatBytes(media.size)}・${escapeHtml(media.uploaded.toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }))}</small></span>
+      <a href="${escapeHtml(media.previewUrl)}" target="_blank" rel="noopener">確認</a>
+    </label>`).join("") : `<p class="empty">承認済み素材はまだありません。先に素材をアップロードしてください。</p>`;
+
+  const body = `<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>トリオランド SNS管理</title><style>${adminStyles()}</style></head>
+<body><header><div><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>SNS管理</h1><p>承認済み素材だけをInstagram公式APIで公開します。</p></div><form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button class="ghost" type="submit">ログアウト</button></form></header>
+<main>
+${notices.map((notice) => `<div class="notice ${notice.startsWith("エラー:") ? "error" : ""}">${escapeHtml(notice)}</div>`).join("")}
+<section class="status"><div><span>本人確認</span><strong>GitHub @${escapeHtml(session.login)}</strong></div><div><span>Instagram</span><strong class="${instagramConnected ? "ok" : "warn"}">${instagramConnected ? "接続済み" : "未接続"}</strong></div><div><span>HOSHILU</span><strong class="ok">完全分離</strong></div></section>
+
+<section><div class="section-head"><div><span class="step">1</span><h2>Instagram接続</h2></div><span class="pill ${instagramConnected ? "done" : ""}">${instagramConnected ? "完了" : "初回のみ"}</span></div>
+<p>Instagramプロアカウントを公式APIへ接続します。HOSHILUには影響しません。</p>
+<div class="actions"><form method="post" action="/admin/connect-instagram"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button type="submit">${instagramConnected ? "Instagramを再接続" : "Instagramを接続"}</button></form>${instagramConnected ? `<form method="post" action="/admin/refresh-token"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button class="secondary" type="submit">トークンを更新</button></form>` : ""}</div></section>
+
+<section><div class="section-head"><div><span class="step">2</span><h2>承認済み素材を追加</h2></div><span class="pill">JPEG / PNG / MP4</span></div>
+<form method="post" action="/admin/upload" enctype="multipart/form-data" class="stack"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><label class="file-drop">画像または動画を選択<input type="file" name="file" accept="image/jpeg,image/png,video/mp4,video/quicktime" required></label><label class="check"><input type="checkbox" name="rightsConfirmed" value="true" required><span>映っている園児・人物・素材の掲載許諾を確認済みです</span></label><button type="submit">承認済み素材として保存</button></form></section>
+
+<section><div class="section-head"><div><span class="step">3</span><h2>内容を確認して投稿</h2></div><span class="pill danger">外部公開</span></div>
+<form method="post" action="/admin/publish" class="stack"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><div class="media-list">${mediaOptions}</div><div class="two"><label>投稿形式<select name="mediaType" required><option value="REELS">リール動画</option><option value="IMAGE">画像投稿</option></select></label><label class="check compact"><input type="checkbox" name="shareToFeed" value="true" checked><span>リールをフィードにも表示</span></label></div><label>本文<textarea name="caption" maxlength="2080" rows="7" placeholder="投稿本文を入力してください"></textarea></label><div class="hashtags"><span>固定ハッシュタグ</span>${escapeHtml(FIXED_HASHTAGS)}</div><label class="check"><input type="checkbox" name="rightsConfirmed" value="true" required><span>掲載許諾と素材内容を再確認しました</span></label><label class="check final"><input type="checkbox" name="publishConfirmed" value="true" required><span>この内容をInstagramへ今すぐ公開することを承認します</span></label><button class="publish" type="submit" ${mediaRows.length && instagramConnected ? "" : "disabled"}>承認して投稿する</button>${!instagramConnected ? `<p class="help">先にInstagram接続を完了してください。</p>` : ""}</form></section>
+</main><footer>トリオランド駒沢大学園 専用・HOSHILUとは接続していません</footer></body></html>`;
+  return new Response(body, { status, headers: securityHeaders() });
+}
+
+function renderAdminLogin() {
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド SNS管理</title><style>${adminStyles()}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>SNS管理</h1><p>大久津さん専用の承認・投稿画面です。GitHubで本人確認して開始してください。</p><a class="button" href="/admin/login">GitHubでログイン</a><p class="help">Instagram・Cloudflare専用基盤のみを使用し、HOSHILUには接続しません。</p></section></main></body></html>`;
+  return new Response(body, { headers: securityHeaders() });
+}
+
+function composeCaption(value) {
+  let body = String(value || "");
+  for (const tag of FIXED_HASHTAGS.split(" ")) body = body.split(tag).join("");
+  body = body.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  return body ? `${body}\n\n${FIXED_HASHTAGS}` : FIXED_HASHTAGS;
+}
+
+function formatBytes(size) {
+  if (size >= 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+  if (size >= 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${size} B`;
+}
+
+function adminStyles() {
+  return `:root{color-scheme:light;--ink:#172128;--muted:#637078;--line:#dce5e5;--brand:#087f74;--brand2:#dff5ef;--danger:#b33a35}*{box-sizing:border-box}body{margin:0;background:#f4f7f6;color:var(--ink);font-family:Inter,"Noto Sans JP",system-ui,sans-serif}header{max-width:920px;margin:0 auto;padding:34px 20px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px}h1{font-size:clamp(30px,5vw,48px);margin:4px 0 5px;letter-spacing:-.04em}h2{font-size:21px;margin:0}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--brand)}p{color:var(--muted);line-height:1.65;margin:8px 0 16px}main{max-width:920px;margin:auto;padding:0 20px 40px}section{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin:16px 0;box-shadow:0 8px 30px #153b3210}.status{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.status div{background:#f7faf9;border-radius:12px;padding:14px}.status span,.status strong{display:block}.status span{font-size:12px;color:var(--muted);margin-bottom:5px}.ok{color:var(--brand)}.warn{color:#a46305}.section-head,.section-head>div,.actions,.two{display:flex;align-items:center;justify-content:space-between;gap:12px}.section-head>div{justify-content:flex-start}.step{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800}.pill{font-size:11px;padding:6px 9px;border-radius:99px;background:#edf1f1;color:#536166}.pill.done{background:var(--brand2);color:var(--brand)}.pill.danger{background:#fff0ef;color:var(--danger)}button,.button{display:inline-block;border:0;border-radius:10px;background:var(--brand);color:#fff;padding:12px 18px;font-weight:800;font-size:14px;text-decoration:none;cursor:pointer}button.secondary{background:#e7f1ef;color:#086e65}button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}button.publish{background:#b33a35;font-size:16px;padding:15px}button:disabled{opacity:.45;cursor:not-allowed}.stack{display:grid;gap:16px}.file-drop{border:2px dashed #b9cdca;border-radius:14px;padding:24px;text-align:center;font-weight:700;background:#f9fbfa}.file-drop input{display:block;margin:12px auto 0;max-width:100%}label{font-weight:700;font-size:13px}select,textarea{display:block;width:100%;margin-top:7px;border:1px solid #cbd7d5;border-radius:10px;padding:11px;background:#fff;color:var(--ink);font:inherit}textarea{resize:vertical}.check{display:flex;align-items:flex-start;gap:10px;background:#f7faf9;padding:13px;border-radius:10px}.check input{width:18px;height:18px;margin:0}.check.compact{align-self:end}.check.final{background:#fff0ef;color:#842b27}.two>label{flex:1}.media-list{display:grid;gap:8px}.media-item{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;border:1px solid var(--line);border-radius:11px;padding:12px}.media-item input{width:18px;height:18px}.media-copy strong,.media-copy small{display:block;word-break:break-word}.media-copy small{font-weight:400;color:var(--muted);margin-top:4px}.media-item a{color:var(--brand)}.hashtags{background:#eef5f3;border-radius:10px;padding:12px;line-height:1.7;word-break:keep-all}.hashtags span{display:block;font-size:11px;color:var(--muted)}.notice{background:#e6f6ef;color:#075f4f;border-radius:12px;padding:14px 16px;margin:12px 0;font-weight:700}.notice.error{background:#fff0ef;color:#8c2d28}.help,.empty{font-size:12px}.login{display:grid;min-height:100vh;place-items:center}.login main{width:min(520px,100%)}.login section{padding:36px}footer{text-align:center;padding:24px;color:var(--muted);font-size:11px}@media(max-width:640px){header{padding-top:24px}.status{grid-template-columns:1fr}.two,.actions{align-items:stretch;flex-direction:column}.two>label,.actions form,.actions button{width:100%}section{padding:18px}.media-item{grid-template-columns:auto 1fr}.media-item a{grid-column:2}}`;
+}
+
+function randomToken() {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return toBase64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function setCookie(name, value, maxAge) {
+  return `${name}=${encodeURIComponent(value)}; HttpOnly; Secure; Path=/; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
+function clearCookie(name) {
+  return `${name}=; HttpOnly; Secure; Path=/; SameSite=Lax; Max-Age=0`;
+}
+
+function redirect(location, cookie = "") {
+  const headers = new Headers({ location, "cache-control": "no-store" });
+  if (cookie) headers.append("set-cookie", cookie);
+  return new Response(null, { status: 303, headers });
 }
 
 const MCP_SCOPES = ["trioland:read", "trioland:publish"];
@@ -613,13 +828,62 @@ async function handleGithubCallback(request, env) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code") || "";
   const state = url.searchParams.get("state") || "";
-  const cookieState = readCookie(request, MCP_STATE_COOKIE);
-  if (!code || !state || !cookieState || !constantTimeEqual(state, cookieState)) throw problem("INVALID_GITHUB_OAUTH_STATE", 401);
-  const stateKey = `mcp-github-state:${state}`;
-  const rawRequest = await env.AUTH_KV.get(stateKey);
-  if (!rawRequest) throw problem("EXPIRED_GITHUB_OAUTH_STATE", 401);
-  await env.AUTH_KV.delete(stateKey);
+  if (!code || !state) throw problem("INVALID_GITHUB_OAUTH_STATE", 401);
 
+  const adminCookieState = readCookie(request, ADMIN_STATE_COOKIE);
+  const mcpCookieState = readCookie(request, MCP_STATE_COOKIE);
+  const adminStateValid = Boolean(adminCookieState && constantTimeEqual(state, adminCookieState));
+  const mcpStateValid = Boolean(mcpCookieState && constantTimeEqual(state, mcpCookieState));
+  if (!adminStateValid && !mcpStateValid) throw problem("INVALID_GITHUB_OAUTH_STATE", 401);
+
+  const adminStateKey = `admin-github-state:${state}`;
+  const mcpStateKey = `mcp-github-state:${state}`;
+  const rawAdminState = adminStateValid ? await env.AUTH_KV.get(adminStateKey) : null;
+  const rawRequest = mcpStateValid ? await env.AUTH_KV.get(mcpStateKey) : null;
+  if (!rawAdminState && !rawRequest) throw problem("EXPIRED_GITHUB_OAUTH_STATE", 401);
+
+  const user = await exchangeGithubCodeForUser(code, env);
+  const allowed = String(env.ALLOWED_GITHUB_LOGIN || "t-ooku").toLowerCase();
+  if (String(user.login).toLowerCase() !== allowed) throw problem("GITHUB_USER_NOT_AUTHORIZED", 403);
+
+  if (rawAdminState) {
+    await env.AUTH_KV.delete(adminStateKey);
+    const sessionToken = randomToken();
+    const csrf = randomToken();
+    await env.AUTH_KV.put(`admin-session:${sessionToken}`, JSON.stringify({
+      login: user.login,
+      githubId: String(user.id),
+      csrf,
+      createdAt: Date.now(),
+    }), { expirationTtl: ADMIN_SESSION_TTL_SECONDS });
+    const headers = new Headers({ location: "/admin", "cache-control": "no-store" });
+    headers.append("set-cookie", setCookie(ADMIN_SESSION_COOKIE, sessionToken, ADMIN_SESSION_TTL_SECONDS));
+    headers.append("set-cookie", clearCookie(ADMIN_STATE_COOKIE));
+    return new Response(null, { status: 303, headers });
+  }
+
+  await env.AUTH_KV.delete(mcpStateKey);
+  const oauthRequest = JSON.parse(rawRequest);
+  const client = await env.OAUTH_PROVIDER.lookupClient(oauthRequest.clientId);
+  const grantedScopes = oauthRequest.scope.filter((scope) => MCP_SCOPES.includes(scope));
+  const { redirectTo } = await env.OAUTH_PROVIDER.completeAuthorization({
+    request: oauthRequest,
+    userId: `github:${user.id}`,
+    scope: grantedScopes,
+    metadata: { clientName: client?.clientName || "ChatGPT", githubLogin: user.login },
+    props: { githubLogin: user.login, githubId: String(user.id), role: "owner" },
+  });
+  return new Response(null, {
+    status: 302,
+    headers: {
+      location: redirectTo,
+      "set-cookie": clearCookie(MCP_STATE_COOKIE),
+      "cache-control": "no-store",
+    },
+  });
+}
+
+async function exchangeGithubCodeForUser(code, env) {
   const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
     method: "POST",
     headers: { accept: "application/json", "content-type": "application/json", "user-agent": "trioland-social-publisher" },
@@ -642,27 +906,7 @@ async function handleGithubCallback(request, env) {
   });
   const user = await userResponse.json().catch(() => ({}));
   if (!userResponse.ok || !user.login || !user.id) throw problem("GITHUB_PROFILE_FETCH_FAILED", 502);
-  const allowed = String(env.ALLOWED_GITHUB_LOGIN || "t-ooku").toLowerCase();
-  if (String(user.login).toLowerCase() !== allowed) throw problem("GITHUB_USER_NOT_AUTHORIZED", 403);
-
-  const oauthRequest = JSON.parse(rawRequest);
-  const client = await env.OAUTH_PROVIDER.lookupClient(oauthRequest.clientId);
-  const grantedScopes = oauthRequest.scope.filter((scope) => MCP_SCOPES.includes(scope));
-  const { redirectTo } = await env.OAUTH_PROVIDER.completeAuthorization({
-    request: oauthRequest,
-    userId: `github:${user.id}`,
-    scope: grantedScopes,
-    metadata: { clientName: client?.clientName || "ChatGPT", githubLogin: user.login },
-    props: { githubLogin: user.login, githubId: String(user.id), role: "owner" },
-  });
-  return new Response(null, {
-    status: 302,
-    headers: {
-      location: redirectTo,
-      "set-cookie": `${MCP_STATE_COOKIE}=; HttpOnly; Secure; Path=/; SameSite=Lax; Max-Age=0`,
-      "cache-control": "no-store",
-    },
-  });
+  return user;
 }
 
 function assertGithubConfig(env) {
@@ -687,15 +931,17 @@ function renderConsentPage({ clientName, scopes, csrf, action }) {
 }
 
 function securityHeaders(setCookie) {
-  return {
+  const headers = {
     "content-type": "text/html; charset=utf-8",
     "cache-control": "no-store",
-    "set-cookie": setCookie,
-    "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+    "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; media-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
     "x-frame-options": "DENY",
     "x-content-type-options": "nosniff",
     "referrer-policy": "no-referrer",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
   };
+  if (setCookie) headers["set-cookie"] = setCookie;
+  return headers;
 }
 
 function readCookie(request, name) {
