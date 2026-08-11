@@ -77,6 +77,18 @@ https://trioland-social-publisher.mygate-jp.workers.dev/admin
 - `ADMIN_TOKEN`、Meta/GitHubシークレット、Instagramトークンはブラウザへ返さない。
 - HOSHILUのリソース、ドメイン、データへ接続しない。
 
+### 別端末へ安全にログインを引き継ぐ
+
+通常ブラウザでログイン済みの管理者が、別の投稿端末を10分限定コードで承認できます。
+
+1. 接続する端末で `https://trioland-social-publisher.mygate-jp.workers.dev/admin/pair` を開く。
+2. 「承認コードを発行」を押し、表示された6桁コードと承認URLを確認する。
+3. ログイン済みの通常ブラウザで承認URLを開き、コード一致を確認して明示的に承認する。
+4. 接続する端末へ戻り、「承認済みか確認」を押す。
+
+承認されるのは新しい8時間の管理セッションだけです。GitHub・Instagramのパスワードや
+永久トークンは端末間で渡しません。承認秘密はハッシュで保存し、HOSHILUには接続しません。
+
 ### GitHub OAuth App
 
 GitHubの **Settings > Developer settings > OAuth Apps > New OAuth App** で、

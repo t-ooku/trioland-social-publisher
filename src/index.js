@@ -11,7 +11,10 @@ const JSON_HEADERS = {
 const FIXED_HASHTAGS = "#トリオランド #駒沢大学駅 #三軒茶屋駅 #保育士募集 #園児募集";
 const ADMIN_SESSION_COOKIE = "__Host-TRIOLAND_ADMIN_SESSION";
 const ADMIN_STATE_COOKIE = "__Host-TRIOLAND_ADMIN_STATE";
+const ADMIN_PAIR_APPROVAL_COOKIE = "__Host-TRIOLAND_PAIR_APPROVAL";
 const ADMIN_SESSION_TTL_SECONDS = 8 * 60 * 60;
+const ADMIN_PAIR_TTL_SECONDS = 10 * 60;
+const ADMIN_PAIR_REDEEM_TTL_SECONDS = 5 * 60;
 
 export const appHandler = {
   async fetch(request, env) {
@@ -375,6 +378,15 @@ async function handleAdminRequest(request, env) {
   if (request.method === "GET" && url.pathname === "/admin/login") {
     return startAdminLogin(env);
   }
+  if (request.method === "GET" && url.pathname === "/admin/pair") {
+    return renderAdminPairStart();
+  }
+  if (request.method === "POST" && url.pathname === "/admin/pair/start") {
+    return startAdminPairing(request, env);
+  }
+  if (request.method === "POST" && url.pathname === "/admin/pair/poll") {
+    return pollAdminPairing(request, env);
+  }
 
   const session = await getAdminSession(request, env);
   if (!session) return renderAdminLogin();
@@ -387,6 +399,9 @@ async function handleAdminRequest(request, env) {
       const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
       return redirect(authorizationUrl);
     }
+    if (request.method === "GET" && url.pathname === "/admin/pair/approve") {
+      return renderAdminPairApproval(request, env, session);
+    }
     if (request.method !== "POST") {
       return new Response("Method Not Allowed", { status: 405, headers: { allow: "GET, POST" } });
     }
@@ -397,6 +412,9 @@ async function handleAdminRequest(request, env) {
     if (url.pathname === "/admin/logout") {
       await env.AUTH_KV.delete(`admin-session:${session.token}`);
       return redirect("/admin", clearCookie(ADMIN_SESSION_COOKIE));
+    }
+    if (url.pathname === "/admin/pair/approve") {
+      return approveAdminPairing(request, form, env, session);
     }
     if (url.pathname === "/admin/connect-instagram") {
       const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
@@ -472,6 +490,146 @@ async function getAdminSession(request, env) {
 function requireAdminCsrf(form, session) {
   const csrf = String(form.get("csrf") || "");
   if (!csrf || !session.csrf || !constantTimeEqual(csrf, session.csrf)) throw problem("CSRF_VALIDATION_FAILED", 400);
+}
+
+function renderAdminPairStart() {
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>投稿端末を接続</title><style>${adminStyles()}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>投稿端末を接続</h1><p>10分間だけ有効な承認コードを発行します。パスワードやInstagramのトークンは共有しません。</p><form method="post" action="/admin/pair/start"><button type="submit">承認コードを発行</button></form><p class="help">HOSHILUには接続せず、トリオランド専用の管理セッションだけを追加します。</p></section></main></body></html>`;
+  return new Response(body, { headers: securityHeaders() });
+}
+
+async function startAdminPairing(request, env) {
+  const origin = publicOrigin(env);
+  const pairingId = randomToken();
+  const pollSecret = randomToken();
+  const approvalSecret = randomToken();
+  const displayCode = randomDisplayCode();
+  const now = Date.now();
+  await env.AUTH_KV.put(`admin-pair:${pairingId}`, JSON.stringify({
+    status: "pending",
+    pollHash: await sha256Hex(pollSecret),
+    approvalHash: await sha256Hex(approvalSecret),
+    displayCode,
+    createdAt: now,
+    expiresAt: now + ADMIN_PAIR_TTL_SECONDS * 1000,
+  }), { expirationTtl: ADMIN_PAIR_TTL_SECONDS });
+  const approvalUrl = new URL("/admin/pair/approve", origin);
+  approvalUrl.searchParams.set("id", pairingId);
+  approvalUrl.searchParams.set("token", approvalSecret);
+  return renderAdminPairWait({ pairingId, pollSecret, approvalSecret, displayCode, approvalUrl: approvalUrl.toString() });
+}
+
+async function pollAdminPairing(request, env) {
+  const form = await request.formData();
+  const pairingId = String(form.get("pairingId") || "");
+  const pollSecret = String(form.get("pollSecret") || "");
+  const approvalSecret = String(form.get("approvalSecret") || "");
+  const record = await readAdminPair(env, pairingId);
+  if (!record || !(await secretMatches(pollSecret, record.pollHash)) || !(await secretMatches(approvalSecret, record.approvalHash)) || record.expiresAt <= Date.now()) {
+    throw problem("PAIRING_NOT_FOUND_OR_EXPIRED", 404);
+  }
+  const approvalUrl = new URL("/admin/pair/approve", publicOrigin(env));
+  approvalUrl.searchParams.set("id", pairingId);
+  approvalUrl.searchParams.set("token", approvalSecret);
+  if (record.status === "pending") {
+    return renderAdminPairWait({
+      pairingId,
+      pollSecret,
+      approvalSecret,
+      displayCode: record.displayCode,
+      approvalUrl: approvalUrl.toString(),
+      message: "まだ承認されていません。承認後にもう一度押してください。",
+    });
+  }
+  if (record.status !== "approved" || !record.sessionToken) throw problem("PAIRING_NOT_FOUND_OR_EXPIRED", 404);
+  await env.AUTH_KV.delete(`admin-pair:${pairingId}`);
+  return redirect("/admin", setCookie(ADMIN_SESSION_COOKIE, record.sessionToken, ADMIN_SESSION_TTL_SECONDS));
+}
+
+function renderAdminPairWait({ pairingId, pollSecret, approvalSecret, displayCode, approvalUrl, message = "" }) {
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>端末承認待ち</title><style>${adminStyles()}.pair-code{font-size:clamp(38px,10vw,64px);letter-spacing:.12em;font-weight:900;text-align:center;background:#eef5f3;border-radius:14px;padding:18px;margin:18px 0}.pair-link{word-break:break-all}</style></head><body class="login"><main><section><span class="eyebrow">10分間有効</span><h1>端末承認待ち</h1>${message ? `<div class="notice error">${escapeHtml(message)}</div>` : ""}<p>ログイン済みの通常ブラウザで次の承認ページを開き、同じコードが表示されることを確認してください。</p><div class="pair-code">${escapeHtml(displayCode)}</div><p class="pair-link"><a href="${escapeHtml(approvalUrl)}" target="_blank" rel="noopener">${escapeHtml(approvalUrl)}</a></p><form method="post" action="/admin/pair/poll"><input type="hidden" name="pairingId" value="${escapeHtml(pairingId)}"><input type="hidden" name="pollSecret" value="${escapeHtml(pollSecret)}"><input type="hidden" name="approvalSecret" value="${escapeHtml(approvalSecret)}"><button type="submit">承認済みか確認</button></form><p class="help">この画面は閉じないでください。コードだけではログインできません。</p></section></main></body></html>`;
+  return new Response(body, { headers: securityHeaders() });
+}
+
+async function renderAdminPairApproval(request, env, session) {
+  const url = new URL(request.url);
+  const pairingId = String(url.searchParams.get("id") || "");
+  const approvalSecret = String(url.searchParams.get("token") || "");
+  if (approvalSecret) {
+    const record = await readAdminPair(env, pairingId);
+    if (!record || record.status !== "pending" || !(await secretMatches(approvalSecret, record.approvalHash)) || record.expiresAt <= Date.now()) {
+      throw problem("PAIRING_NOT_FOUND_OR_EXPIRED", 404);
+    }
+    const cleanUrl = new URL("/admin/pair/approve", url.origin);
+    cleanUrl.searchParams.set("id", pairingId);
+    return redirect(cleanUrl.toString(), setCookie(ADMIN_PAIR_APPROVAL_COOKIE, `${pairingId}.${approvalSecret}`, ADMIN_PAIR_TTL_SECONDS));
+  }
+  const authorized = await authorizedAdminPair(request, env, pairingId);
+  if (!authorized || authorized.record.status !== "pending" || authorized.record.expiresAt <= Date.now()) {
+    throw problem("PAIRING_NOT_FOUND_OR_EXPIRED", 404);
+  }
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>投稿端末を承認</title><style>${adminStyles()}.pair-code{font-size:clamp(38px,10vw,64px);letter-spacing:.12em;font-weight:900;text-align:center;background:#eef5f3;border-radius:14px;padding:18px;margin:18px 0}</style></head><body class="login"><main><section><span class="eyebrow">GitHub @${escapeHtml(session.login)}</span><h1>投稿端末を承認</h1><p>接続元に表示されたコードと一致する場合だけ承認してください。</p><div class="pair-code">${escapeHtml(authorized.record.displayCode)}</div><form method="post" action="/admin/pair/approve"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><input type="hidden" name="pairingId" value="${escapeHtml(pairingId)}"><label class="check final"><input type="checkbox" name="pairConfirmed" value="true" required><span>接続元と同じコードであることを確認しました</span></label><button type="submit">この投稿端末を承認</button></form><p class="help">承認すると、この端末用に8時間有効な新しい管理セッションが発行されます。現在のログインには影響しません。</p></section></main></body></html>`;
+  return new Response(body, { headers: securityHeaders() });
+}
+
+async function approveAdminPairing(request, form, env, session) {
+  const pairingId = String(form.get("pairingId") || "");
+  if (String(form.get("pairConfirmed")) !== "true") throw problem("PAIRING_CONFIRMATION_REQUIRED", 409);
+  const authorized = await authorizedAdminPair(request, env, pairingId);
+  if (!authorized || authorized.record.status !== "pending" || authorized.record.expiresAt <= Date.now()) {
+    throw problem("PAIRING_NOT_FOUND_OR_EXPIRED", 404);
+  }
+  const sessionToken = randomToken();
+  await env.AUTH_KV.put(`admin-session:${sessionToken}`, JSON.stringify({
+    login: session.login,
+    githubId: String(session.githubId),
+    csrf: randomToken(),
+    createdAt: Date.now(),
+  }), { expirationTtl: ADMIN_SESSION_TTL_SECONDS });
+  await env.AUTH_KV.put(`admin-pair:${pairingId}`, JSON.stringify({
+    ...authorized.record,
+    status: "approved",
+    sessionToken,
+    approvedAt: Date.now(),
+    expiresAt: Date.now() + ADMIN_PAIR_REDEEM_TTL_SECONDS * 1000,
+  }), { expirationTtl: ADMIN_PAIR_REDEEM_TTL_SECONDS });
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>承認完了</title><style>${adminStyles()}</style></head><body class="login"><main><section><div class="notice">投稿端末を承認しました。</div><h1>承認完了</h1><p>接続元の画面へ戻り、「承認済みか確認」を押してください。</p><a class="button" href="/admin">SNS管理へ戻る</a></section></main></body></html>`;
+  return new Response(body, { headers: securityHeaders(clearCookie(ADMIN_PAIR_APPROVAL_COOKIE)) });
+}
+
+async function authorizedAdminPair(request, env, pairingId) {
+  const cookie = readCookie(request, ADMIN_PAIR_APPROVAL_COOKIE);
+  const separator = cookie.indexOf(".");
+  if (!pairingId || separator < 1 || cookie.slice(0, separator) !== pairingId) return null;
+  const approvalSecret = cookie.slice(separator + 1);
+  const record = await readAdminPair(env, pairingId);
+  if (!record || !(await secretMatches(approvalSecret, record.approvalHash))) return null;
+  return { record };
+}
+
+async function readAdminPair(env, pairingId) {
+  if (!/^[A-Za-z0-9_-]{40,64}$/.test(pairingId)) return null;
+  const raw = await env.AUTH_KV.get(`admin-pair:${pairingId}`);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+async function secretMatches(secret, expectedHash) {
+  if (!/^[A-Za-z0-9_-]{40,64}$/.test(secret) || !/^[a-f0-9]{64}$/.test(String(expectedHash || ""))) return false;
+  return constantTimeEqual(await sha256Hex(secret), expectedHash);
+}
+
+async function sha256Hex(value) {
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value)));
+  return [...digest].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function randomDisplayCode() {
+  const value = crypto.getRandomValues(new Uint32Array(1))[0] % 1000000;
+  return String(value).padStart(6, "0");
 }
 
 async function renderAdminDashboard(request, env, session, errorMessage = "", status = 200) {
