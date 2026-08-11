@@ -7,7 +7,9 @@
   "keep_vars": true,
   "workers_dev": true,
   "vars": {
+    "META_APP_ID": "4489990307945447",
     "META_API_VERSION": "v24.0",
+    "GITHUB_CLIENT_ID": "Ov23li2JVVC67XtemTo5",
     "PUBLIC_BASE_URL": "https://trioland-social-publisher.mygate-jp.workers.dev",
     "ALLOWED_GITHUB_LOGIN": "t-ooku"
   },
