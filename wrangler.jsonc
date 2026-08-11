@@ -4,6 +4,7 @@
   "main": "src/index.js",
   "compatibility_date": "2026-08-11",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "keep_vars": true,
   "workers_dev": true,
   "vars": {
     "META_API_VERSION": "v24.0",
