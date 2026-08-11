@@ -58,6 +58,25 @@ https://trioland-social-publisher.mygate-jp.workers.dev/mcp
 - `publish_approved_media`
 - `refresh_instagram_token`
 
+## ChatGPT Pro向け専用Web管理画面
+
+ChatGPT ProではMCPの書き込み操作を使わず、次の専用画面から承認・投稿します。
+
+```text
+https://trioland-social-publisher.mygate-jp.workers.dev/admin
+```
+
+- GitHub OAuthで `t-ooku` 本人だけがログイン可能。
+- 管理セッションは8時間で自動失効し、CookieはHttpOnly / Secure。
+- すべての変更操作でCSRFを検証。
+- 画像・動画のアップロード時に掲載許諾確認が必須。
+- 公開時に掲載許諾と外部公開の最終確認が必須。
+- R2の `approved=true` メタデータを投稿直前にも再確認。
+- 投稿本文には次の5つを自動で固定付与。
+  `#トリオランド #駒沢大学駅 #三軒茶屋駅 #保育士募集 #園児募集`
+- `ADMIN_TOKEN`、Meta/GitHubシークレット、Instagramトークンはブラウザへ返さない。
+- HOSHILUのリソース、ドメイン、データへ接続しない。
+
 ### GitHub OAuth App
 
 GitHubの **Settings > Developer settings > OAuth Apps > New OAuth App** で、
