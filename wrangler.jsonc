@@ -3,14 +3,19 @@
   "name": "trioland-social-publisher",
   "main": "src/index.js",
   "compatibility_date": "2026-08-11",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "workers_dev": true,
   "vars": {
-    "META_API_VERSION": "v24.0"
+    "META_API_VERSION": "v24.0",
+    "PUBLIC_BASE_URL": "https://trioland-social-publisher.mygate-jp.workers.dev",
+    "ALLOWED_GITHUB_LOGIN": "t-ooku"
   },
   "kv_namespaces": [
     {
       "binding": "AUTH_KV"
+    },
+    {
+      "binding": "OAUTH_KV"
     }
   ],
   "r2_buckets": [

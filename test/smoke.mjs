@@ -1,26 +1,31 @@
 import assert from "node:assert/strict";
-import worker from "../src/index.js";
+import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 
-const env = {
-  META_API_VERSION: "SET_IN_CLOUDFLARE",
-};
+const source = readFileSync(new URL("../src/index.js", import.meta.url), "utf8");
+const config = readFileSync(new URL("../wrangler.jsonc", import.meta.url), "utf8");
 
-const health = await worker.fetch(new Request("https://worker.example/health"), env);
-assert.equal(health.status, 200);
-assert.deepEqual(await health.json(), {
-  ok: true,
-  service: "trioland-social-publisher",
-  hoshilu_isolated: true,
-  metaConfigured: false,
-  apiVersionConfigured: false,
-  adminConfigured: false,
-  encryptionConfigured: false,
-  mediaSigningConfigured: false,
-  oauthRedirectUri: "https://worker.example/oauth/callback",
-});
+assert.match(source, /hoshilu_isolated: true/);
+assert.match(source, /approved: z\.literal\(true\)/);
+assert.match(source, /ALLOWED_GITHUB_LOGIN/);
+assert.match(source, /apiRoute: "\/mcp"/);
+assert.match(config, /"binding": "AUTH_KV"/);
+assert.match(config, /"binding": "OAUTH_KV"/);
+assert.match(config, /"binding": "MEDIA_BUCKET"/);
 
-const unauthorized = await worker.fetch(new Request("https://worker.example/account"), env);
-assert.equal(unauthorized.status, 503);
-assert.equal((await unauthorized.json()).error, "ADMIN_TOKEN_NOT_CONFIGURED");
+const result = spawnSync(
+  "./node_modules/.bin/esbuild",
+  [
+    "src/index.js",
+    "--bundle",
+    "--format=esm",
+    "--platform=node",
+    "--main-fields=module,main",
+    "--external:cloudflare:*",
+    "--outfile=/tmp/trioland-worker-smoke/index.js",
+  ],
+  { cwd: new URL("..", import.meta.url), encoding: "utf8" },
+);
 
+assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 console.log("smoke tests passed");

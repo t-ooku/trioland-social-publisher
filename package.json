@@ -24,6 +24,12 @@
       },
       "MEDIA_SIGNING_SECRET": {
         "description": "Meta取得用の短期メディアURL署名に使う十分に長いランダム値"
+      },
+      "GITHUB_CLIENT_ID": {
+        "description": "ChatGPT WebのMCP接続で本人確認に使うGitHub OAuth AppのClient ID"
+      },
+      "GITHUB_CLIENT_SECRET": {
+        "description": "GitHub OAuth AppのClient secret。公開しないでください。"
       }
     }
   },
@@ -31,5 +37,11 @@
     "@cloudflare/vitest-pool-workers": "latest",
     "vitest": "latest",
     "wrangler": "latest"
+  },
+  "dependencies": {
+    "@cloudflare/workers-oauth-provider": "^0.10.3",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "agents": "^0.20.1",
+    "zod": "^4.4.3"
   }
 }
