@@ -17,6 +17,7 @@ assert.match(source, /url\.pathname === "\/admin\/access"/);
 assert.match(source, /name="adminToken"[^>]*type="password"|type="password"[^>]*name="adminToken"/i);
 assert.match(source, /ADMIN_ACCESS_CSRF_COOKIE = "__Host-TRIOLAND_ADMIN_ACCESS_CSRF"/);
 assert.match(source, /setStrictCookie\(ADMIN_ACCESS_CSRF_COOKIE, csrf, ADMIN_ACCESS_CSRF_TTL_SECONDS\)/);
+assert.match(source, /headers\.set\("referrer-policy", "same-origin"\)/);
 assert.match(source, /if \(!sameOrigin\(request, env\)\)/);
 assert.match(source, /const suppliedHash = await sha256Hex\(suppliedToken\)/);
 assert.match(source, /const expectedHash = await sha256Hex\(String\(env\.ADMIN_TOKEN\)\)/);
