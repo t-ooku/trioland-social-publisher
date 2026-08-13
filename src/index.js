@@ -11,8 +11,12 @@ const JSON_HEADERS = {
 const FIXED_HASHTAGS = "#トリオランド #駒沢大学駅 #三軒茶屋駅 #保育士募集 #園児募集";
 const ADMIN_SESSION_COOKIE = "__Host-TRIOLAND_ADMIN_SESSION";
 const ADMIN_STATE_COOKIE = "__Host-TRIOLAND_ADMIN_STATE";
+const ADMIN_ACCESS_CSRF_COOKIE = "__Host-TRIOLAND_ADMIN_ACCESS_CSRF";
 const ADMIN_PAIR_APPROVAL_COOKIE = "__Host-TRIOLAND_PAIR_APPROVAL";
 const ADMIN_SESSION_TTL_SECONDS = 8 * 60 * 60;
+const ADMIN_ACCESS_CSRF_TTL_SECONDS = 10 * 60;
+const ADMIN_ACCESS_RATE_TTL_SECONDS = 15 * 60;
+const ADMIN_ACCESS_MAX_FAILURES = 5;
 const ADMIN_PAIR_TTL_SECONDS = 10 * 60;
 const ADMIN_PAIR_REDEEM_TTL_SECONDS = 5 * 60;
 const MAKE_SCENARIO_ID = "5623382";
@@ -383,6 +387,13 @@ function fromBase64(value) {
 
 async function handleAdminRequest(request, env) {
   const url = new URL(request.url);
+  if (request.method === "GET" && url.pathname === "/admin/access") {
+    const session = await getAdminSession(request, env);
+    return session ? redirect("/admin") : renderAdminAccess();
+  }
+  if (request.method === "POST" && url.pathname === "/admin/access") {
+    return completeAdminAccess(request, env);
+  }
   if (request.method === "GET" && url.pathname === "/admin/login") {
     return startAdminLogin(env);
   }
@@ -497,6 +508,93 @@ async function startAdminLogin(env) {
   return redirect(github.toString(), setCookie(ADMIN_STATE_COOKIE, state, 600));
 }
 
+function renderAdminAccess(errorMessage = "", status = 200) {
+  const csrf = randomToken();
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド SNS管理</title><style>${adminStyles()}.secret-input{display:block;width:100%;margin-top:7px;border:1px solid #cbd7d5;border-radius:10px;padding:11px;font:inherit}.login-options{display:grid;gap:12px}.subtle-link{color:var(--brand);font-size:13px}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>管理コードでログイン</h1><p>Cloudflareに保存済みのトリオランド専用管理コードを入力してください。コードはURL・Cookie・保存データ・ログには残しません。</p>${errorMessage ? `<div class="notice error">${escapeHtml(errorMessage)}</div>` : ""}<form method="post" action="/admin/access" class="stack" autocomplete="off"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"><label>管理コード<input class="secret-input" type="password" name="adminToken" minlength="20" maxlength="4096" autocomplete="new-password" required autofocus></label><button type="submit">SNS管理を開く</button></form><p class="help">認証後は、このブラウザだけに8時間有効な安全な管理セッションを発行します。HOSHILUには接続しません。</p><a class="subtle-link" href="/admin/login">GitHubログイン（予備）</a></section></main></body></html>`;
+  return new Response(body, {
+    status,
+    headers: securityHeaders(setStrictCookie(ADMIN_ACCESS_CSRF_COOKIE, csrf, ADMIN_ACCESS_CSRF_TTL_SECONDS)),
+  });
+}
+
+async function completeAdminAccess(request, env) {
+  if (!env.ADMIN_TOKEN) return renderAdminAccess("管理コード認証が設定されていません。", 503);
+  if (!sameOrigin(request, env)) return renderAdminAccess("このページからもう一度ログインしてください。", 403);
+
+  const form = await request.formData();
+  const csrfForm = String(form.get("csrf") || "");
+  const csrfCookie = readCookie(request, ADMIN_ACCESS_CSRF_COOKIE);
+  if (!csrfForm || !csrfCookie || !constantTimeEqual(csrfForm, csrfCookie)) {
+    return renderAdminAccess("ログイン画面の有効期限が切れました。もう一度入力してください。", 400);
+  }
+
+  const rateKey = await adminAccessRateKey(request, env);
+  const rate = await readAdminAccessRate(env, rateKey);
+  if (rate.attempts >= ADMIN_ACCESS_MAX_FAILURES && rate.expiresAt > Date.now()) {
+    return renderAdminAccess("ログイン試行が上限に達しました。15分後にもう一度お試しください。", 429);
+  }
+
+  const suppliedToken = String(form.get("adminToken") || "");
+  const suppliedHash = await sha256Hex(suppliedToken);
+  const expectedHash = await sha256Hex(String(env.ADMIN_TOKEN));
+  if (!constantTimeEqual(suppliedHash, expectedHash)) {
+    const attempts = await recordAdminAccessFailure(env, rateKey, rate);
+    return attempts >= ADMIN_ACCESS_MAX_FAILURES
+      ? renderAdminAccess("ログイン試行が上限に達しました。15分後にもう一度お試しください。", 429)
+      : renderAdminAccess("管理コードを確認できませんでした。", 401);
+  }
+
+  await env.AUTH_KV.delete(rateKey);
+  const sessionToken = randomToken();
+  await env.AUTH_KV.put(`admin-session:${sessionToken}`, JSON.stringify({
+    login: String(env.ALLOWED_GITHUB_LOGIN || "t-ooku"),
+    githubId: null,
+    authMethod: "admin_token",
+    csrf: randomToken(),
+    createdAt: Date.now(),
+  }), { expirationTtl: ADMIN_SESSION_TTL_SECONDS });
+  return redirectWithCookies("/admin", [
+    setCookie(ADMIN_SESSION_COOKIE, sessionToken, ADMIN_SESSION_TTL_SECONDS),
+    clearCookie(ADMIN_ACCESS_CSRF_COOKIE),
+  ]);
+}
+
+function sameOrigin(request, env) {
+  const origin = request.headers.get("origin") || "";
+  const expected = publicOrigin(env);
+  return origin.length === expected.length && constantTimeEqual(origin, expected);
+}
+
+async function adminAccessRateKey(request, env) {
+  const address = request.headers.get("cf-connecting-ip") || "unavailable";
+  return `admin-access-rate:${await hmacHex(env.ADMIN_TOKEN, `admin-access\n${address}`)}`;
+}
+
+async function readAdminAccessRate(env, key) {
+  const raw = await env.AUTH_KV.get(key);
+  if (!raw) return { attempts: 0, expiresAt: 0 };
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Number.isInteger(parsed.attempts) || !Number.isFinite(parsed.expiresAt) || parsed.expiresAt <= Date.now()) {
+      return { attempts: 0, expiresAt: 0 };
+    }
+    return { attempts: parsed.attempts, expiresAt: parsed.expiresAt };
+  } catch {
+    return { attempts: 0, expiresAt: 0 };
+  }
+}
+
+async function recordAdminAccessFailure(env, key, current) {
+  const attempts = current.attempts + 1;
+  const expiresAt = current.expiresAt > Date.now()
+    ? current.expiresAt
+    : Date.now() + ADMIN_ACCESS_RATE_TTL_SECONDS * 1000;
+  await env.AUTH_KV.put(key, JSON.stringify({ attempts, expiresAt }), {
+    expirationTtl: ADMIN_ACCESS_RATE_TTL_SECONDS,
+  });
+  return attempts;
+}
+
 async function getAdminSession(request, env) {
   const token = readCookie(request, ADMIN_SESSION_COOKIE);
   if (!token) return null;
@@ -590,7 +688,8 @@ async function renderAdminPairApproval(request, env, session) {
   if (!authorized || authorized.record.status !== "pending" || authorized.record.expiresAt <= Date.now()) {
     throw problem("PAIRING_NOT_FOUND_OR_EXPIRED", 404);
   }
-  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>投稿端末を承認</title><style>${adminStyles()}.pair-code{font-size:clamp(38px,10vw,64px);letter-spacing:.12em;font-weight:900;text-align:center;background:#eef5f3;border-radius:14px;padding:18px;margin:18px 0}</style></head><body class="login"><main><section><span class="eyebrow">GitHub @${escapeHtml(session.login)}</span><h1>投稿端末を承認</h1><p>接続元に表示されたコードと一致する場合だけ承認してください。</p><div class="pair-code">${escapeHtml(authorized.record.displayCode)}</div><form method="post" action="/admin/pair/approve"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><input type="hidden" name="pairingId" value="${escapeHtml(pairingId)}"><label class="check final"><input type="checkbox" name="pairConfirmed" value="true" required><span>接続元と同じコードであることを確認しました</span></label><button type="submit">この投稿端末を承認</button></form><p class="help">承認すると、この端末用に8時間有効な新しい管理セッションが発行されます。現在のログインには影響しません。</p></section></main></body></html>`;
+  const identity = adminIdentity(session);
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>投稿端末を承認</title><style>${adminStyles()}.pair-code{font-size:clamp(38px,10vw,64px);letter-spacing:.12em;font-weight:900;text-align:center;background:#eef5f3;border-radius:14px;padding:18px;margin:18px 0}</style></head><body class="login"><main><section><span class="eyebrow">${escapeHtml(identity)}</span><h1>投稿端末を承認</h1><p>接続元に表示されたコードと一致する場合だけ承認してください。</p><div class="pair-code">${escapeHtml(authorized.record.displayCode)}</div><form method="post" action="/admin/pair/approve"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><input type="hidden" name="pairingId" value="${escapeHtml(pairingId)}"><label class="check final"><input type="checkbox" name="pairConfirmed" value="true" required><span>接続元と同じコードであることを確認しました</span></label><button type="submit">この投稿端末を承認</button></form><p class="help">承認すると、この端末用に8時間有効な新しい管理セッションが発行されます。現在のログインには影響しません。</p></section></main></body></html>`;
   return new Response(body, { headers: securityHeaders() });
 }
 
@@ -604,7 +703,8 @@ async function approveAdminPairing(request, form, env, session) {
   const sessionToken = randomToken();
   await env.AUTH_KV.put(`admin-session:${sessionToken}`, JSON.stringify({
     login: session.login,
-    githubId: String(session.githubId),
+    githubId: session.githubId ? String(session.githubId) : null,
+    authMethod: session.authMethod || "github",
     csrf: randomToken(),
     createdAt: Date.now(),
   }), { expirationTtl: ADMIN_SESSION_TTL_SECONDS });
@@ -696,7 +796,7 @@ async function renderAdminDashboard(request, env, session, errorMessage = "", st
 <body><header><div><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>SNS管理</h1><p>承認済み素材だけをInstagram公式APIで公開します。</p></div><form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button class="ghost" type="submit">ログアウト</button></form></header>
 <main>
 ${notices.map((notice) => `<div class="notice ${notice.startsWith("エラー:") ? "error" : ""}">${escapeHtml(notice)}</div>`).join("")}
-<section class="status"><div><span>本人確認</span><strong>GitHub @${escapeHtml(session.login)}</strong></div><div><span>Instagram</span><strong class="${instagramConnected ? "ok" : "warn"}">${instagramConnected ? "接続済み" : "未接続"}</strong></div><div><span>HOSHILU</span><strong class="ok">完全分離</strong></div></section>
+<section class="status"><div><span>本人確認</span><strong>${escapeHtml(adminIdentity(session))}</strong></div><div><span>Instagram</span><strong class="${instagramConnected ? "ok" : "warn"}">${instagramConnected ? "接続済み" : "未接続"}</strong></div><div><span>HOSHILU</span><strong class="ok">完全分離</strong></div></section>
 
 <section><div class="section-head"><div><span class="step">M</span><h2>Make / Googleビジネスプロフィール</h2></div><span class="pill ${makeConnected ? "done" : ""}">${makeConnected ? "API接続済み" : "未接続"}</span></div><p>シナリオ ${MAKE_SCENARIO_ID} の構成と直近実行ログを、トークンを表示せずに診断します。</p><a class="button" href="/admin/make">Make診断画面を開く</a></section>
 
@@ -978,8 +1078,14 @@ function makeAdminStyles() {
 }
 
 function renderAdminLogin() {
-  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド SNS管理</title><style>${adminStyles()}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>SNS管理</h1><p>大久津さん専用の承認・投稿画面です。GitHubで本人確認して開始してください。</p><a class="button" href="/admin/login">GitHubでログイン</a><p class="help">Instagram・Cloudflare専用基盤のみを使用し、HOSHILUには接続しません。</p></section></main></body></html>`;
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド SNS管理</title><style>${adminStyles()}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>SNS管理</h1><p>大久津さん専用の承認・投稿画面です。管理コードで本人確認して開始できます。</p><a class="button" href="/admin/access">管理コードでログイン</a><p class="help"><a href="/admin/login">GitHubログイン（予備）</a><br>Instagram・Cloudflare専用基盤のみを使用し、HOSHILUには接続しません。</p></section></main></body></html>`;
   return new Response(body, { headers: securityHeaders() });
+}
+
+function adminIdentity(session) {
+  return session.authMethod === "admin_token"
+    ? "管理コードで本人確認済み"
+    : `GitHub @${session.login}`;
 }
 
 function composeCaption(value) {
@@ -1008,6 +1114,10 @@ function setCookie(name, value, maxAge) {
   return `${name}=${encodeURIComponent(value)}; HttpOnly; Secure; Path=/; SameSite=Lax; Max-Age=${maxAge}`;
 }
 
+function setStrictCookie(name, value, maxAge) {
+  return `${name}=${encodeURIComponent(value)}; HttpOnly; Secure; Path=/; SameSite=Strict; Max-Age=${maxAge}`;
+}
+
 function clearCookie(name) {
   return `${name}=; HttpOnly; Secure; Path=/; SameSite=Lax; Max-Age=0`;
 }
@@ -1015,6 +1125,12 @@ function clearCookie(name) {
 function redirect(location, cookie = "") {
   const headers = new Headers({ location, "cache-control": "no-store" });
   if (cookie) headers.append("set-cookie", cookie);
+  return new Response(null, { status: 303, headers });
+}
+
+function redirectWithCookies(location, cookies) {
+  const headers = new Headers({ location, "cache-control": "no-store" });
+  for (const cookie of cookies) headers.append("set-cookie", cookie);
   return new Response(null, { status: 303, headers });
 }
 
