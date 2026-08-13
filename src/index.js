@@ -15,6 +15,14 @@ const ADMIN_PAIR_APPROVAL_COOKIE = "__Host-TRIOLAND_PAIR_APPROVAL";
 const ADMIN_SESSION_TTL_SECONDS = 8 * 60 * 60;
 const ADMIN_PAIR_TTL_SECONDS = 10 * 60;
 const ADMIN_PAIR_REDEEM_TTL_SECONDS = 5 * 60;
+const MAKE_SCENARIO_ID = "5623382";
+const MAKE_API_ORIGIN = "https://us2.make.com";
+const MAKE_API_BASE = `${MAKE_API_ORIGIN}/api/v2`;
+const MAKE_TOKEN_KEY = "make-api-token";
+const MAKE_DIAGNOSIS_KEY = `make-diagnosis:${MAKE_SCENARIO_ID}`;
+const MAKE_DIAGNOSIS_TTL_SECONDS = 7 * 24 * 60 * 60;
+const MAKE_MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+const MAKE_REQUEST_TIMEOUT_MS = 12_000;
 
 export const appHandler = {
   async fetch(request, env) {
@@ -395,6 +403,9 @@ async function handleAdminRequest(request, env) {
     if (request.method === "GET" && url.pathname === "/admin") {
       return renderAdminDashboard(request, env, session);
     }
+    if (request.method === "GET" && url.pathname === "/admin/make") {
+      return renderMakeAdmin(request, env, session);
+    }
     if (request.method === "GET" && url.pathname === "/admin/connect-instagram") {
       const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
       return redirect(authorizationUrl);
@@ -454,8 +465,20 @@ async function handleAdminRequest(request, env) {
       await refreshToken(env);
       return redirect("/admin?refreshed=1");
     }
+    if (url.pathname === "/admin/make/token") {
+      return saveMakeToken(form, env);
+    }
+    if (url.pathname === "/admin/make/token/delete") {
+      return deleteMakeToken(form, env);
+    }
+    if (url.pathname === "/admin/make/diagnose") {
+      return runMakeDiagnosis(env);
+    }
     throw problem("管理画面の操作が見つかりません", 404);
   } catch (error) {
+    if (url.pathname.startsWith("/admin/make")) {
+      return renderMakeAdmin(request, env, session, error?.message || "操作に失敗しました", Number(error?.status || 500));
+    }
     return renderAdminDashboard(request, env, session, error?.message || "操作に失敗しました", Number(error?.status || 500));
   }
 }
@@ -635,6 +658,7 @@ function randomDisplayCode() {
 async function renderAdminDashboard(request, env, session, errorMessage = "", status = 200) {
   const url = new URL(request.url);
   const instagramConnected = Boolean(await env.AUTH_KV.get("instagram-token"));
+  const makeConnected = Boolean(await env.AUTH_KV.get(MAKE_TOKEN_KEY));
   const listing = await env.MEDIA_BUCKET.list({
     prefix: "approved/",
     limit: 50,
@@ -674,6 +698,8 @@ async function renderAdminDashboard(request, env, session, errorMessage = "", st
 ${notices.map((notice) => `<div class="notice ${notice.startsWith("エラー:") ? "error" : ""}">${escapeHtml(notice)}</div>`).join("")}
 <section class="status"><div><span>本人確認</span><strong>GitHub @${escapeHtml(session.login)}</strong></div><div><span>Instagram</span><strong class="${instagramConnected ? "ok" : "warn"}">${instagramConnected ? "接続済み" : "未接続"}</strong></div><div><span>HOSHILU</span><strong class="ok">完全分離</strong></div></section>
 
+<section><div class="section-head"><div><span class="step">M</span><h2>Make / Googleビジネスプロフィール</h2></div><span class="pill ${makeConnected ? "done" : ""}">${makeConnected ? "API接続済み" : "未接続"}</span></div><p>シナリオ ${MAKE_SCENARIO_ID} の構成と直近実行ログを、トークンを表示せずに診断します。</p><a class="button" href="/admin/make">Make診断画面を開く</a></section>
+
 <section><div class="section-head"><div><span class="step">1</span><h2>Instagram接続</h2></div><span class="pill ${instagramConnected ? "done" : ""}">${instagramConnected ? "完了" : "初回のみ"}</span></div>
 <p>Instagramプロアカウントを公式APIへ接続します。HOSHILUには影響しません。</p>
 <div class="actions"><a class="button" href="/admin/connect-instagram">${instagramConnected ? "Instagramを再接続" : "Instagramを接続"}</a>${instagramConnected ? `<form method="post" action="/admin/refresh-token"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button class="secondary" type="submit">トークンを更新</button></form>` : ""}</div></section>
@@ -685,6 +711,270 @@ ${notices.map((notice) => `<div class="notice ${notice.startsWith("エラー:") 
 <form method="post" action="/admin/publish" class="stack"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><div class="media-list">${mediaOptions}</div><div class="two"><label>投稿形式<select name="mediaType" required><option value="REELS">リール動画</option><option value="IMAGE">画像投稿</option></select></label><label class="check compact"><input type="checkbox" name="shareToFeed" value="true" checked><span>リールをフィードにも表示</span></label></div><label>本文<textarea name="caption" maxlength="2080" rows="7" placeholder="投稿本文を入力してください"></textarea></label><div class="hashtags"><span>固定ハッシュタグ</span>${escapeHtml(FIXED_HASHTAGS)}</div><label class="check"><input type="checkbox" name="rightsConfirmed" value="true" required><span>掲載許諾と素材内容を再確認しました</span></label><label class="check final"><input type="checkbox" name="publishConfirmed" value="true" required><span>この内容をInstagramへ今すぐ公開することを承認します</span></label><button class="publish" type="submit" ${mediaRows.length && instagramConnected ? "" : "disabled"}>承認して投稿する</button>${!instagramConnected ? `<p class="help">先にInstagram接続を完了してください。</p>` : ""}</form></section>
 </main><footer>トリオランド駒沢大学園 専用・HOSHILUとは接続していません</footer></body></html>`;
   return new Response(body, { status, headers: securityHeaders() });
+}
+
+async function renderMakeAdmin(request, env, session, errorMessage = "", status = 200) {
+  const url = new URL(request.url);
+  const tokenConfigured = Boolean(await env.AUTH_KV.get(MAKE_TOKEN_KEY));
+  const diagnosis = await readStoredMakeDiagnosis(env);
+  const notices = [];
+  if (url.searchParams.get("tokenSaved") === "1") notices.push("Make APIトークンを暗号化して保存しました。");
+  if (url.searchParams.get("tokenDeleted") === "1") notices.push("Make APIトークンを削除しました。");
+  if (url.searchParams.get("diagnosed") === "1") notices.push("シナリオ診断を更新しました。外部投稿・設定変更はしていません。");
+  if (errorMessage) notices.push(`エラー: ${errorMessage}`);
+
+  const resultBlock = diagnosis ? renderMakeDiagnosis(diagnosis) : `<p class="empty">診断結果はまだありません。トークン保存後に「診断だけ実行」を押してください。</p>`;
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Make診断 | トリオランド</title><style>${adminStyles()}${makeAdminStyles()}</style></head>
+<body><header><div><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>Make診断</h1><p>対象は us2 / シナリオ ${MAKE_SCENARIO_ID} に固定されています。</p></div><a class="button ghost" href="/admin">SNS管理へ戻る</a></header><main>
+${notices.map((notice) => `<div class="notice ${notice.startsWith("エラー:") ? "error" : ""}">${escapeHtml(notice)}</div>`).join("")}
+<section><div class="section-head"><div><span class="step">1</span><h2>Make API接続</h2></div><span class="pill ${tokenConfigured ? "done" : ""}">${tokenConfigured ? "暗号化保存済み" : "未設定"}</span></div>
+<p>MakeのAPIトークンはブラウザへ再表示せず、既存のTOKEN_ENCRYPTION_KEYでAES-256-GCM暗号化してAUTH_KVへ保存します。現在必要なscopeは読み取り専用の scenarios:read です。</p>
+<form method="post" action="/admin/make/token" class="stack"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><label>Make APIトークン<input class="secret-input" type="password" name="makeToken" minlength="20" maxlength="4096" autocomplete="new-password" required></label><label class="check"><input type="checkbox" name="tokenConfirmed" value="true" required><span>Makeで新規発行したトークンを、この専用Workerへ暗号化保存することを承認します</span></label><button type="submit">接続確認して保存</button></form>
+${tokenConfigured ? `<form method="post" action="/admin/make/token/delete" class="inline-danger"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><label class="check final"><input type="checkbox" name="deleteConfirmed" value="true" required><span>保存済みMakeトークンを削除する</span></label><button class="publish" type="submit">削除</button></form>` : ""}</section>
+<section><div class="section-head"><div><span class="step">2</span><h2>原因診断</h2></div><span class="pill">読み取りのみ</span></div><p>シナリオ、ライブ/下書きBlueprintの安全な構造要約、直近実行ログを取得します。Blueprintの設定値、実行outputs、bundle、個人情報、認証情報は保存・表示しません。</p><form method="post" action="/admin/make/diagnose"><input type="hidden" name="csrf" value="${escapeHtml(session.csrf)}"><button type="submit" ${tokenConfigured ? "" : "disabled"}>診断だけ実行</button></form></section>
+<section><div class="section-head"><div><span class="step">3</span><h2>診断結果</h2></div><span class="pill">外部変更なし</span></div>${resultBlock}</section>
+</main><footer>Make対象: us2 / ${MAKE_SCENARIO_ID}・HOSHILUとは接続していません</footer></body></html>`;
+  return new Response(body, { status, headers: securityHeaders() });
+}
+
+async function saveMakeToken(form, env) {
+  if (String(form.get("tokenConfirmed")) !== "true") throw problem("MAKE_TOKEN_CONFIRMATION_REQUIRED", 409);
+  const token = String(form.get("makeToken") || "").trim();
+  if (token.length < 20 || token.length > 4096 || /\s/.test(token)) throw problem("MAKE_API_TOKEN_FORMAT_INVALID", 400);
+  await makeReadRequest(token, "scenario");
+  const encrypted = await encryptJson({ token, storedAt: Date.now(), zone: "us2", scenarioId: MAKE_SCENARIO_ID }, env.TOKEN_ENCRYPTION_KEY);
+  await env.AUTH_KV.put(MAKE_TOKEN_KEY, JSON.stringify(encrypted));
+  await env.AUTH_KV.delete(MAKE_DIAGNOSIS_KEY);
+  return redirect("/admin/make?tokenSaved=1");
+}
+
+async function deleteMakeToken(form, env) {
+  if (String(form.get("deleteConfirmed")) !== "true") throw problem("MAKE_TOKEN_DELETE_CONFIRMATION_REQUIRED", 409);
+  await env.AUTH_KV.delete(MAKE_TOKEN_KEY);
+  await env.AUTH_KV.delete(MAKE_DIAGNOSIS_KEY);
+  return redirect("/admin/make?tokenDeleted=1");
+}
+
+async function loadMakeToken(env) {
+  const raw = await env.AUTH_KV.get(MAKE_TOKEN_KEY);
+  if (!raw) throw problem("MAKE_API_TOKEN_NOT_CONFIGURED", 409);
+  const stored = await decryptJson(JSON.parse(raw), env.TOKEN_ENCRYPTION_KEY);
+  if (!stored?.token || stored.zone !== "us2" || stored.scenarioId !== MAKE_SCENARIO_ID) throw problem("MAKE_API_TOKEN_RECORD_INVALID", 503);
+  return stored.token;
+}
+
+async function runMakeDiagnosis(env) {
+  const token = await loadMakeToken(env);
+  const [scenarioRaw, liveRaw, draftRaw, logsRaw] = await Promise.all([
+    makeReadRequest(token, "scenario"),
+    makeReadRequest(token, "live-blueprint"),
+    makeReadRequest(token, "draft-blueprint"),
+    makeReadRequest(token, "logs"),
+  ]);
+  const scenario = projectMakeScenario(scenarioRaw);
+  const liveBlueprint = projectMakeBlueprint(liveRaw);
+  const draftBlueprint = projectMakeBlueprint(draftRaw);
+  const logs = projectMakeLogs(logsRaw);
+  const safeData = { scenario, liveBlueprint, draftBlueprint, logs };
+  const diagnosis = {
+    scenarioId: MAKE_SCENARIO_ID,
+    zone: "us2",
+    diagnosedAt: new Date().toISOString(),
+    fingerprint: await sha256Hex(JSON.stringify(safeData)),
+    summary: summarizeMakeDiagnosis(safeData),
+    data: safeData,
+  };
+  await env.AUTH_KV.put(MAKE_DIAGNOSIS_KEY, JSON.stringify(diagnosis), { expirationTtl: MAKE_DIAGNOSIS_TTL_SECONDS });
+  return redirect("/admin/make?diagnosed=1");
+}
+
+function makeReadPath(kind) {
+  const paths = {
+    scenario: `/scenarios/${MAKE_SCENARIO_ID}`,
+    "live-blueprint": `/scenarios/${MAKE_SCENARIO_ID}/blueprint?draft=false`,
+    "draft-blueprint": `/scenarios/${MAKE_SCENARIO_ID}/blueprint?draft=true`,
+    logs: `/scenarios/${MAKE_SCENARIO_ID}/logs?pg[limit]=20&pg[sortDir]=desc`,
+  };
+  const path = paths[kind];
+  if (!path) throw problem("MAKE_API_OPERATION_NOT_ALLOWED", 500);
+  return path;
+}
+
+async function makeReadRequest(token, kind) {
+  const path = makeReadPath(kind);
+  const url = new URL(`${MAKE_API_BASE}${path}`);
+  if (url.origin !== MAKE_API_ORIGIN || !url.pathname.startsWith("/api/v2/")) throw problem("MAKE_API_TARGET_REJECTED", 500);
+  const headers = new Headers();
+  headers.set("authorization", `Token ${token}`);
+  headers.set("accept", "application/json");
+  let response;
+  try {
+    response = await fetch(url, {
+      method: "GET",
+      headers,
+      redirect: "error",
+      signal: AbortSignal.timeout(MAKE_REQUEST_TIMEOUT_MS),
+  });
+  } catch (error) {
+    if (error?.name === "TimeoutError" || error?.name === "AbortError") throw problem("MAKE_API_TIMEOUT", 504);
+    throw problem("MAKE_API_NETWORK_ERROR", 502);
+  }
+  if (!response.ok) {
+    if (response.body) await response.body.cancel().catch(() => {});
+    if (response.status === 401) throw problem("MAKE_API_AUTHENTICATION_FAILED", 502);
+    if (response.status === 403) throw problem("MAKE_API_SCOPE_OR_ACCESS_DENIED", 502);
+    if (response.status === 404) throw problem("MAKE_API_RESOURCE_NOT_FOUND", 502);
+    if (response.status === 429) throw problem("MAKE_API_RATE_LIMITED", 503);
+    throw problem(`MAKE_API_HTTP_${response.status}`, 502);
+  }
+  return readBoundedJson(response);
+}
+
+async function readBoundedJson(response) {
+  const length = Number(response.headers.get("content-length") || 0);
+  if (length > MAKE_MAX_RESPONSE_BYTES) throw problem("MAKE_API_RESPONSE_TOO_LARGE", 502);
+  if (!response.body) return {};
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > MAKE_MAX_RESPONSE_BYTES) {
+      await reader.cancel();
+      throw problem("MAKE_API_RESPONSE_TOO_LARGE", 502);
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  const text = new TextDecoder().decode(bytes);
+  if (!text) return {};
+  try { return JSON.parse(text); } catch { throw problem("MAKE_API_INVALID_JSON", 502); }
+}
+
+function projectMakeScenario(raw) {
+  const scenario = raw?.scenario;
+  if (!scenario || typeof scenario !== "object" || Array.isArray(scenario) || String(scenario.id || "") !== MAKE_SCENARIO_ID) {
+    throw problem("MAKE_API_RESPONSE_SHAPE_INVALID", 502);
+  }
+  return {
+    id: MAKE_SCENARIO_ID,
+    isActive: Boolean(scenario.isActive),
+    isInvalid: Boolean(scenario.isinvalid ?? scenario.isInvalid),
+    isPaused: Boolean(scenario.isPaused ?? scenario.ispaused),
+    isLocked: Boolean(scenario.islocked ?? scenario.isLocked),
+    lastEdit: safeMakeDate(scenario.lastEdit),
+  };
+}
+
+function projectMakeBlueprint(raw) {
+  const response = raw?.response;
+  const blueprint = response?.blueprint;
+  if (!response || typeof response !== "object" || !blueprint || typeof blueprint !== "object" || !Array.isArray(blueprint.flow)) {
+    throw problem("MAKE_API_RESPONSE_SHAPE_INVALID", 502);
+  }
+  const modules = [];
+  const filters = [];
+  const visitFlow = (flow, depth = 0) => {
+    if (!Array.isArray(flow) || depth > 5) return;
+    for (const node of flow.slice(0, 200)) {
+      if (!node || typeof node !== "object") continue;
+      if (node.module) modules.push({ id: safeMakeModuleId(node.id), module: safeMakePackage(node.module) });
+      if (node.filter) filters.push({ present: true, conditionCount: countMakeConditions(node.filter) });
+      visitFlow(node.routes, depth + 1);
+      visitFlow(node.flow, depth + 1);
+    }
+  };
+  visitFlow(blueprint.flow);
+  return {
+    created: safeMakeDate(response.created),
+    lastEdit: safeMakeDate(response.last_edit),
+    schedulingConfigured: Boolean(response.scheduling),
+    modules: modules.slice(0, 200),
+    filters: filters.slice(0, 100),
+  };
+}
+
+function projectMakeLogs(raw) {
+  if (!Array.isArray(raw?.scenarioLogs)) throw problem("MAKE_API_RESPONSE_SHAPE_INVALID", 502);
+  const rows = raw.scenarioLogs;
+  return rows.slice(0, 20).map((row) => ({
+    logId: /^[A-Za-z0-9_-]{1,160}$/.test(String(row?.id || "")) ? String(row.id) : null,
+    timestamp: safeMakeDate(row?.timestamp),
+    status: [1, 2, 3].includes(Number(row?.status)) ? Number(row.status) : null,
+    durationMs: safeMakeCount(row?.duration),
+    operations: safeMakeCount(row?.operations),
+    transferBytes: safeMakeCount(row?.transfer),
+    type: ["auto", "manual"].includes(String(row?.type)) ? String(row.type) : "other",
+  }));
+}
+
+function safeMakePackage(value) {
+  return typeof value === "string" && /^[A-Za-z0-9_.:@/-]{1,160}$/.test(value) ? value : null;
+}
+
+function safeMakeModuleId(value) {
+  return /^[A-Za-z0-9_-]{1,80}$/.test(String(value ?? "")) ? String(value) : null;
+}
+
+function safeMakeDate(value) {
+  const text = typeof value === "string" ? value : "";
+  return /^\d{4}-\d{2}-\d{2}T[\d:.+-]+Z?$/.test(text) ? text.slice(0, 40) : null;
+}
+
+function safeMakeCount(value) {
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+}
+
+function countMakeConditions(filter) {
+  let count = 0;
+  const visit = (value, depth = 0) => {
+    if (value == null || depth > 5) return;
+    if (Array.isArray(value)) { count += value.length; for (const child of value.slice(0, 100)) visit(child, depth + 1); }
+    else if (typeof value === "object") for (const child of Object.values(value).slice(0, 100)) visit(child, depth + 1);
+  };
+  visit(filter?.conditions);
+  return Math.min(count, 1000);
+}
+
+function summarizeMakeDiagnosis(data) {
+  const moduleIds = new Set(
+    [...(data.liveBlueprint?.modules || []), ...(data.draftBlueprint?.modules || [])]
+      .map((item) => String(item?.module || "").toLowerCase())
+      .filter(Boolean),
+  );
+  const hasInstagramModule = [...moduleIds].some((id) => id === "instagram" || id.startsWith("instagram:") || id.includes("instagram-business"));
+  const hasGoogleBusinessModule = [...moduleIds].some((id) => ["google-business-profile", "googlemybusiness", "google-my-business"].some((candidate) => id.includes(candidate)));
+  const findings = [];
+  if (!hasGoogleBusinessModule) findings.push("投影済みモジュール識別子からGoogleビジネスプロフィール投稿モジュール候補を確認できません。Make画面で構成を確認してください。");
+  if (!hasInstagramModule) findings.push("投影済みモジュール識別子からInstagram入力モジュール候補を確認できません。");
+  const errors = (data.logs || []).filter((row) => row.status === 3).length;
+  const warnings = (data.logs || []).filter((row) => row.status === 2).length;
+  if (errors) findings.push(`直近20件にエラー実行が${errors}件あります。Makeのシナリオ画面で該当ログIDを確認してください。`);
+  if (warnings) findings.push(`直近20件に警告実行が${warnings}件あります。`);
+  if (!data.scenario?.isActive) findings.push("シナリオが停止中です。原因確認前に開始・再実行はしません。");
+  if (data.scenario?.isInvalid) findings.push("Makeがシナリオ構成をinvalidと判定しています。");
+  if ((data.liveBlueprint?.filters || []).length === 0) findings.push("ライブ構成にフィルターを確認できません。意図した経路制御かMake画面で確認してください。");
+  if (findings.length === 0) findings.push("安全な構造要約と直近ログの範囲では決定的な原因を確認できません。設定値やbundleは取得していないため、Make画面で追加確認が必要です。");
+  return findings.slice(0, 8);
+}
+
+async function readStoredMakeDiagnosis(env) {
+  const raw = await env.AUTH_KV.get(MAKE_DIAGNOSIS_KEY);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch { return null; }
+}
+
+function renderMakeDiagnosis(diagnosis) {
+  return `<div class="diagnosis-meta"><span>診断日時</span><strong>${escapeHtml(new Date(diagnosis.diagnosedAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }))}</strong><span>構成fingerprint</span><code>${escapeHtml(diagnosis.fingerprint)}</code></div><h3>判定候補</h3><ul>${(diagnosis.summary || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul><details><summary>安全な構造要約</summary><pre>${escapeHtml(JSON.stringify(diagnosis.data, null, 2))}</pre></details><p class="help">この画面は診断専用です。原因を特定後、Google側の重複照合を含む専用修正をコードレビューしてから追加します。現時点では投稿・再実行・設定変更を行いません。</p>`;
+}
+
+function makeAdminStyles() {
+  return `.secret-input{display:block;width:100%;margin-top:7px;border:1px solid #cbd7d5;border-radius:10px;padding:11px;font:inherit}.inline-danger{display:flex;align-items:center;gap:12px;margin-top:18px}.inline-danger .check{flex:1}.diagnosis-meta{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;background:#f7faf9;padding:14px;border-radius:10px}.diagnosis-meta span{color:var(--muted)}code{word-break:break-all}details{margin:16px 0}summary{cursor:pointer;font-weight:800}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:520px;overflow:auto;background:#172128;color:#e9f5f2;border-radius:12px;padding:14px;font-size:12px}@media(max-width:640px){.inline-danger{align-items:stretch;flex-direction:column}.inline-danger button{width:100%}}`;
 }
 
 function renderAdminLogin() {

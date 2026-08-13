@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const source = readFileSync(new URL("../src/index.js", import.meta.url), "utf8");
@@ -30,23 +30,52 @@ assert.match(source, /const container = await metaJson[\s\S]{0,180}await waitUnt
 assert.doesNotMatch(source, /if \(type === "REELS"\) await waitUntilFinished/);
 assert.match(source, /#トリオランド #駒沢大学駅 #三軒茶屋駅 #保育士募集 #園児募集/);
 assert.doesNotMatch(source, /ADMIN_TOKEN[^\n]*<input/i);
+assert.match(source, /url\.pathname === "\/admin\/make"/);
+assert.match(source, /url\.pathname === "\/admin\/make\/token"/);
+assert.match(source, /url\.pathname === "\/admin\/make\/diagnose"/);
+assert.doesNotMatch(source, /url\.pathname === "\/admin\/make\/(?:repair|replay|run)/);
+assert.match(source, /const MAKE_SCENARIO_ID = "5623382"/);
+assert.match(source, /const MAKE_API_ORIGIN = "https:\/\/us2\.make\.com"/);
+assert.match(source, /encryptJson\(\{ token, storedAt:/);
+assert.match(source, /function makeReadPath\(kind\)/);
+assert.match(source, /method: "GET"/);
+assert.match(source, /AbortSignal\.timeout\(MAKE_REQUEST_TIMEOUT_MS\)/);
+assert.match(source, /function projectMakeScenario\(raw\)/);
+assert.match(source, /function projectMakeBlueprint\(raw\)/);
+assert.match(source, /function projectMakeLogs\(raw\)/);
+assert.match(source, /raw\?\.scenarioLogs/);
+assert.match(source, /logId:/);
+assert.match(source, /MAKE_API_RESPONSE_SHAPE_INVALID/);
+assert.match(source, /MAKE_API_INVALID_JSON/);
+assert.doesNotMatch(source, /sanitizeMakeValue/);
+assert.doesNotMatch(source, /MAKE_EXECUTION_ALREADY_REPLAYED|duplicateChecked|replayConfirmed/);
+assert.doesNotMatch(source, /method:\s*"PATCH"/);
+assert.doesNotMatch(source, /\/dlqs(?:\/|\?)/);
+assert.doesNotMatch(source, /makeTokenStored/);
+assert.doesNotMatch(source, /filter[^\n]{0,120}label:/);
+assert.doesNotMatch(source, /name="makeToken"[^>]*value=/i);
+assert.doesNotMatch(source, /console\.(?:log|error|warn)\([^\n]*token/i);
 assert.match(config, /"binding": "AUTH_KV"/);
 assert.match(config, /"binding": "OAUTH_KV"/);
 assert.match(config, /"binding": "MEDIA_BUCKET"/);
 
-const result = spawnSync(
-  "./node_modules/.bin/esbuild",
-  [
-    "src/index.js",
-    "--bundle",
-    "--format=esm",
-    "--platform=node",
-    "--main-fields=module,main",
-    "--external:cloudflare:*",
-    "--outfile=/tmp/trioland-worker-smoke/index.js",
-  ],
-  { cwd: new URL("..", import.meta.url), encoding: "utf8" },
-);
+const repo = new URL("..", import.meta.url);
+const esbuild = new URL("../node_modules/.bin/esbuild", import.meta.url);
+const result = existsSync(esbuild)
+  ? spawnSync(
+    esbuild.pathname,
+    [
+      "src/index.js",
+      "--bundle",
+      "--format=esm",
+      "--platform=node",
+      "--main-fields=module,main",
+      "--external:cloudflare:*",
+      "--outfile=/tmp/trioland-worker-smoke/index.js",
+    ],
+    { cwd: repo, encoding: "utf8" },
+  )
+  : spawnSync(process.execPath, ["--check", "src/index.js"], { cwd: repo, encoding: "utf8" });
 
 assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 console.log("smoke tests passed");
