@@ -77,6 +77,28 @@ https://trioland-social-publisher.mygate-jp.workers.dev/admin
 - `ADMIN_TOKEN`、Meta/GitHubシークレット、Instagramトークンはブラウザへ返さない。
 - HOSHILUのリソース、ドメイン、データへ接続しない。
 
+### 管理コードでログイン
+
+GitHub OAuthが利用できない場合も、通常ブラウザで次の専用ページを開けます。
+
+```text
+https://trioland-social-publisher.mygate-jp.workers.dev/admin/access
+```
+
+- Cloudflare Worker Secretに保存済みの `ADMIN_TOKEN` を管理コードとして入力します。
+- 管理コードはURL、Cookie、KV、HTML、アプリケーションログへ保存・表示しません。
+- 入力値とSecretはSHA-256ハッシュ化してから固定時間比較します。
+- ログイン画面は同一Originと短時間CSRF Cookieを検証します。
+- 失敗回数は接続元IPを保存せず、HMAC化した識別子だけで15分間制限します。
+- 認証成功後はランダムな8時間セッションへ交換し、管理コードそのものをブラウザに残しません。
+- CookieはHttpOnly / Secureで、管理画面の変更操作は従来どおりCSRFを検証します。
+- GitHub OAuthログインは予備として残り、Remote MCPのGitHub OAuthには変更を加えません。
+- この経路もトリオランド専用Worker、KV、R2だけを使い、HOSHILUには接続しません。
+
+`ADMIN_TOKEN` をチャット、URL、GitHub、スクリーンショットへ貼らないでください。
+値を忘れてCloudflareで再発行する場合、Bearer認証で直接APIを利用しているクライアントも
+同じSecretの更新が必要です。
+
 ## Make / Googleビジネスプロフィール診断
 
 GitHub認証済みの管理者だけが、次の画面でMakeシナリオを診断できます。
