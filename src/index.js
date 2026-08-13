@@ -512,7 +512,7 @@ function renderAdminAccess(errorMessage = "", status = 200) {
   const csrf = randomToken();
   const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド SNS管理</title><style>${adminStyles()}.secret-input{display:block;width:100%;margin-top:7px;border:1px solid #cbd7d5;border-radius:10px;padding:11px;font:inherit}.login-options{display:grid;gap:12px}.subtle-link{color:var(--brand);font-size:13px}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>管理コードでログイン</h1><p>Cloudflareに保存済みのトリオランド専用管理コードを入力してください。コードはURL・Cookie・保存データ・ログには残しません。</p>${errorMessage ? `<div class="notice error">${escapeHtml(errorMessage)}</div>` : ""}<form method="post" action="/admin/access" class="stack" autocomplete="off"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"><label>管理コード<input class="secret-input" type="password" name="adminToken" minlength="20" maxlength="4096" autocomplete="new-password" required autofocus></label><button type="submit">SNS管理を開く</button></form><p class="help">認証後は、このブラウザだけに8時間有効な安全な管理セッションを発行します。HOSHILUには接続しません。</p><a class="subtle-link" href="/admin/login">GitHubログイン（予備）</a></section></main></body></html>`;
   const headers = securityHeaders(setStrictCookie(ADMIN_ACCESS_CSRF_COOKIE, csrf, ADMIN_ACCESS_CSRF_TTL_SECONDS));
-  headers.set("referrer-policy", "same-origin");
+  headers["referrer-policy"] = "same-origin";
   return new Response(body, {
     status,
     headers,
