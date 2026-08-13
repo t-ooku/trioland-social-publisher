@@ -77,6 +77,41 @@ https://trioland-social-publisher.mygate-jp.workers.dev/admin
 - `ADMIN_TOKEN`、Meta/GitHubシークレット、Instagramトークンはブラウザへ返さない。
 - HOSHILUのリソース、ドメイン、データへ接続しない。
 
+## Make / Googleビジネスプロフィール診断
+
+GitHub認証済みの管理者だけが、次の画面でMakeシナリオを診断できます。
+
+```text
+https://trioland-social-publisher.mygate-jp.workers.dev/admin/make
+```
+
+対象はMakeの `us2` ゾーン、シナリオ `5623382` にコード側で固定しています。
+
+### Make APIトークン
+
+[Make公式のAPIトークン作成手順](https://developers.make.com/api-documentation/authentication/create-authentication-token)
+に従ってトークンを作成し、次のscopeだけを付けます。
+
+- `scenarios:read`（シナリオ、Blueprint構造、直近ログの診断）
+
+トークンは管理画面のpassword入力から送信され、既存の
+`TOKEN_ENCRYPTION_KEY` でAES-256-GCM暗号化して `AUTH_KV` に保存されます。
+保存後に値をブラウザへ表示せず、アプリケーションログにも出力しません。
+
+### 読み取り専用診断
+
+- 「診断だけ実行」は固定シナリオの概要、ライブ/下書きBlueprint、直近ログを
+  Make公式APIからGETするだけです。
+- Blueprintのmapper / parameters / value / connection設定は保存・表示しません。
+  モジュールID・アプリ種別・フィルター有無など、明示した安全な項目だけを抽出します。
+- ログはログID、時刻、status、処理時間、operation数などだけを抽出し、
+  outputs、bundle、本文、個人情報を保存・表示しません。
+- 抽出済み診断は7日間だけKVへ保存します。
+- endpointは `us2` のシナリオ `5623382` に対するGET 4種だけをコードで許可します。
+- PATCH / run / replay / DLQ retryは実装していません。診断結果から原因を特定した後、
+  Google側の投稿重複をサーバー側で照合できる専用修正をコードレビューして追加します。
+- したがって、この画面の診断だけで「改善・未投稿の投稿完了」とは表示しません。
+
 ### 別端末へ安全にログインを引き継ぐ
 
 通常ブラウザでログイン済みの管理者が、別の投稿端末を10分限定コードで承認できます。
