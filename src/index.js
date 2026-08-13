@@ -50,33 +50,33 @@ export const appHandler = {
       }
 
       if (request.method === "GET" && url.pathname.startsWith("/media/")) {
-        return serveSignedMedia(request, env);
+        return await serveSignedMedia(request, env);
       }
 
       if (request.method === "GET" && url.pathname === "/oauth/callback") {
-        return oauthCallback(request, env);
+        return await oauthCallback(request, env);
       }
 
       if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
-        return handleAdminRequest(request, env);
+        return await handleAdminRequest(request, env);
       }
 
       await requireAdmin(request, env);
 
       if (request.method === "POST" && url.pathname === "/oauth/start") {
-        return oauthStart(request, env);
+        return await oauthStart(request, env);
       }
       if (request.method === "GET" && url.pathname === "/account") {
-        return accountInfo(env);
+        return await accountInfo(env);
       }
       if (request.method === "POST" && url.pathname === "/media") {
-        return uploadApprovedMedia(request, env);
+        return await uploadApprovedMedia(request, env);
       }
       if (request.method === "POST" && url.pathname === "/publish") {
-        return publishApprovedMedia(request, env);
+        return await publishApprovedMedia(request, env);
       }
       if (request.method === "POST" && url.pathname === "/token/refresh") {
-        return refreshToken(env);
+        return await refreshToken(env);
       }
 
       return json({ error: "NOT_FOUND" }, 404);
@@ -412,17 +412,17 @@ async function handleAdminRequest(request, env) {
 
   try {
     if (request.method === "GET" && url.pathname === "/admin") {
-      return renderAdminDashboard(request, env, session);
+      return await renderAdminDashboard(request, env, session);
     }
     if (request.method === "GET" && url.pathname === "/admin/make") {
-      return renderMakeAdmin(request, env, session);
+      return await renderMakeAdmin(request, env, session);
     }
     if (request.method === "GET" && url.pathname === "/admin/connect-instagram") {
       const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
       return redirect(authorizationUrl);
     }
     if (request.method === "GET" && url.pathname === "/admin/pair/approve") {
-      return renderAdminPairApproval(request, env, session);
+      return await renderAdminPairApproval(request, env, session);
     }
     if (request.method !== "POST") {
       return new Response("Method Not Allowed", { status: 405, headers: { allow: "GET, POST" } });
@@ -436,7 +436,7 @@ async function handleAdminRequest(request, env) {
       return redirect("/admin", clearCookie(ADMIN_SESSION_COOKIE));
     }
     if (url.pathname === "/admin/pair/approve") {
-      return approveAdminPairing(request, form, env, session);
+      return await approveAdminPairing(request, form, env, session);
     }
     if (url.pathname === "/admin/connect-instagram") {
       const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
@@ -477,21 +477,34 @@ async function handleAdminRequest(request, env) {
       return redirect("/admin?refreshed=1");
     }
     if (url.pathname === "/admin/make/token") {
-      return saveMakeToken(form, env);
+      return await saveMakeToken(form, env);
     }
     if (url.pathname === "/admin/make/token/delete") {
-      return deleteMakeToken(form, env);
+      return await deleteMakeToken(form, env);
     }
     if (url.pathname === "/admin/make/diagnose") {
-      return runMakeDiagnosis(env);
+      return await runMakeDiagnosis(env);
     }
     throw problem("管理画面の操作が見つかりません", 404);
   } catch (error) {
     if (url.pathname.startsWith("/admin/make")) {
-      return renderMakeAdmin(request, env, session, error?.message || "操作に失敗しました", Number(error?.status || 500));
+      try {
+        return await renderMakeAdmin(request, env, session, error?.message || "操作に失敗しました", Number(error?.status || 500));
+      } catch {
+        return renderAdminFailure("Make診断画面の表示中にエラーが発生しました。再読み込みしてからもう一度お試しください。", "/admin/make");
+      }
     }
-    return renderAdminDashboard(request, env, session, error?.message || "操作に失敗しました", Number(error?.status || 500));
+    try {
+      return await renderAdminDashboard(request, env, session, error?.message || "操作に失敗しました", Number(error?.status || 500));
+    } catch {
+      return renderAdminFailure("管理画面の表示中にエラーが発生しました。再読み込みしてからもう一度お試しください。", "/admin");
+    }
   }
+}
+
+function renderAdminFailure(message, returnTo) {
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド SNS管理</title><style>${adminStyles()}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>処理を完了できませんでした</h1><div class="notice error">${escapeHtml(message)}</div><a class="button" href="${escapeHtml(returnTo)}">管理画面へ戻る</a></section></main></body></html>`;
+  return new Response(body, { status: 500, headers: securityHeaders() });
 }
 
 async function startAdminLogin(env) {
@@ -1333,9 +1346,9 @@ const defaultHandler = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     try {
-      if (url.pathname === "/authorize") return handleMcpAuthorize(request, env);
-      if (url.pathname === "/github/callback") return handleGithubCallback(request, env);
-      return appHandler.fetch(request, env, ctx);
+      if (url.pathname === "/authorize") return await handleMcpAuthorize(request, env);
+      if (url.pathname === "/github/callback") return await handleGithubCallback(request, env);
+      return await appHandler.fetch(request, env, ctx);
     } catch (error) {
       const status = Number(error?.status || 500);
       return json({ error: error?.message || "INTERNAL_ERROR" }, status);
