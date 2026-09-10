@@ -44,7 +44,7 @@ jobs:
           test "$size" -gt 30000
           desc=$(file /tmp/photos.webp)
           echo "$desc"
-          grep -qiE 'Web/P image|WebP' <<<"$desc"
+          [[ "$desc" == *"Web/P image"* ]]
           for page in komazawa.html umegaoka.html recruit.html faq.html column.html contact.html; do
             curl -fsS "$base/$page?v=20260910-1638" -o "/tmp/$page"
             grep -q 'photo-loader.js?v=20260910-1638' "/tmp/$page"
