@@ -8,7 +8,7 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait until Cloudflare serves latest site
+      - name: Wait until Cloudflare serves final photo policy
         shell: bash
         run: |
           set -euo pipefail
@@ -16,51 +16,56 @@ jobs:
           ok=0
           for i in $(seq 1 24); do
             echo "attempt $i"
-            if curl -fsSL "$base/?v=20260910-1645" -o /tmp/index.html && grep -q 'photo-loader.js?v=20260910-1638' /tmp/index.html; then
+            if curl -fsSL "$base/?v=20260910-1845" -o /tmp/index.html && grep -q 'photo-policy-v2.js?v=20260910-1845' /tmp/index.html; then
               ok=1
               break
             fi
             sleep 10
           done
           test "$ok" = 1
-          echo 'latest home detected'
-      - name: Verify photo payload and all public pages
+          echo 'final home detected'
+
+      - name: Verify all pages and photo payload
         shell: bash
         run: |
           set -euo pipefail
           base='https://trioland-social-publisher.mygate-jp.workers.dev'
-          curl -fsSL "$base/assets/photo-loader.js?v=20260910-1645" -o /tmp/photo-loader.js
-          grep -q 'photos-b64-v5' /tmp/photo-loader.js
-          echo 'photo loader OK'
+          curl -fsSL "$base/assets/photo-policy-v2.js?v=20260910-1845" -o /tmp/policy.js
+          grep -q 'photo-policy-home' /tmp/policy.js
+          grep -q 'ume-exterior' /tmp/policy.js
+          grep -q 'picks=\[4,2,6,3,7,10\]' /tmp/policy.js
           : > /tmp/photos.b64
           for p in 00 01 02 03 04; do
-            curl -fsSL "$base/assets/photos-b64-v5/$p.txt?v=20260910-1645" -o "/tmp/$p.txt"
-            echo "$p $(wc -c < /tmp/$p.txt) bytes"
-            cat "/tmp/$p.txt" >> /tmp/photos.b64
+            curl -fsSL "$base/assets/photos-b64-v5/$p.txt?v=20260910-1845" >> /tmp/photos.b64
           done
           base64 -d /tmp/photos.b64 > /tmp/photos.webp
-          size=$(stat -c%s /tmp/photos.webp)
-          echo "decoded image bytes: $size"
-          test "$size" -gt 30000
+          test "$(stat -c%s /tmp/photos.webp)" -gt 30000
           file /tmp/photos.webp
-          fail=0
-          for page in komazawa.html umegaoka.html recruit.html faq.html column.html contact.html; do
-            curl -fsSL "$base/$page?v=20260910-1645" -o "/tmp/$page"
-            if grep -q 'photo-loader.js?v=20260910-1638' "/tmp/$page"; then
-              echo "$page OK"
-            else
-              echo "$page MISSING LOADER"
-              fail=1
+          curl -fsSL "$base/assets/umegaoka.jpg?v=20260910-1845" -o /tmp/ume.jpg
+          test "$(stat -c%s /tmp/ume.jpg)" -gt 10000
+          for page in index.html komazawa.html umegaoka.html recruit.html faq.html column.html contact.html; do
+            curl -fsSL "$base/$page?v=20260910-1845" -o "/tmp/$page"
+            grep -q 'photo-policy-v2.js?v=20260910-1845' "/tmp/$page"
+            if grep -q 'photo-loader.js' "/tmp/$page"; then
+              echo "$page still references old photo loader"
+              exit 1
             fi
+            echo "$page OK"
           done
-          exit "$fail"
-      - name: Verify photos render in a real browser
+
+      - name: Verify final visuals in a real browser
         shell: bash
         run: |
           set -euo pipefail
           base='https://trioland-social-publisher.mygate-jp.workers.dev'
           chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
           test -n "$chrome"
-          "$chrome" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=7000 --dump-dom "$base/?v=20260910-1645" > /tmp/rendered.html
-          grep -q 'blob:' /tmp/rendered.html
-          echo 'headless browser confirmed reconstructed photo sprite is applied'
+          "$chrome" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=7000 --dump-dom "$base/?v=20260910-1845" > /tmp/home-rendered.html
+          test "$(grep -o 'blob:' /tmp/home-rendered.html | wc -l)" -ge 6
+          grep -q 'ume-exterior' /tmp/home-rendered.html
+          "$chrome" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=7000 --dump-dom "$base/umegaoka.html?v=20260910-1845" > /tmp/ume-rendered.html
+          grep -q 'ume-exterior' /tmp/ume-rendered.html
+          test "$(grep -o 'blob:' /tmp/ume-rendered.html | wc -l)" -eq 1
+          "$chrome" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=7000 --dump-dom "$base/recruit.html?v=20260910-1845" > /tmp/recruit-rendered.html
+          test "$(grep -o 'blob:' /tmp/recruit-rendered.html | wc -l)" -eq 1
+          echo 'final visual policy confirmed in production browser'
