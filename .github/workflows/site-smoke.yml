@@ -1,0 +1,31 @@
+name: Trioland site smoke
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Cloudflare deployment
+        run: sleep 45
+      - name: Check public pages and photo loader
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://trioland-social-publisher.mygate-jp.workers.dev'
+          curl -fsS --retry 6 --retry-delay 10 "$base/?v=20260910-1638" -o /tmp/index.html
+          grep -q 'photo-loader.js?v=20260910-1638' /tmp/index.html
+          curl -fsS --retry 6 --retry-delay 10 "$base/assets/photo-loader.js?v=20260910-1638" -o /tmp/photo-loader.js
+          grep -q 'photos-b64-v5' /tmp/photo-loader.js
+          : > /tmp/photos.b64
+          for p in 00 01 02 03 04; do
+            curl -fsS --retry 6 --retry-delay 10 "$base/assets/photos-b64-v5/$p.txt?v=20260910-1638" >> /tmp/photos.b64
+          done
+          base64 -d /tmp/photos.b64 > /tmp/photos.webp
+          test "$(stat -c%s /tmp/photos.webp)" -gt 30000
+          file /tmp/photos.webp | grep -qi 'Web/P image\|RIFF.*WebP'
+          for page in komazawa.html umegaoka.html recruit.html faq.html column.html contact.html; do
+            curl -fsS --retry 6 --retry-delay 10 "$base/$page?v=20260910-1638" | grep -q 'photo-loader.js?v=20260910-1638'
+          done
