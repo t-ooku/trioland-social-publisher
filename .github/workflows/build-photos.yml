@@ -1,0 +1,53 @@
+# site/assets/photos/*.jpg を base64 テキスト素材から生成してコミットする。
+#
+# バイナリをテキストのコミット API 経由で入れると壊れる（過去に 15,000 バイトで
+# 切り詰められた JPEG がコミットされ、本番が broken-image になった）。
+# そのため画像は必ずこのワークフローか git push で入れること。
+name: Build site photos
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/assets/photos-b64-v5/**'
+      - 'tools/build_photos.py'
+      - '.github/workflows/build-photos.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-photos
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate photos
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tools/build_photos.py
+
+      - name: Verify every output decodes end to end
+        run: |
+          set -euo pipefail
+          for f in site/assets/photos/*.jpg; do
+            s=$(stat -c%s "$f")
+            test "$s" -gt 20000 || { echo "$f too small ($s)"; exit 1; }
+            file -b "$f" | grep -qi jpeg
+            python3 -c "import sys;from PIL import Image;im=Image.open(sys.argv[1]);im.load();print(sys.argv[1],im.size,'OK')" "$f"
+          done
+
+      - name: Commit
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/photos/
+          if git diff --cached --quiet; then echo 'photos already current'; exit 0; fi
+          git commit -m 'Build site photos from base64 source [skip-photos]'
+          git push
