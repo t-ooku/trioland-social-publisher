@@ -16,7 +16,7 @@ jobs:
           ok=0
           for i in $(seq 1 24); do
             echo "attempt $i"
-            if curl -fsS "$base/?v=20260910-1642" -o /tmp/index.html && grep -q 'photo-loader.js?v=20260910-1638' /tmp/index.html; then
+            if curl -fsSL "$base/?v=20260910-1645" -o /tmp/index.html && grep -q 'photo-loader.js?v=20260910-1638' /tmp/index.html; then
               ok=1
               break
             fi
@@ -29,12 +29,12 @@ jobs:
         run: |
           set -euo pipefail
           base='https://trioland-social-publisher.mygate-jp.workers.dev'
-          curl -fsS "$base/assets/photo-loader.js?v=20260910-1642" -o /tmp/photo-loader.js
+          curl -fsSL "$base/assets/photo-loader.js?v=20260910-1645" -o /tmp/photo-loader.js
           grep -q 'photos-b64-v5' /tmp/photo-loader.js
           echo 'photo loader OK'
           : > /tmp/photos.b64
           for p in 00 01 02 03 04; do
-            curl -fsS "$base/assets/photos-b64-v5/$p.txt?v=20260910-1642" -o "/tmp/$p.txt"
+            curl -fsSL "$base/assets/photos-b64-v5/$p.txt?v=20260910-1645" -o "/tmp/$p.txt"
             echo "$p $(wc -c < /tmp/$p.txt) bytes"
             cat "/tmp/$p.txt" >> /tmp/photos.b64
           done
@@ -45,14 +45,22 @@ jobs:
           file /tmp/photos.webp
           fail=0
           for page in komazawa.html umegaoka.html recruit.html faq.html column.html contact.html; do
-            curl -fsS "$base/$page?v=20260910-1642" -o "/tmp/$page"
+            curl -fsSL "$base/$page?v=20260910-1645" -o "/tmp/$page"
             if grep -q 'photo-loader.js?v=20260910-1638' "/tmp/$page"; then
               echo "$page OK"
             else
               echo "$page MISSING LOADER"
-              tail -c 500 "/tmp/$page" || true
-              echo
               fail=1
             fi
           done
           exit "$fail"
+      - name: Verify photos render in a real browser
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://trioland-social-publisher.mygate-jp.workers.dev'
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
+          test -n "$chrome"
+          "$chrome" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=7000 --dump-dom "$base/?v=20260910-1645" > /tmp/rendered.html
+          grep -q 'blob:' /tmp/rendered.html
+          echo 'headless browser confirmed reconstructed photo sprite is applied'
