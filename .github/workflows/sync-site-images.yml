@@ -1,0 +1,67 @@
+name: Sync Trioland site images
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/sync-site-images.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download approved source images
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/trioland site/assets
+          curl -fL --retry 3 'https://drive.usercontent.google.com/download?id=1O87r8RVuc6U1ABvsWfAEkKuefs0HVuGM&export=download' -o /tmp/trioland/ume.jpg
+          curl -fL --retry 3 'https://drive.usercontent.google.com/download?id=1jiXg1imGUyH1LnCmcRpuXqiKcd9t3CQa&export=download' -o /tmp/trioland/koma1.jpg
+          curl -fL --retry 3 'https://drive.usercontent.google.com/download?id=1LV-8iLFvMe_7ljpMnkXcFkT5_AX0rkkG&export=download' -o /tmp/trioland/koma2.jpg
+          test $(stat -c%s /tmp/trioland/ume.jpg) -gt 100000
+          test $(stat -c%s /tmp/trioland/koma1.jpg) -gt 100000
+          test $(stat -c%s /tmp/trioland/koma2.jpg) -gt 100000
+          file /tmp/trioland/ume.jpg | grep -qi 'JPEG image'
+          file /tmp/trioland/koma1.jpg | grep -qi 'JPEG image'
+          file /tmp/trioland/koma2.jpg | grep -qi 'JPEG image'
+      - name: Prepare web images
+        shell: bash
+        run: |
+          python -m pip install --quiet pillow
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          # Umegaoka: preserve full clean exterior.
+          im=Image.open('/tmp/trioland/ume.jpg').convert('RGB')
+          im.thumbnail((1600,1200))
+          im.save('site/assets/umegaoka-hq.jpg','JPEG',quality=90,optimize=True,progressive=True)
+          # Komazawa image 1: remove lower caption and crop to 4:3.
+          im=Image.open('/tmp/trioland/koma1.jpg').convert('RGB')
+          w,h=im.size
+          im=im.crop((0,0,w,int(h*.78)))
+          w,h=im.size; nh=int(w*3/4)
+          if h>nh:
+              y=(h-nh)//2; im=im.crop((0,y,w,y+nh))
+          im.resize((1200,900)).save('site/assets/komazawa-life-1.jpg','JPEG',quality=86,optimize=True,progressive=True)
+          # Komazawa image 2: crop to the central nursery-life scene, excluding overlay text.
+          im=Image.open('/tmp/trioland/koma2.jpg').convert('RGB')
+          w,h=im.size; ch=min(int(w*3/4),h); cy=int(h*.51); y0=max(0,cy-ch//2); y1=min(h,y0+ch); y0=y1-ch
+          im=im.crop((0,y0,w,y1)).resize((1200,900))
+          im.save('site/assets/komazawa-life-2.jpg','JPEG',quality=86,optimize=True,progressive=True)
+          for p in ['site/assets/umegaoka-hq.jpg','site/assets/komazawa-life-1.jpg','site/assets/komazawa-life-2.jpg']:
+              print(p, Path(p).stat().st_size)
+              assert Path(p).stat().st_size > 50000
+          PY
+      - name: Commit site images
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/umegaoka-hq.jpg site/assets/komazawa-life-1.jpg site/assets/komazawa-life-2.jpg
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add high-quality Umegaoka and Komazawa site photos'
+          git push
