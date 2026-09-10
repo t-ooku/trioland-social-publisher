@@ -42,8 +42,9 @@ jobs:
           size=$(stat -c%s /tmp/photos.webp)
           echo "decoded image bytes: $size"
           test "$size" -gt 30000
-          file /tmp/photos.webp
-          file /tmp/photos.webp | grep -qi 'Web/P image\|WebP'
+          desc=$(file /tmp/photos.webp)
+          echo "$desc"
+          grep -qiE 'Web/P image|WebP' <<<"$desc"
           for page in komazawa.html umegaoka.html recruit.html faq.html column.html contact.html; do
             curl -fsS "$base/$page?v=20260910-1638" -o "/tmp/$page"
             grep -q 'photo-loader.js?v=20260910-1638' "/tmp/$page"
