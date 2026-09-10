@@ -1,15 +1,24 @@
-# site/assets/photos/*.jpg を base64 テキスト素材から生成してコミットする。
+# サイトのHTMLと写真を生成してコミットする。
 #
-# バイナリをテキストのコミット API 経由で入れると壊れる（過去に 15,000 バイトで
-# 切り詰められた JPEG がコミットされ、本番が broken-image になった）。
-# そのため画像は必ずこのワークフローか git push で入れること。
-name: Build site photos
+# なぜ生成してコミットするのか:
+#   Cloudflare Workers は site/ をそのまま静的アセットとして配信するため、
+#   最終成果物がリポジトリに入っている必要がある。さらに、バイナリをテキストの
+#   コミットAPI経由で入れると壊れる（過去に15,000バイトで切り詰められたJPEGが
+#   コミットされ、本番がbroken-imageになった）。画像は必ずこのワークフローか
+#   git push で入れること。
+#
+# 入力:
+#   build_site.py             … 全ページのHTML / robots.txt / sitemap.xml
+#   tools/build_photos.py     … site/assets/photos/*.jpg
+#   site/assets/photos-b64-v5 … 写真の生成元（テキスト）
+name: Build site
 on:
   push:
     branches: [main]
     paths:
-      - 'site/assets/photos-b64-v5/**'
+      - 'build_site.py'
       - 'tools/build_photos.py'
+      - 'site/assets/photos-b64-v5/**'
       - '.github/workflows/build-photos.yml'
   workflow_dispatch:
 
@@ -17,7 +26,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: build-photos
+  group: build-site
   cancel-in-progress: false
 
 jobs:
@@ -27,12 +36,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate photos
-        run: |
-          python3 -m pip install --quiet pillow
-          python3 tools/build_photos.py
+      - name: Install deps
+        run: python3 -m pip install --quiet pillow
 
-      - name: Verify every output decodes end to end
+      - name: Generate photos
+        run: python3 tools/build_photos.py
+
+      - name: Generate pages
+        run: python3 build_site.py
+
+      - name: Verify every photo decodes end to end
         run: |
           set -euo pipefail
           for f in site/assets/photos/*.jpg; do
@@ -42,12 +55,44 @@ jobs:
             python3 -c "import sys;from PIL import Image;im=Image.open(sys.argv[1]);im.load();print(sys.argv[1],im.size,'OK')" "$f"
           done
 
+      - name: Verify no page references the retired photo pipeline
+        run: |
+          set -euo pipefail
+          ! grep -rl 'sprite-photo\|photo-policy-v2\|photos-b64-v5/' site/*.html
+          echo 'pages are clean'
+
+      - name: Remove retired photo-pipeline assets
+        run: |
+          set -euo pipefail
+          # 壊れたJPEG・座標定義の無いスプライト・base64ローダーの残骸を撤去する。
+          # site/assets/photos-b64-v5/ は現行の生成元なので残すこと。
+          legacy=(
+            site/assets/umegaoka.jpg
+            site/assets/child1.jpg
+            site/assets/child2.jpg
+            site/assets/photos.jpg
+            site/assets/photos-v2.jpg
+            site/assets/photos-v4.webp.b64
+            site/assets/photo-loader.js
+            site/assets/photo-policy-v2.js
+            site/assets/placeholder-test.txt
+            site/assets/photo-fallback.txt
+            site/assets/top-images-note.txt
+            site/assets/photos-final-marker.txt
+            site/assets/photos-b64-v2
+            site/.deploy-marker.txt
+            site/umegaoka.jpg
+          )
+          for f in "${legacy[@]}"; do
+            if [ -e "$f" ]; then git rm -r --quiet "$f"; echo "removed $f"; fi
+          done
+
       - name: Commit
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add site/assets/photos/
-          if git diff --cached --quiet; then echo 'photos already current'; exit 0; fi
-          git commit -m 'Build site photos from base64 source [skip-photos]'
+          git add -A site/
+          if git diff --cached --quiet; then echo 'site already current'; exit 0; fi
+          git commit -m 'Build Trioland site (pages + photos) and drop retired assets'
           git push
