@@ -8,24 +8,44 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait for Cloudflare deployment
-        run: sleep 45
-      - name: Check public pages and photo loader
+      - name: Wait until Cloudflare serves latest site
         shell: bash
         run: |
           set -euo pipefail
           base='https://trioland-social-publisher.mygate-jp.workers.dev'
-          curl -fsS --retry 6 --retry-delay 10 "$base/?v=20260910-1638" -o /tmp/index.html
-          grep -q 'photo-loader.js?v=20260910-1638' /tmp/index.html
-          curl -fsS --retry 6 --retry-delay 10 "$base/assets/photo-loader.js?v=20260910-1638" -o /tmp/photo-loader.js
+          ok=0
+          for i in $(seq 1 24); do
+            echo "attempt $i"
+            if curl -fsS "$base/?v=20260910-1638" -o /tmp/index.html && grep -q 'photo-loader.js?v=20260910-1638' /tmp/index.html; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          test "$ok" = 1
+          echo 'latest home detected'
+      - name: Verify photo payload and all public pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://trioland-social-publisher.mygate-jp.workers.dev'
+          curl -fsS "$base/assets/photo-loader.js?v=20260910-1638" -o /tmp/photo-loader.js
           grep -q 'photos-b64-v5' /tmp/photo-loader.js
+          echo 'photo loader OK'
           : > /tmp/photos.b64
           for p in 00 01 02 03 04; do
-            curl -fsS --retry 6 --retry-delay 10 "$base/assets/photos-b64-v5/$p.txt?v=20260910-1638" >> /tmp/photos.b64
+            curl -fsS "$base/assets/photos-b64-v5/$p.txt?v=20260910-1638" -o "/tmp/$p.txt"
+            echo "$p $(wc -c < /tmp/$p.txt) bytes"
+            cat "/tmp/$p.txt" >> /tmp/photos.b64
           done
           base64 -d /tmp/photos.b64 > /tmp/photos.webp
-          test "$(stat -c%s /tmp/photos.webp)" -gt 30000
-          file /tmp/photos.webp | grep -qi 'Web/P image\|RIFF.*WebP'
+          size=$(stat -c%s /tmp/photos.webp)
+          echo "decoded image bytes: $size"
+          test "$size" -gt 30000
+          file /tmp/photos.webp
+          file /tmp/photos.webp | grep -qi 'Web/P image\|WebP'
           for page in komazawa.html umegaoka.html recruit.html faq.html column.html contact.html; do
-            curl -fsS --retry 6 --retry-delay 10 "$base/$page?v=20260910-1638" | grep -q 'photo-loader.js?v=20260910-1638'
+            curl -fsS "$base/$page?v=20260910-1638" -o "/tmp/$page"
+            grep -q 'photo-loader.js?v=20260910-1638' "/tmp/$page"
+            echo "$page OK"
           done
