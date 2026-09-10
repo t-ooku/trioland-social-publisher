@@ -1,13 +1,12 @@
+# trigger: 2026-09-10T22:35+09:00
 name: Sync Trioland site images
 on:
   push:
     branches: [main]
     paths: ['.github/workflows/sync-site-images.yml']
   workflow_dispatch:
-
 permissions:
   contents: write
-
 jobs:
   sync:
     if: github.actor != 'github-actions[bot]'
@@ -35,26 +34,14 @@ jobs:
           python - <<'PY'
           from PIL import Image
           from pathlib import Path
-          # Umegaoka: preserve full clean exterior.
-          im=Image.open('/tmp/trioland/ume.jpg').convert('RGB')
-          im.thumbnail((1600,1200))
-          im.save('site/assets/umegaoka-hq.jpg','JPEG',quality=90,optimize=True,progressive=True)
-          # Komazawa image 1: remove lower caption and crop to 4:3.
-          im=Image.open('/tmp/trioland/koma1.jpg').convert('RGB')
-          w,h=im.size
-          im=im.crop((0,0,w,int(h*.78)))
-          w,h=im.size; nh=int(w*3/4)
+          im=Image.open('/tmp/trioland/ume.jpg').convert('RGB'); im.thumbnail((1600,1200)); im.save('site/assets/umegaoka-hq.jpg','JPEG',quality=90,optimize=True,progressive=True)
+          im=Image.open('/tmp/trioland/koma1.jpg').convert('RGB'); w,h=im.size; im=im.crop((0,0,w,int(h*.78))); w,h=im.size; nh=int(w*3/4)
           if h>nh:
               y=(h-nh)//2; im=im.crop((0,y,w,y+nh))
           im.resize((1200,900)).save('site/assets/komazawa-life-1.jpg','JPEG',quality=86,optimize=True,progressive=True)
-          # Komazawa image 2: crop to the central nursery-life scene, excluding overlay text.
-          im=Image.open('/tmp/trioland/koma2.jpg').convert('RGB')
-          w,h=im.size; ch=min(int(w*3/4),h); cy=int(h*.51); y0=max(0,cy-ch//2); y1=min(h,y0+ch); y0=y1-ch
-          im=im.crop((0,y0,w,y1)).resize((1200,900))
-          im.save('site/assets/komazawa-life-2.jpg','JPEG',quality=86,optimize=True,progressive=True)
+          im=Image.open('/tmp/trioland/koma2.jpg').convert('RGB'); w,h=im.size; ch=min(int(w*3/4),h); cy=int(h*.51); y0=max(0,cy-ch//2); y1=min(h,y0+ch); y0=y1-ch; im=im.crop((0,y0,w,y1)).resize((1200,900)); im.save('site/assets/komazawa-life-2.jpg','JPEG',quality=86,optimize=True,progressive=True)
           for p in ['site/assets/umegaoka-hq.jpg','site/assets/komazawa-life-1.jpg','site/assets/komazawa-life-2.jpg']:
-              print(p, Path(p).stat().st_size)
-              assert Path(p).stat().st_size > 50000
+              print(p,Path(p).stat().st_size); assert Path(p).stat().st_size>50000
           PY
       - name: Commit site images
         shell: bash
