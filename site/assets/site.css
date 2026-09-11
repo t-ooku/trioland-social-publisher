@@ -12,7 +12,8 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
   line-height:1.9;font-size:16px;overflow-wrap:break-word;word-break:normal;line-break:strict}
-img{max-width:100%;display:block}
+/* height:auto は必須。width だけ指定すると HTML の height 属性が使われて写真が歪む。 */
+img{max-width:100%;height:auto;display:block}
 a{color:inherit}
 h1,h2,h3,h4{letter-spacing:-.02em;word-break:auto-phrase;line-break:strict;overflow-wrap:normal}
 .lead,p,li,td,th,figcaption,summary{line-break:strict}
@@ -54,16 +55,16 @@ p{color:var(--body);margin:0 0 15px}
 .btn.sm{padding:10px 18px;font-size:13.5px;min-height:42px}
 
 /* ---------- hero ---------- */
-.hero{padding:44px 0 34px;display:grid;grid-template-columns:1.22fr .78fr;gap:44px;align-items:center}
+.hero{padding:44px 0 34px;display:grid;grid-template-columns:1.12fr .88fr;gap:40px;align-items:center}
 .hero.single{grid-template-columns:1fr;max-width:820px}
 .badge{display:inline-block;background:var(--mint);color:var(--green);border-radius:999px;
   padding:5px 13px;font-size:12px;font-weight:900;margin-bottom:4px}
-/* photo sizing note: source frames are 400x300 native, exported at 2x (800px).
-   Display boxes are capped near native size so images stay sharp, never upscaled. */
-.hero-photo{width:100%;max-width:400px;aspect-ratio:4/3;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow);background:var(--cream);justify-self:end}
+/* 写真のサイズ方針：素材は Drive の元写真（1200x900〜1666x982）で、760〜1100px で書き出している。
+   表示枠は書き出し幅の半分前後までに留めること。これ以上広げると 2x 画面でぼやける。 */
+.hero-photo{width:100%;max-width:470px;aspect-ratio:4/3;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow);background:var(--cream);justify-self:end}
 .hero-media{display:flex;justify-content:flex-end}
-.hero-media figure{margin:0;max-width:400px}
-.hero-media img{width:100%;border-radius:var(--radius-lg);box-shadow:var(--shadow);background:var(--cream)}
+.hero-media figure{margin:0;max-width:470px}
+.hero-media img{width:100%;height:auto;border-radius:var(--radius-lg);box-shadow:var(--shadow);background:var(--cream)}
 .hero-media figcaption{font-size:12px;color:var(--muted);margin-top:9px;text-align:right}
 .collage{display:grid;grid-template-columns:1.35fr .65fr;grid-template-rows:1fr 1fr;gap:12px}
 .collage img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius);box-shadow:var(--shadow);background:var(--cream)}
@@ -94,13 +95,13 @@ a.card:hover{border-color:var(--green);box-shadow:var(--shadow)}
 /* ---------- gallery ---------- */
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
 .gallery figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-.gallery img{width:100%;height:218px;object-fit:cover;background:var(--cream)}
+.gallery img{width:100%;height:232px;object-fit:cover;background:var(--cream)}
 .gallery figcaption{padding:13px 16px;font-size:13.5px;font-weight:800;line-height:1.6}
 
 /* ---------- split ---------- */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:center}
 .split.narrow-img{grid-template-columns:1.25fr .75fr}
-.split img{border-radius:var(--radius-lg);box-shadow:var(--shadow);width:100%;max-width:400px}
+.split img{border-radius:var(--radius-lg);box-shadow:var(--shadow);width:100%;height:auto;max-width:470px}
 .split img.portrait{max-width:300px}
 @media(max-width:600px){.split img.portrait{max-width:260px}}
 .split .imgcol{display:flex;justify-content:center}
