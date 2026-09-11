@@ -1,19 +1,35 @@
-# Google Drive にある高解像度の元写真を site/assets/photos/source/ に取り込む。
+# Google Drive にある元写真から site/assets/photos/*.webp を生成してコミットする。
 #
-# バイナリをテキストのコミット API 経由で入れると壊れる（過去に 15,000 バイトで
-# 切り詰められた JPEG がコミットされ、本番が broken-image になった）ので、
-# 元写真は必ずこのワークフローか git push で入れること。
+# 前提：対象ファイルが Drive で「リンクを知っている全員が閲覧可」になっていること。
+#       非公開のままだと Drive が HTML のログインページを返すため、サイズ検証で
+#       失敗して止まる（壊れた画像はコミットされない）。
 #
-# 取り込んだ後、実際にページで使う Web 用サイズは tools/build_photos.py が生成する。
-name: Sync Trioland source photos
+# なぜこの経路なのか：
+#   バイナリをテキストのコミット API 経由で入れると壊れる。過去に
+#   site/assets/umegaoka.jpg などが「ちょうど15,000バイトで切り詰められた
+#   壊れた JPEG」としてコミットされ、本番が broken-image になっていた。
+#   画像は必ずこのワークフローか git push で入れること。
+#
+# 画質の方針：
+#   元写真は 1200x900 〜 1666x982。表示枠（site.css で 400〜560px）の
+#   2倍前後に収まるよう 760〜1100px で書き出す。引き伸ばしは一切しない。
+#
+# 焼き込みテロップ：
+#   素材は Instagram 投稿用のフレームで、下部（一部は上部にも）に字幕が
+#   焼き込まれている。CROP の座標はその帯を実測して決めたもの。動かさないこと。
+name: Sync site photos from Drive
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths: ['.github/workflows/sync-site-images.yml']
-  workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: sync-site-photos
+  cancel-in-progress: false
 
 jobs:
   sync:
@@ -22,43 +38,72 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download source images from Drive
+      - name: Download originals from Drive
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p /tmp/src
           dl() {
-            curl -fL --retry 3 "https://drive.usercontent.google.com/download?id=$1&export=download" -o "$2"
-            s=$(stat -c%s "$2")
-            echo "$2 -> $s bytes"
-            test "$s" -gt 100000 || { echo "too small: Drive returned an HTML page, not an image"; head -c 300 "$2"; exit 1; }
+            curl -fsSL --retry 3 \
+              "https://drive.usercontent.google.com/download?id=$1&export=download&confirm=t" -o "/tmp/src/$2"
+            s=$(stat -c%s "/tmp/src/$2")
+            echo "$2 <- $1 : $s bytes"
+            if [ "$s" -lt 50000 ]; then
+              echo "---- too small: Drive returned a page, not an image ----"
+              head -c 400 "/tmp/src/$2" || true
+              echo
+              echo "Drive のファイルが「リンクを知っている全員」になっているか確認してください。"
+              exit 1
+            fi
           }
-          dl '1O87r8RVuc6U1ABvsWfAEkKuefs0HVuGM' /tmp/src/a
-          dl '1jiXg1imGUyH1LnCmcRpuXqiKcd9t3CQa' /tmp/src/b
-          dl '1LV-8iLFvMe_7ljpMnkXcFkT5_AX0rkkG' /tmp/src/c
+          dl 1O87r8RVuc6U1ABvsWfAEkKuefs0HVuGM umegaoka-exterior
+          dl 1CLcvw3TAr2ryaFbXB3pn4soCeNItew1R koma-nature-1
+          dl 1FtOwi0Giwjv396YaQz3QfqKSCkrr1Zja koma-nature-2
+          dl 1RdrQTvRupCEcvTOv7wfmNRxLHAUSuA7L koma-nature-3
+          dl 1RmgrdK-YLCHcc-qJAsaKSgTWfkkuWQlD koma-room-1
+          dl 1TaEWEmgsfj06Mb6QEOQdPvFCfSfaEoxg koma-room-2
+          dl 1nuspJ-3WKh_jZP5A_g8Ez_3F-zCDgpqA koma-room-3
+          dl 1dlX2jVRZIBdznMhSsK37qOrJ1ZT0jBtS koma-craft
+          dl 1jiXg1imGUyH1LnCmcRpuXqiKcd9t3CQa koma-water
 
-      - name: Store at full resolution
+      - name: Build web images
         shell: bash
         run: |
           set -euo pipefail
           python3 -m pip install --quiet pillow
-          mkdir -p site/assets/photos/source
+          mkdir -p site/assets/photos
           python3 - <<'PY'
           from PIL import Image, ImageOps
           from pathlib import Path
 
-          # ファイルIDと中身の対応は旧ワークフローのコメント由来で未検証なため、
-          # ここでは園名を名前に入れず a / b / c のまま保存する。
-          # どの写真がどの園かは目視で確認してから割り当てること。
-          for src, name in [('/tmp/src/a', 'a'), ('/tmp/src/b', 'b'), ('/tmp/src/c', 'c')]:
-              im = Image.open(src)
+          # name, expected source size, crop box (焼き込みテロップの除去), output width, quality
+          PLAN = [
+              ("umegaoka-exterior", (1666,  982), None,                 1100, 80),
+              ("koma-nature-1",     (1200,  900), (0,   0, 1200,  680),  880, 80),
+              ("koma-nature-2",     (1200,  900), (0,   0, 1200,  680),  880, 80),
+              ("koma-nature-3",     (1200,  900), (0,   0, 1200,  655),  880, 80),
+              ("koma-room-1",       (1200, 1200), (0, 150, 1200,  950),  880, 80),
+              ("koma-room-2",       (1200, 1200), (0, 150, 1200,  950),  880, 80),
+              ("koma-room-3",       (1200, 1200), (0, 150, 1200,  950),  880, 80),
+              ("koma-craft",        (1110, 1474), None,                  760, 80),
+              ("koma-water",        (1170, 2064), (0,   0, 1170, 1700),  760, 80),
+          ]
+
+          for name, expect, box, width, q in PLAN:
+              im = Image.open(f"/tmp/src/{name}")
               im.load()
-              im = ImageOps.exif_transpose(im).convert('RGB')
-              out = Path(f'site/assets/photos/source/{name}.jpg')
-              im.save(out, 'JPEG', quality=95, optimize=True, progressive=True, subsampling=0)
-              chk = Image.open(out); chk.load()
-              print(name, im.size, '->', out, out.stat().st_size, 'bytes')
-              assert out.stat().st_size > 80000, out
+              im = ImageOps.exif_transpose(im).convert("RGB")
+              if im.size != expect:
+                  raise SystemExit(f"{name}: expected {expect}, got {im.size} - wrong file?")
+              if box:
+                  im = im.crop(box)
+              if im.width > width:
+                  im = im.resize((width, round(width * im.height / im.width)), Image.LANCZOS)
+              out = Path(f"site/assets/photos/{name}.webp")
+              im.save(out, "WEBP", quality=q, method=6)
+              chk = Image.open(out); chk.load()          # full decode guard
+              print(f"{name:20s} {chk.size}  {out.stat().st_size//1024}KB")
+              assert out.stat().st_size > 15000, out
           PY
 
       - name: Commit
@@ -67,7 +112,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add site/assets/photos/source/
-          if git diff --cached --quiet; then echo 'sources already current'; exit 0; fi
-          git commit -m 'Store high-resolution Trioland source photos'
+          git add site/assets/photos/
+          if git diff --cached --quiet; then echo 'photos already current'; exit 0; fi
+          git commit -m 'Add high-resolution Trioland site photos'
           git push
