@@ -1,0 +1,38 @@
+name: Patch homepage two exterior photos
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/patch-home-two-exteriors.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch homepage to two nursery exterior photos
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('build_site.py')
+          s=p.read_text(encoding='utf-8')
+          old='''  <div class="hero-media"><figure>\n    <img src="/assets/photos/exterior.jpg?v={V}" width="800" height="600" alt="トリオランド梅ヶ丘園の園舎外観。通りに面した明るい入口" fetchpriority="high" decoding="async">\n    <figcaption>トリオランド梅ヶ丘園の園舎外観</figcaption>\n  </figure></div>'''
+          new='''  <div class="hero-media" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;">\n    <figure style="margin:0;max-width:none;">\n      <img src="/assets/photos/exterior.jpg?v={V}" width="800" height="600" alt="トリオランド梅ヶ丘園の園舎外観" fetchpriority="high" decoding="async" style="width:100%;aspect-ratio:4/3;object-fit:cover;">\n      <figcaption style="text-align:center;">梅ヶ丘園</figcaption>\n    </figure>\n    <figure style="margin:0;max-width:none;">\n      <img src="/assets/photos/komazawa-exterior.jpg?v={V}" width="243" height="174" alt="トリオランド駒沢大学園の園舎外観" fetchpriority="high" decoding="async" style="width:100%;aspect-ratio:4/3;object-fit:cover;">\n      <figcaption style="text-align:center;">駒沢大学園</figcaption>\n    </figure>\n  </div>'''
+          if old not in s:
+              raise SystemExit('target hero block not found')
+          s=s.replace(old,new,1)
+          s=s.replace('V = "20260911-03"','V = "20260914-01"',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+          python3 build_site.py
+      - name: Commit homepage update
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add build_site.py site/index.html site/komazawa.html site/umegaoka.html site/contact.html site/recruit.html site/faq.html site/column.html site/robots.txt site/sitemap.xml
+          git diff --cached --quiet && exit 0
+          git commit -m 'Show Umegaoka and Komazawa exterior photos on homepage'
+          git push
