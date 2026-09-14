@@ -21,6 +21,7 @@ on:
       - 'site/assets/photos-b64-v5/**'
       - 'site/assets/photo-src/**'
       - 'tools/decode_photos.py'
+      - 'tools/verify_photos.py'
       - '.github/workflows/build-photos.yml'
   workflow_dispatch:
 
@@ -50,22 +51,10 @@ jobs:
       - name: Generate pages
         run: python3 build_site.py
 
-      - name: Verify every photo decodes end to end
-        run: |
-          set -euo pipefail
-          for f in site/assets/photos/*.jpg site/assets/photos/*.webp; do
-            s=$(stat -c%s "$f")
-            test "$s" -gt 20000 || { echo "$f too small ($s)"; exit 1; }
-            file -b "$f" | grep -qiE 'jpeg|web/?p'
-            python3 -c "import sys;from PIL import Image;im=Image.open(sys.argv[1]);im.load();print(sys.argv[1],im.size,'OK')" "$f"
-          done
-
-      - name: Verify no page references the retired photo pipeline
-        run: |
-          set -euo pipefail
-          ! grep -rl 'sprite-photo\|photo-policy-v2\|photos-b64-v5/' site/*.html
-          echo 'pages are clean'
-
+      # 撤去は検証より先に行うこと。
+      # 退役した壊れたJPEG（例: Codexが入れた 7,470 バイトの komazawa-exterior.jpg）が
+      # 残っていると、それ自体が検証で引っかかってビルドが止まる。
+      # 撤去してから、実際に配信するファイルだけを検証する。
       - name: Remove retired photo-pipeline assets
         run: |
           set -euo pipefail
@@ -93,6 +82,25 @@ jobs:
           for f in "${legacy[@]}"; do
             if [ -e "$f" ]; then git rm -r --quiet "$f"; echo "removed $f"; fi
           done
+
+      - name: Show what the build produced
+        if: always()
+        run: |
+          {
+            echo '### site/assets/photos'
+            echo '```'
+            ls -la site/assets/photos/ 2>&1 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify every photo decodes end to end
+        run: python3 tools/verify_photos.py
+
+      - name: Verify no page references the retired photo pipeline
+        run: |
+          set -euo pipefail
+          ! grep -rl 'sprite-photo\|photo-policy-v2\|photos-b64-v5/' site/*.html
+          echo 'pages are clean'
 
       - name: Commit
         run: |
