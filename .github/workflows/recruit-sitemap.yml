@@ -1,0 +1,55 @@
+name: Preserve recruitment SEO sitemap
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/recruit/**'
+      - '.github/workflows/recruit-sitemap.yml'
+  workflow_run:
+    workflows: ['Build site']
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Ensure every recruitment article is in sitemap
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          base='https://trioland-social-publisher.mygate-jp.workers.dev'
+          p=Path('site/sitemap.xml')
+          s=p.read_text(encoding='utf-8')
+          existing=set(re.findall(r'<loc>(.*?)</loc>',s))
+          missing=[]
+          for f in sorted(Path('site/recruit').glob('*.html')):
+              if f.name=='index.html':
+                  continue
+              url=f'{base}/recruit/{f.name}'
+              if url not in existing:
+                  missing.append(f'<url><loc>{url}</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>')
+          if missing:
+              s=s.replace('</urlset>',''.join(missing)+'</urlset>')
+              p.write_text(s,encoding='utf-8')
+              print('added',len(missing),'recruitment URLs')
+          else:
+              print('sitemap already complete')
+          PY
+      - name: Commit sitemap if changed
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/sitemap.xml
+          git diff --cached --quiet && exit 0
+          git commit -m 'Preserve recruitment SEO URLs in sitemap'
+          git push
