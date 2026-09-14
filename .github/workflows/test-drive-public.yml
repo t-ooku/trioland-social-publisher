@@ -1,0 +1,21 @@
+name: Test Drive public image
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/test-drive-public.yml']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test direct Drive image access
+        run: |
+          set -euo pipefail
+          url='https://drive.google.com/uc?export=download&id=1CLcvw3TAr2ryaFbXB3pn4soCeNItew1R'
+          code=$(curl -L -s -o /tmp/a.jpg -w '%{http_code}' "$url")
+          echo "HTTP=$code SIZE=$(stat -c%s /tmp/a.jpg)"
+          file /tmp/a.jpg
+          test "$code" = 200
+          python3 - <<'PY'
+          from PIL import Image
+          im=Image.open('/tmp/a.jpg'); im.load(); print(im.size, im.format)
+          PY
