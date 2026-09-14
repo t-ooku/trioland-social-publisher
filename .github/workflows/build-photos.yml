@@ -56,7 +56,7 @@ jobs:
           for f in site/assets/photos/*.jpg site/assets/photos/*.webp; do
             s=$(stat -c%s "$f")
             test "$s" -gt 20000 || { echo "$f too small ($s)"; exit 1; }
-            file -b "$f" | grep -qi jpeg
+            file -b "$f" | grep -qiE 'jpeg|web/?p'
             python3 -c "import sys;from PIL import Image;im=Image.open(sys.argv[1]);im.load();print(sys.argv[1],im.size,'OK')" "$f"
           done
 
