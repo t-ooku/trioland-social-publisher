@@ -15,7 +15,7 @@ jobs:
           set -euo pipefail
           base='https://trioland-social-publisher.mygate-jp.workers.dev'
           for i in $(seq 1 40); do
-            if curl -fsSL "$base/" -o /tmp/home && grep -q 'assets/photos/exterior.jpg' /tmp/home; then
+            if curl -fsSL "$base/" -o /tmp/home && grep -q 'assets/photos/komazawa-exterior.webp' /tmp/home; then
               echo "live"; exit 0
             fi
             sleep 10
@@ -40,13 +40,14 @@ jobs:
           set -euo pipefail
           python3 -m pip install --quiet pillow
           base='https://trioland-social-publisher.mygate-jp.workers.dev'
-          for n in exterior life-room life-play life-nature life-table life-toys life-summer life-water; do
-            f=/tmp/$n.jpg
-            code=$(curl -L -s -o "$f" -w '%{http_code}' "$base/assets/photos/$n.jpg")
+          for n in komazawa-exterior.webp umegaoka-exterior.webp life-room.jpg life-play.jpg \
+                   life-nature.jpg life-table.jpg life-toys.jpg life-summer.jpg life-water.jpg; do
+            f=/tmp/$n
+            code=$(curl -L -s -o "$f" -w '%{http_code}' "$base/assets/photos/$n")
             test "$code" = 200
             size=$(stat -c%s "$f")
             test "$size" -gt 20000
-            file -b "$f" | grep -qi jpeg
+            file -b "$f" | grep -qiE 'jpeg|web/?p'
             # full decode - this is exactly what caught the truncated 15,000-byte JPEGs
             python3 -c "import sys;from PIL import Image;im=Image.open(sys.argv[1]);im.load();print(sys.argv[1],im.size,'decoded OK')" "$f"
             echo "$n OK ($size bytes)"

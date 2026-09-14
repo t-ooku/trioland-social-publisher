@@ -19,6 +19,8 @@ on:
       - 'build_site.py'
       - 'tools/build_photos.py'
       - 'site/assets/photos-b64-v5/**'
+      - 'site/assets/photo-src/**'
+      - 'tools/decode_photos.py'
       - '.github/workflows/build-photos.yml'
   workflow_dispatch:
 
@@ -39,6 +41,9 @@ jobs:
       - name: Install deps
         run: python3 -m pip install --quiet pillow
 
+      - name: Restore photos committed as base64 (checksum verified)
+        run: python3 tools/decode_photos.py
+
       - name: Generate photos
         run: python3 tools/build_photos.py
 
@@ -48,7 +53,7 @@ jobs:
       - name: Verify every photo decodes end to end
         run: |
           set -euo pipefail
-          for f in site/assets/photos/*.jpg; do
+          for f in site/assets/photos/*.jpg site/assets/photos/*.webp; do
             s=$(stat -c%s "$f")
             test "$s" -gt 20000 || { echo "$f too small ($s)"; exit 1; }
             file -b "$f" | grep -qi jpeg
@@ -82,6 +87,8 @@ jobs:
             site/assets/photos-b64-v2
             site/.deploy-marker.txt
             site/umegaoka.jpg
+            site/assets/photos/exterior.jpg
+            site/assets/photos/komazawa-exterior.jpg
           )
           for f in "${legacy[@]}"; do
             if [ -e "$f" ]; then git rm -r --quiet "$f"; echo "removed $f"; fi

@@ -8,7 +8,7 @@ import os, re, json, pathlib
 
 BASE = "https://trioland-social-publisher.mygate-jp.workers.dev"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20260914-01"
+V = "20260914-02"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -64,7 +64,7 @@ def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-previe
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="{BASE}{path}">
-<meta property="og:image" content="{BASE}/assets/photos/exterior.jpg">
+<meta property="og:image" content="{BASE}/assets/photos/komazawa-exterior.webp">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#fffdf9">
 <link rel="stylesheet" href="/assets/site.css?v={V}">
@@ -140,7 +140,7 @@ def nursery_ld(p, url):
                     "addressLocality": "世田谷区", "streetAddress": p["addr"].replace("東京都世田谷区", ""),
                     "addressCountry": "JP"},
         "openingHours": ["Mo-Fr 07:30-20:30", "Sa-Su 08:00-17:00"],
-        "image": BASE + "/assets/photos/exterior.jpg",
+        "image": BASE + "/assets/photos/komazawa-exterior.webp",
         "areaServed": "東京都世田谷区",
     }
 
@@ -148,7 +148,7 @@ ORG_LD = {
     "@context": "https://schema.org", "@type": "Organization",
     "name": "トリオランド", "url": BASE,
     "parentOrganization": {"@type": "Organization", "name": "トリオキャリア株式会社"},
-    "logo": BASE + "/assets/photos/exterior.jpg",
+    "logo": BASE + "/assets/photos/komazawa-exterior.webp",
     "department": [
         {"@type": "ChildCare", "name": KOMA["name"], "url": BASE + "/komazawa.html", "telephone": KOMA["tel"]},
         {"@type": "ChildCare", "name": UME["name"], "url": BASE + "/umegaoka.html", "telephone": UME["tel"]},
@@ -179,7 +179,7 @@ def page_index():
 <main>
 <div class="wrap">
 
-<section class="hero">
+<section class="hero single">
   <div>
     <span class="badge">東京都世田谷区／企業主導型保育園</span>
     <h1>0・1・2歳の「やってみたい」を、<br>いちばん近くで見守る保育園。</h1>
@@ -189,15 +189,48 @@ def page_index():
       <a class="btn outline" href="/recruit.html">保育士・保育補助の採用情報</a>
     </div>
   </div>
-  <div class="hero-media" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;">
-    <figure style="margin:0;max-width:none;">
-      <img src="/assets/photos/exterior.jpg?v={V}" width="800" height="600" alt="トリオランド梅ヶ丘園の園舎外観" fetchpriority="high" decoding="async" style="width:100%;aspect-ratio:4/3;object-fit:cover;">
-      <figcaption style="text-align:center;">梅ヶ丘園</figcaption>
-    </figure>
-    <figure style="margin:0;max-width:none;">
-      <img src="/assets/photos/komazawa-exterior.jpg?v={V}" width="243" height="174" alt="トリオランド駒沢大学園の園舎外観" fetchpriority="high" decoding="async" style="width:100%;aspect-ratio:4/3;object-fit:cover;">
-      <figcaption style="text-align:center;">駒沢大学園</figcaption>
-    </figure>
+</section>
+
+<section class="tight">
+  <div class="kicker">OUR NURSERIES</div>
+  <h2>世田谷区のトリオランド2園</h2>
+  <p class="lead">どちらの園も生後57日目〜2歳児クラス、平日7:30〜20:30開園です。ご自宅・勤務先からの通いやすさでお選びいただけます。</p>
+  <div class="branch-grid">
+    <div class="branch">
+      <img src="/assets/photos/komazawa-exterior.webp?v={V}" width="1080" height="720" alt="トリオランド駒沢大学園の園舎外観。通りに面した明るい入口と「トリオランド こまざわ保育園」の看板" fetchpriority="high" decoding="async">
+      <div class="content">
+      <h3>{KOMA["name"]}</h3>
+      <div class="meta">駒沢大学駅 徒歩約6分／三軒茶屋駅 徒歩約14分</div>
+      <p>世田谷区野沢2丁目。駒沢大学・三軒茶屋エリアからお通いいただける園です。</p>
+      <ul>
+        <li>定員 {KOMA["capacity"]}</li>
+        <li>{KOMA["ages"]}</li>
+        <li>365日開園・土日祝もOK／手ぶら登園</li>
+        <li>管理栄養士監修の自園調理／アレルギー対応食あり</li>
+        <li>入園料 0円／給食費は会費に含まれます</li>
+      </ul>
+      <div class="btnrow">
+        <a class="btn outline sm" href="/komazawa.html">園の詳細を見る</a>
+        <a class="btn pink sm" href="/contact.html">見学を申し込む</a>
+      </div>
+    </div></div>
+    <div class="branch">
+      <img src="/assets/photos/umegaoka-exterior.webp?v={V}" width="1080" height="720" alt="トリオランド梅ヶ丘園の園舎外観。梅ヶ丘駅すぐの通りに面した入口と「トリオランド 梅ヶ丘園」の看板" fetchpriority="high" decoding="async">
+      <div class="content">
+      <h3>{UME["name"]}</h3>
+      <div class="meta">小田急線 梅ヶ丘駅 徒歩約1分</div>
+      <p>世田谷区梅丘1丁目。駅から約90m、雨の日や送迎の負担が少ない立地です。</p>
+      <ul>
+        <li>定員 {UME["capacity"]}</li>
+        <li>{UME["ages"]}</li>
+        <li>自園調理／季節のイベントを実施</li>
+        <li>山下駅・東松原駅からも徒歩圏</li>
+      </ul>
+      <div class="btnrow">
+        <a class="btn outline sm" href="/umegaoka.html">園の詳細を見る</a>
+        <a class="btn pink sm" href="/contact.html">見学を申し込む</a>
+      </div>
+    </div></div>
   </div>
 </section>
 
@@ -258,45 +291,6 @@ def page_index():
     <div><time>9:30〜</time><b>あそび・お散歩</b><p>天気の良い日は近隣の公園へ。室内では体を動かすあそびや手先を使うあそびを。</p></div>
     <div><time>11:00〜</time><b>給食・午睡</b><p>自園調理の給食。食べる量やペースも一人ひとりに合わせます。</p></div>
     <div><time>15:00〜</time><b>おやつ・順次降園</b><p>その日の様子をお伝えします。18:30以降は事前のご相談で対応します。</p></div>
-  </div>
-</section>
-
-<section>
-  <div class="kicker">OUR NURSERIES</div>
-  <h2>世田谷区のトリオランド2園</h2>
-  <p class="lead">どちらの園も生後57日目〜2歳児クラス、平日7:30〜20:30開園です。ご自宅・勤務先からの通いやすさでお選びいただけます。</p>
-  <div class="branch-grid">
-    <div class="branch"><div class="content">
-      <h3>{KOMA["name"]}</h3>
-      <div class="meta">駒沢大学駅 徒歩約6分／三軒茶屋駅 徒歩約14分</div>
-      <p>世田谷区野沢2丁目。駒沢大学・三軒茶屋エリアからお通いいただける園です。</p>
-      <ul>
-        <li>定員 {KOMA["capacity"]}</li>
-        <li>{KOMA["ages"]}</li>
-        <li>365日開園・土日祝もOK／手ぶら登園</li>
-        <li>管理栄養士監修の自園調理／アレルギー対応食あり</li>
-        <li>入園料 0円／給食費は会費に含まれます</li>
-      </ul>
-      <div class="btnrow">
-        <a class="btn outline sm" href="/komazawa.html">園の詳細を見る</a>
-        <a class="btn pink sm" href="/contact.html">見学を申し込む</a>
-      </div>
-    </div></div>
-    <div class="branch"><div class="content">
-      <h3>{UME["name"]}</h3>
-      <div class="meta">小田急線 梅ヶ丘駅 徒歩約1分</div>
-      <p>世田谷区梅丘1丁目。駅から約90m、雨の日や送迎の負担が少ない立地です。</p>
-      <ul>
-        <li>定員 {UME["capacity"]}</li>
-        <li>{UME["ages"]}</li>
-        <li>自園調理／季節のイベントを実施</li>
-        <li>山下駅・東松原駅からも徒歩圏</li>
-      </ul>
-      <div class="btnrow">
-        <a class="btn outline sm" href="/umegaoka.html">園の詳細を見る</a>
-        <a class="btn pink sm" href="/contact.html">見学を申し込む</a>
-      </div>
-    </div></div>
   </div>
 </section>
 
