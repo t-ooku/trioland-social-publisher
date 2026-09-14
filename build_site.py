@@ -8,7 +8,7 @@ import os, re, json, pathlib
 
 BASE = "https://trioland-social-publisher.mygate-jp.workers.dev"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20260911-03"
+V = "20260914-01"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -189,10 +189,16 @@ def page_index():
       <a class="btn outline" href="/recruit.html">保育士・保育補助の採用情報</a>
     </div>
   </div>
-  <div class="hero-media"><figure>
-    <img src="/assets/photos/exterior.jpg?v={V}" width="800" height="600" alt="トリオランド梅ヶ丘園の園舎外観。通りに面した明るい入口" fetchpriority="high" decoding="async">
-    <figcaption>トリオランド梅ヶ丘園の園舎外観</figcaption>
-  </figure></div>
+  <div class="hero-media" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;">
+    <figure style="margin:0;max-width:none;">
+      <img src="/assets/photos/exterior.jpg?v={V}" width="800" height="600" alt="トリオランド梅ヶ丘園の園舎外観" fetchpriority="high" decoding="async" style="width:100%;aspect-ratio:4/3;object-fit:cover;">
+      <figcaption style="text-align:center;">梅ヶ丘園</figcaption>
+    </figure>
+    <figure style="margin:0;max-width:none;">
+      <img src="/assets/photos/komazawa-exterior.jpg?v={V}" width="243" height="174" alt="トリオランド駒沢大学園の園舎外観" fetchpriority="high" decoding="async" style="width:100%;aspect-ratio:4/3;object-fit:cover;">
+      <figcaption style="text-align:center;">駒沢大学園</figcaption>
+    </figure>
+  </div>
 </section>
 
 <section class="tight">
