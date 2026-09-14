@@ -1,0 +1,31 @@
+{
+  "komazawa-exterior": {
+    "bytes": 128620,
+    "sha256": "7eadab0d1a586bb65f3daf716337ab7ca99700c572f0fe38796f19bb62df121e",
+    "chunks": [
+      "fef7f98d0e6669b7",
+      "4995de50108a5ddb",
+      "8eb27e406a4309d9",
+      "b48527b0ec2e3f84",
+      "c2c7e9ee7be7127a",
+      "35e8abcb9549069b",
+      "e388625bd0be423f",
+      "41e320b6e51cd986"
+    ],
+    "b64len": 171496
+  },
+  "umegaoka-exterior": {
+    "bytes": 120232,
+    "sha256": "df47ea503254280786ab722dfb9247d3d87a81bf64ac5ccaaa770d7b8ff57055",
+    "chunks": [
+      "d1a6efa92c3782af",
+      "f3736ec044613c39",
+      "f757c95a78aef438",
+      "0b7d27359535345d",
+      "61c0c8accc373a49",
+      "8d7d6013788e63a7",
+      "198cdcf933815a08"
+    ],
+    "b64len": 160312
+  }
+}
