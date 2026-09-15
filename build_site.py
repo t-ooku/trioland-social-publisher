@@ -48,7 +48,10 @@ RECRUIT_URL = "https://www.triocareer.jp/company/recruit/"
 CONTACT_URL = "https://www.triocareer.jp/contact/"
 
 # ------------------------------------------------------------------- 部品
-def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-preview:large"):
+def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-preview:large",
+         og_image="komazawa-exterior.webp"):
+    # og:image はSNSで共有されたときに出る絵。園ページではその園の外観を渡すこと。
+    # ここを固定にすると、梅ヶ丘のページを共有したのに駒沢の写真が出てしまう。
     ld = extra_ld or []
     ldtags = "".join(
         f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False, separators=(",",":"))}</script>'
@@ -68,7 +71,7 @@ def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-previe
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="{BASE}{path}">
-<meta property="og:image" content="{BASE}/assets/photos/komazawa-exterior.webp">
+<meta property="og:image" content="{BASE}/assets/photos/{og_image}?v={V}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#fffdf9">
 <link rel="stylesheet" href="/assets/site.css?v={V}">
@@ -359,7 +362,7 @@ def page_nursery(p, path, kicker, h1, intro, features, local_text, active):
     return head(
         f'{p["name"]}｜{kicker}',
         intro[:150],
-        path, ld) + nav(active) + f'''
+        path, ld, og_image=p["photo"]) + nav(active) + f'''
 <main>
 <div class="wrap">
 
