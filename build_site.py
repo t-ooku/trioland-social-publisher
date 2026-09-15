@@ -8,7 +8,7 @@ import os, re, json, pathlib
 
 BASE = "https://trioland-social-publisher.mygate-jp.workers.dev"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20260915-01"
+V = "20260915-02"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -34,7 +34,7 @@ UME = dict(
     tel="03-6413-1704",
     capacity="20名",
     ages="生後57日目〜2歳児クラス",
-    hours="平日 7:30〜20:30／土・日・祝 8:00〜17:00",
+    hours="平日 7:30〜20:30（18:30以降のお預かりは事前相談）／土・日・祝 8:00〜17:00",
     access=["小田急小田原線 梅ヶ丘駅 徒歩約1分（約90m）",
             "東急世田谷線 山下駅 徒歩約11分",
             "京王井の頭線 東松原駅 徒歩約13分"],
@@ -50,7 +50,7 @@ CONTACT_URL = "https://www.triocareer.jp/contact/"
 # ------------------------------------------------------------------- 部品
 def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-preview:large",
          og_image="komazawa-exterior.webp"):
-    # og:image はSNSで共有されたときに出る絵。園ページではその園の外観を渡すこと。
+    # og:image はSNSで共有されたときに出る絵。園ページériではその園の外観を渡すこと。
     # ここを固定にすると、梅ヶ丘のページを共有したのに駒沢の写真が出てしまう。
     ld = extra_ld or []
     ldtags = "".join(
@@ -147,7 +147,8 @@ def nursery_ld(p, url):
                     "addressLocality": "世田谷区", "streetAddress": p["addr"].replace("東京都世田谷区", ""),
                     "addressCountry": "JP"},
         "openingHours": ["Mo-Fr 07:30-20:30", "Sa-Su 08:00-17:00"],
-        "image": BASE + "/assets/photos/komazawa-exterior.webp",
+        # 検索結果に出る写真。ここも園ごとに変えること（固定にすると別の園の写真が出る）。
+        "image": BASE + "/assets/photos/" + p["photo"],
         "areaServed": "東京都世田谷区",
     }
 
@@ -155,7 +156,7 @@ ORG_LD = {
     "@context": "https://schema.org", "@type": "Organization",
     "name": "トリオランド", "url": BASE,
     "parentOrganization": {"@type": "Organization", "name": "トリオキャリア株式会社"},
-    "logo": BASE + "/assets/photos/komazawa-exterior.webp",
+    "logo": BASE + "/assets/photos/trioland-logo.webp",
     "department": [
         {"@type": "ChildCare", "name": KOMA["name"], "url": BASE + "/komazawa.html", "telephone": KOMA["tel"]},
         {"@type": "ChildCare", "name": UME["name"], "url": BASE + "/umegaoka.html", "telephone": UME["tel"]},
