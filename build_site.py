@@ -50,7 +50,7 @@ CONTACT_URL = "https://www.triocareer.jp/contact/"
 # ------------------------------------------------------------------- 部品
 def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-preview:large",
          og_image="komazawa-exterior.webp"):
-    # og:image はSNSで共有されたときに出る絵。園ページériではその園の外観を渡すこと。
+    # og:image はSNSで共有されたときに出る絵。園ページではその園の外観を渡すこと。
     # ここを固定にすると、梅ヶ丘のページを共有したのに駒沢の写真が出てしまう。
     ld = extra_ld or []
     ldtags = "".join(
@@ -859,7 +859,7 @@ def main():
     write("/column.html", page_column())
 
     # robots.txt
-    write("/robots.txt", f"User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: {BASE}/sitemap.xml\n")
+    write("/robots.txt", f"User-agent: *\\nAllow: /\\nDisallow: /admin\\nDisallow: /api/\\n\\nSitemap: {BASE}/sitemap.xml\\n")
 
     # sitemap
     urls = [("/", "1.0", "weekly"), ("/komazawa.html", "0.9", "monthly"),
@@ -871,7 +871,7 @@ def main():
         f"<url><loc>{BASE}{u}</loc><changefreq>{c}</changefreq><priority>{p}</priority></url>"
         for u, p, c in urls)
     write("/sitemap.xml",
-          f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>\n')
+          f'<?xml version="1.0" encoding="UTF-8"?>\\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>\\n')
     print("done.")
 
 
