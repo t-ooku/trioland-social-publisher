@@ -1,1 +1,6 @@
-User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: https://trioland-social-publisher.mygate-jp.workers.dev/sitemap.xml\n
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://trioland-social-publisher.mygate-jp.workers.dev/sitemap.xml
