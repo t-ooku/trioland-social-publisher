@@ -1,4 +1,4 @@
-name: Preserve recruitment SEO sitemap
+name: Preserve recruitment SEO discovery
 on:
   push:
     branches: [main]
@@ -20,18 +20,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Ensure every recruitment article is in sitemap
+      - name: Ensure recruitment articles are linked and in sitemap
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
+          import html, re
+
           base='https://trioland-social-publisher.mygate-jp.workers.dev'
-          p=Path('site/sitemap.xml')
-          s=p.read_text(encoding='utf-8')
+          recruit=Path('site/recruit')
+
+          # Sitemap: make every recruitment article discoverable.
+          sm=Path('site/sitemap.xml')
+          s=sm.read_text(encoding='utf-8')
           existing=set(re.findall(r'<loc>(.*?)</loc>',s))
           missing=[]
-          for f in sorted(Path('site/recruit').glob('*.html')):
+          for f in sorted(recruit.glob('*.html')):
               if f.name=='index.html':
                   continue
               url=f'{base}/recruit/{f.name}'
@@ -39,17 +43,47 @@ jobs:
                   missing.append(f'<url><loc>{url}</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>')
           if missing:
               s=s.replace('</urlset>',''.join(missing)+'</urlset>')
-              p.write_text(s,encoding='utf-8')
-              print('added',len(missing),'recruitment URLs')
+              sm.write_text(s,encoding='utf-8')
+              print('sitemap: added',len(missing),'URLs')
           else:
               print('sitemap already complete')
+
+          # Recruitment index: append a card for every article not yet linked.
+          idx=Path('site/recruit/index.html')
+          t=idx.read_text(encoding='utf-8')
+          marker='</div><div class="note">'
+          cards=[]
+          for f in sorted(recruit.glob('*.html')):
+              if f.name=='index.html':
+                  continue
+              href=f'/recruit/{f.name}'
+              if f'href="{href}"' in t:
+                  continue
+              src=f.read_text(encoding='utf-8')
+              mh=re.search(r'<h1>(.*?)</h1>',src,re.S|re.I)
+              md=re.search(r'<meta\s+name="description"\s+content="([^"]*)"',src,re.I)
+              if not mh:
+                  continue
+              title=re.sub(r'<[^>]+>','',mh.group(1)).strip()
+              desc=(md.group(1).strip() if md else 'トリオランドの採用・求人選びに役立つガイド。')
+              if len(desc)>72:
+                  desc=desc[:72]+'…'
+              cards.append(f'<a class="card" href="{href}"><b>{html.escape(title)}</b><span>{html.escape(desc)}</span></a>')
+          if cards:
+              if marker not in t:
+                  raise SystemExit('recruit index marker not found')
+              t=t.replace(marker,''.join(cards)+marker,1)
+              idx.write_text(t,encoding='utf-8')
+              print('recruit index: added',len(cards),'cards')
+          else:
+              print('recruit index already complete')
           PY
-      - name: Commit sitemap if changed
+      - name: Commit discovery files if changed
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add site/sitemap.xml
+          git add site/sitemap.xml site/recruit/index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Preserve recruitment SEO URLs in sitemap'
+          git commit -m 'Preserve recruitment SEO discovery links'
           git push
