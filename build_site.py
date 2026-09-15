@@ -859,7 +859,7 @@ def main():
     write("/column.html", page_column())
 
     # robots.txt
-    write("/robots.txt", f"User-agent: *\\nAllow: /\\nDisallow: /admin\\nDisallow: /api/\\n\\nSitemap: {BASE}/sitemap.xml\\n")
+    write("/robots.txt", f"User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: {BASE}/sitemap.xml\n")
 
     # sitemap
     urls = [("/", "1.0", "weekly"), ("/komazawa.html", "0.9", "monthly"),
@@ -871,7 +871,7 @@ def main():
         f"<url><loc>{BASE}{u}</loc><changefreq>{c}</changefreq><priority>{p}</priority></url>"
         for u, p, c in urls)
     write("/sitemap.xml",
-          f'<?xml version="1.0" encoding="UTF-8"?>\\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>\\n')
+          f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>\n')
     print("done.")
 
 
