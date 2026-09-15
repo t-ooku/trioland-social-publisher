@@ -21,8 +21,10 @@ h1,h2,h3,h4{letter-spacing:-.02em;word-break:auto-phrase;line-break:strict;overf
 /* ---------- header ---------- */
 header{position:sticky;top:0;z-index:40;background:rgba(255,253,249,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .nav{max-width:var(--maxw);margin:auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{text-decoration:none;font-size:19px;font-weight:900;line-height:1.25;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;min-height:46px}
-.brand small{display:block;color:var(--green);font-size:10px;font-weight:800;letter-spacing:.14em}
+.brand{text-decoration:none;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:46px}
+/* ロゴは公式データ。height だけ指定し、width は auto に任せて縦横比を崩さない。 */
+.brand img{height:42px;width:auto;display:block}
+.brand small{display:block;color:var(--green);font-size:10px;font-weight:800;letter-spacing:.1em;white-space:nowrap}
 .links{display:flex;gap:16px;align-items:center}
 .links a{text-decoration:none;font-size:13.5px;font-weight:800;white-space:nowrap;padding:4px 0;border-bottom:2px solid transparent}
 .links a:hover{border-bottom-color:var(--green)}
@@ -71,6 +73,13 @@ p{color:var(--body);margin:0 0 15px}
 .collage img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius);box-shadow:var(--shadow);background:var(--cream)}
 .collage .big{grid-row:1/3;min-height:400px}
 .collage .small{min-height:194px}
+
+/* ---------- 施設ページの外観写真 ---------- */
+/* 外観写真の原本は 1080x720。表示幅をそれ以上に広げると必ず甘くなるので、
+   760px で止めている。もっと大きく出したい場合は先に高解像度の原本が要る。 */
+.exterior{margin:0 auto 6px;max-width:760px}
+.exterior img{width:100%;aspect-ratio:3/2;height:auto;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow);background:var(--cream)}
+.exterior figcaption{font-size:12.5px;color:var(--muted);margin-top:10px;text-align:center}
 
 /* ---------- quick facts strip ---------- */
 .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -193,7 +202,8 @@ footer li{margin-bottom:5px}
 @media(max-width:600px){
   body{font-size:15.5px}
   .nav{height:60px;padding:0 16px}
-  .brand{font-size:17px}
+  .brand img{height:34px}
+  .brand small{display:none}
   .wrap{padding:0 16px}
   section{padding:40px 0}
   .hero{padding:22px 0 24px;gap:20px}
