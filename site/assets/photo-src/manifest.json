@@ -27,5 +27,73 @@
       "198cdcf933815a08"
     ],
     "b64len": 160312
+  },
+  "life-room": {
+    "bytes": 21286,
+    "sha256": "31df64dfdbad873eae1a6253bcff6cb53a19f5d9b189bd60509d848630173f24",
+    "chunks": [
+      "fc717fb46f0dfc66"
+    ],
+    "b64len": 28384
+  },
+  "life-play": {
+    "bytes": 19338,
+    "sha256": "c90b7bbdbbe41348f796323a5cd300583887b4e8bb6388ea01b2b284db6cc060",
+    "chunks": [
+      "475e5812ff08148b"
+    ],
+    "b64len": 25784
+  },
+  "life-toys": {
+    "bytes": 22582,
+    "sha256": "a8fd971d3e76c489eb0bc9a40457797a918cf49e294bc0d6c038aa24a01d1f81",
+    "chunks": [
+      "8bcfbcf6966d04bf",
+      "e2118000277ee9e0"
+    ],
+    "b64len": 30112
+  },
+  "life-nature": {
+    "bytes": 34542,
+    "sha256": "29a5f05b800e92ba4400a9fca9f2f2a2b4988039a8ca85453c20d38bd6f7defb",
+    "chunks": [
+      "0bcf06fddbad0a0b",
+      "431d63462ca01ed5"
+    ],
+    "b64len": 46056
+  },
+  "life-table": {
+    "bytes": 17546,
+    "sha256": "f5d8595eb3eb30e82857c924653509ffb4759ded9188ed11044e10101446cb06",
+    "chunks": [
+      "058a2a07585a4593"
+    ],
+    "b64len": 23396
+  },
+  "life-summer": {
+    "bytes": 16776,
+    "sha256": "cc2739157c9c88e8d32c50ec119420bc8b1b557f139c9805c6ad43572fd7f5df",
+    "chunks": [
+      "93f8b83efd953139"
+    ],
+    "b64len": 22368
+  },
+  "life-water": {
+    "bytes": 37108,
+    "sha256": "d45edcd4c06fe2a64e03d06eaba32a08352c573787339602677983ac8f2de042",
+    "chunks": [
+      "b6ae8880bed93642",
+      "c1694a677941b527"
+    ],
+    "b64len": 49480
+  },
+  "trioland-logo": {
+    "bytes": 28350,
+    "sha256": "b83f237da40a5bb6cbb98ca979ef7f3eb7a7e00ffbb539650831eb146660a4d0",
+    "chunks": [
+      "fc1c25cdef07ef09",
+      "b914ca8aff0e0151"
+    ],
+    "b64len": 37800
   }
 }

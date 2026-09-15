@@ -9,16 +9,17 @@
 #
 # 入力:
 #   build_site.py             … 全ページのHTML / robots.txt / sitemap.xml
-#   tools/build_photos.py     … site/assets/photos/*.jpg
-#   site/assets/photos-b64-v5 … 写真の生成元（テキスト）
+#   site/assets/photo-src/    … 全写真の生成元（base64テキスト＋SHA-256）
+#
+# 2026-09-15: 旧 tools/build_photos.py は引退。あれは 400x300 のスプライトから
+# 写真を引き伸ばしていたため必ず眠い絵になった。いまは高解像度の原本から
+# 作った WebP を photo-src に置いており、CI はそれを復元するだけでよい。
 name: Build site
 on:
   push:
     branches: [main]
     paths:
       - 'build_site.py'
-      - 'tools/build_photos.py'
-      - 'site/assets/photos-b64-v5/**'
       - 'site/assets/photo-src/**'
       - 'tools/decode_photos.py'
       - 'tools/verify_photos.py'
@@ -44,9 +45,6 @@ jobs:
 
       - name: Restore photos committed as base64 (checksum verified)
         run: python3 tools/decode_photos.py
-
-      - name: Generate photos
-        run: python3 tools/build_photos.py
 
       - name: Generate pages
         run: python3 build_site.py
@@ -78,6 +76,15 @@ jobs:
             site/umegaoka.jpg
             site/assets/photos/exterior.jpg
             site/assets/photos/komazawa-exterior.jpg
+            site/assets/photos/life-room.jpg
+            site/assets/photos/life-play.jpg
+            site/assets/photos/life-toys.jpg
+            site/assets/photos/life-nature.jpg
+            site/assets/photos/life-table.jpg
+            site/assets/photos/life-summer.jpg
+            site/assets/photos/life-water.jpg
+            site/assets/photos-b64-v5
+            tools/build_photos.py
           )
           for f in "${legacy[@]}"; do
             if [ -e "$f" ]; then git rm -r --quiet "$f"; echo "removed $f"; fi
@@ -107,7 +114,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A site/
+          git add -A site/ tools/
           if git diff --cached --quiet; then echo 'site already current'; exit 0; fi
           git commit -m 'Build Trioland site (pages + photos) and drop retired assets'
           git push

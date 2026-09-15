@@ -30,9 +30,15 @@ DST = ROOT / "site" / "assets" / "photos"
 
 # 必ず存在しなければならない写真。トップページが参照しているため、
 # 欠けたまま公開すると broken-image になる。
-REQUIRED = ["komazawa-exterior.webp", "umegaoka-exterior.webp"]
+REQUIRED = [
+    "komazawa-exterior.webp", "umegaoka-exterior.webp", "trioland-logo.webp",
+    "life-room.webp", "life-play.webp", "life-nature.webp", "life-table.webp",
+    "life-toys.webp", "life-summer.webp", "life-water.webp",
+]
 
-MIN_BYTES = 20000
+# 切り詰めの検知は下の「完全デコード」が本体。ここはあくまで粗いふるいなので、
+# 正しく切り出した結果 17KB 程度になる写真を誤検知しない値にしておく。
+MIN_BYTES = 8000
 
 
 def main() -> None:

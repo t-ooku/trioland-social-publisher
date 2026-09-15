@@ -8,7 +8,7 @@ import os, re, json, pathlib
 
 BASE = "https://trioland-social-publisher.mygate-jp.workers.dev"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20260914-02"
+V = "20260915-01"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -24,6 +24,8 @@ KOMA = dict(
             "東急世田谷線 西太子堂駅 徒歩約16分"],
     extra="敷地面積 98.36㎡／入園料 0円／給食費は会費に含まれます",
     geo=("35.6266", "139.6620"),
+    photo="komazawa-exterior.webp",
+    photo_alt="トリオランド駒沢大学園の園舎外観。通りに面した明るい入口と「トリオランド こまざわ保育園」の看板",
 )
 UME = dict(
     name="トリオランド梅ヶ丘園",
@@ -38,6 +40,8 @@ UME = dict(
             "京王井の頭線 東松原駅 徒歩約13分"],
     extra=None,
     geo=("35.6533", "139.6480"),
+    photo="umegaoka-exterior.webp",
+    photo_alt="トリオランド梅ヶ丘園の園舎外観。梅ヶ丘駅前の通りに面した入口と「トリオランド 梅ヶ丘園」の看板",
 )
 
 RECRUIT_URL = "https://www.triocareer.jp/company/recruit/"
@@ -80,7 +84,7 @@ def nav(active=""):
     links = "".join(
         f'<a href="{h}"{cur if h == active else ""}>{t}</a>' for h, t in items)
     return f'''<header><div class="nav">
-<a class="brand" href="/">トリオランド<small>企業主導型保育園／世田谷区</small></a>
+<a class="brand" href="/" aria-label="トリオランド ホームへ"><img src="/assets/photos/trioland-logo.webp?v={V}" width="466" height="140" alt="トリオランド 企業主導型保育所" decoding="async"><small>世田谷区／駒沢大学園・梅ヶ丘園</small></a>
 <nav class="links" aria-label="メインメニュー">{links}<a class="cta-top" href="/contact.html">見学・入園相談</a></nav>
 </div></header>'''
 
@@ -267,15 +271,15 @@ def page_index():
   <p class="lead">文章だけでは伝わりにくい「楽しそう」「安心して預けられそう」を、実際の園生活の記録からご紹介します。</p>
   <div class="gallery">
     <figure>
-      <img src="/assets/photos/life-room.jpg?v={V}" width="800" height="504" alt="保育室でソフトブロックを使って遊ぶ子どもたちと保育士" loading="lazy" decoding="async">
+      <img src="/assets/photos/life-room.webp?v={V}" width="880" height="565" alt="保育室で保育士が子どもたちにおもちゃの器を手渡しているところ" loading="lazy" decoding="async">
       <figcaption>お散歩に行けない日も、室内で体をたっぷり動かします。</figcaption>
     </figure>
     <figure>
-      <img src="/assets/photos/life-play.jpg?v={V}" width="800" height="516" alt="保育室でおもちゃを受け取る子どもと保育士の手" loading="lazy" decoding="async">
+      <img src="/assets/photos/life-play.webp?v={V}" width="880" height="565" alt="保育室でカラフルな器を手に取ってあそぶ子どもと保育士" loading="lazy" decoding="async">
       <figcaption>「やってみたい」に、そっと手が届く距離で。</figcaption>
     </figure>
     <figure>
-      <img src="/assets/photos/life-nature.jpg?v={V}" width="800" height="444" alt="机を囲んで生き物をやさしく観察する子どもたち" loading="lazy" decoding="async">
+      <img src="/assets/photos/life-nature.webp?v={V}" width="880" height="506" alt="机を囲んで保育士と一緒に生き物をやさしく観察する子どもたち" loading="lazy" decoding="async">
       <figcaption>力を加減しながら、生き物とふれあう時間。</figcaption>
     </figure>
   </div>
@@ -371,6 +375,11 @@ def page_nursery(p, path, kicker, h1, intro, features, local_text, active):
   </div>
 </section>
 
+<figure class="exterior">
+  <img src="/assets/photos/{p["photo"]}?v={V}" width="1080" height="720" alt="{p["photo_alt"]}" fetchpriority="high" decoding="async">
+  <figcaption>{p["name"]}の園舎外観（〒{p["zip"]} {p["addr"]}）</figcaption>
+</figure>
+
 <section class="tight">
   <div class="kicker">FACILITY</div>
   <h2>園の基本情報</h2>
@@ -460,7 +469,7 @@ def page_contact():
     </div>
   </div>
   <div class="hero-media"><figure>
-    <img src="/assets/photos/life-summer.jpg?v={V}" width="800" height="600" alt="保育室で保育士と一緒に水あそびを楽しむ子どもたち" loading="lazy" decoding="async">
+    <img src="/assets/photos/life-summer.webp?v={V}" width="880" height="429" alt="水をはったタライでボールなどを使って水あそびをする子どもたち" loading="lazy" decoding="async">
     <figcaption>園での過ごし方も、見学でご案内します</figcaption>
   </figure></div>
 </section>
@@ -536,7 +545,7 @@ def page_recruit():
     </div>
   </div>
   <div class="hero-media"><figure>
-    <img src="/assets/photos/life-table.jpg?v={V}" width="800" height="444" alt="机を囲んで活動する子どもたちと保育士" fetchpriority="high" decoding="async">
+    <img src="/assets/photos/life-table.webp?v={V}" width="880" height="489" alt="机の上にのりやはさみ、紙の丸シールを広げて制作活動をしているところ" fetchpriority="high" decoding="async">
     <figcaption>0〜2歳の少人数保育です</figcaption>
   </figure></div>
 </section>
@@ -618,7 +627,7 @@ def page_recruit():
       <div class="actions"><a class="btn navy" href="/recruit/">求人ガイド一覧を見る</a><a class="btn outline" href="/column.html">保育士求人コラム</a></div>
     </div>
     <div class="imgcol">
-      <img class="portrait" src="/assets/photos/life-water.jpg?v={V}" width="672" height="900" alt="保育士が子どもたちと一緒に水あそびをしている様子" loading="lazy" decoding="async">
+      <img class="portrait" src="/assets/photos/life-water.webp?v={V}" width="675" height="900" alt="タライのそばに立って水あそびに夢中になっている子ども" loading="lazy" decoding="async">
     </div>
   </div>
 </section>
@@ -772,7 +781,7 @@ def page_column():
     </div>
   </div>
   <div class="hero-media"><figure>
-    <img src="/assets/photos/life-toys.jpg?v={V}" width="800" height="510" alt="保育室でおもちゃを手に取る子ども" loading="lazy" decoding="async">
+    <img src="/assets/photos/life-toys.webp?v={V}" width="880" height="565" alt="保育室でベビーベッドのそばを歩く子どもと見守る保育士" loading="lazy" decoding="async">
     <figcaption>0〜2歳の少人数保育の現場です</figcaption>
   </figure></div>
 </section>
