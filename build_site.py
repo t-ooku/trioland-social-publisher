@@ -702,7 +702,7 @@ def page_recruit():
 
 <section class="soft">
   <div class="kicker">WORKPLACE</div>
-  <h2>working場所について</h2>
+  <h2>働く場所について</h2>
   <div class="table-scroll"><table class="spec">
     <tr><th>勤務地</th><td>
       {KOMA["name"]}（〒{KOMA["zip"]} {KOMA["addr"]}）<br>
