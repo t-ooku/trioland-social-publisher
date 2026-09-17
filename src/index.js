@@ -2,6 +2,7 @@ import { OAuthProvider, AuthorizationError } from "@cloudflare/workers-oauth-pro
 import { McpServer } from "@modelcontextprotocol/server";
 import { createMcpHandler, getMcpAuthContext } from "agents/mcp/server";
 import { z } from "zod";
+import { handleInquiry } from "./inquiry.js";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -59,6 +60,11 @@ export const appHandler = {
 
       if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
         return await handleAdminRequest(request, env);
+      }
+
+      // 問い合わせフォームの受け口。保護者・応募者が使うので requireAdmin より前に置く。
+      if (url.pathname === "/api/inquiry") {
+        return await handleInquiry(request, env);
       }
 
       await requireAdmin(request, env);
