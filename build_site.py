@@ -173,6 +173,116 @@ def cta(title, text, primary=("/contact.html", "見学・入園相談をする")
     return f'''<section><div class="cta"><h2>{title}</h2><p>{text}</p>
 <div class="actions"><a class="btn" href="{primary[0]}">{primary[1]}</a>{s}</div></div></section>'''
 
+# 問い合わせフォーム。送信先の実アドレスはこのコードに書かない（リポジトリは公開）。
+# ブラウザは宛先の記号だけを送り、Worker が Make 経由で該当アドレスへ転送する。
+def inquiry_form(mode):
+    if mode == "recruit":
+        title = "採用へのお問い合わせ"
+        lead = "保育士・保育補助のご応募、見学のご希望、働き方のご相談など、どんな内容でも構いません。"
+        dest_field = '<input type="hidden" name="destination" value="recruit">'
+        extra = """
+    <div class="row">
+      <div class="field"><label for="f-child">ご経験</label>
+        <input id="f-child" name="child" placeholder="例：保育士5年 / ブランクあり / 未経験"></div>
+      <div class="field"><label for="f-timing">勤務開始のご希望</label>
+        <input id="f-timing" name="timing" placeholder="例：来月から / 相談したい"></div>
+    </div>"""
+        label = "ご質問・ご相談"
+        submit = "この内容で応募・相談する"
+    else:
+        title = "見学・入園のお問い合わせ"
+        lead = "下のフォームからお送りください。ご希望の園に直接届きます。お電話でも承っています。"
+        dest_field = f"""<div class="field">
+      <label for="f-dest">ご希望の園 <span class="req">必須</span></label>
+      <select id="f-dest" name="destination" required>
+        <option value="">選択してください</option>
+        <option value="komazawa">{KOMA["name"]}（駒沢大学駅 徒歩約6分）</option>
+        <option value="umegaoka">{UME["name"]}（梅ヶ丘駅 徒歩約1分）</option>
+        <option value="general">まだ決めていない／どちらも見てみたい</option>
+      </select>
+    </div>"""
+        extra = """
+    <div class="row">
+      <div class="field"><label for="f-child">お子さまの月齢・年齢</label>
+        <input id="f-child" name="child" placeholder="例：生後8か月 / 1歳児クラス"></div>
+      <div class="field"><label for="f-timing">入園希望時期</label>
+        <input id="f-timing" name="timing" placeholder="例：来年度4月 / なるべく早く"></div>
+    </div>"""
+        label = "ご相談内容"
+        submit = "この内容で送信する"
+
+    return f'''
+<section id="form">
+  <div class="kicker">CONTACT</div>
+  <h2>{title}</h2>
+  <p class="lead">{lead}</p>
+  <form class="inquiry" id="inquiry-form" novalidate>
+    {dest_field}
+    <div class="field"><label for="f-name">お名前 <span class="req">必須</span></label>
+      <input id="f-name" name="name" required autocomplete="name"></div>
+    <div class="row">
+      <div class="field"><label for="f-email">メールアドレス</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email"></div>
+      <div class="field"><label for="f-tel">電話番号</label>
+        <input id="f-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel"></div>
+    </div>
+    <p class="hint">メールアドレスと電話番号は、どちらか一方で構いません。</p>{extra}
+    <div class="field"><label for="f-message">{label} <span class="req">必須</span></label>
+      <textarea id="f-message" name="message" rows="6" required></textarea></div>
+    <div class="hp" aria-hidden="true"><label>会社名（入力しないでください）
+      <input name="company" tabindex="-1" autocomplete="off"></label></div>
+    <button class="btn pink" type="submit">{submit}</button>
+    <p class="form-status" role="status" aria-live="polite"></p>
+  </form>
+</section>
+<script>
+(function () {{
+  var form = document.getElementById("inquiry-form");
+  if (!form) return;
+  var status = form.querySelector(".form-status");
+  var button = form.querySelector("button[type=submit]");
+  var MESSAGES = {{
+    NAME_REQUIRED: "お名前をご記入ください。",
+    CONTACT_REQUIRED: "メールアドレスか電話番号のどちらかをご記入ください。",
+    INVALID_EMAIL: "メールアドレスの形式をご確認ください。",
+    MESSAGE_REQUIRED: "ご相談内容をご記入ください。",
+    INVALID_DESTINATION: "ご希望の園を選択してください。",
+    TOO_MANY_REQUESTS: "送信が続いています。しばらく時間をおいてからお試しください。"
+  }};
+  var FALLBACK = "送信できませんでした。恐れ入りますが、お電話でご連絡ください。"
+    + " {KOMA["name"]} {KOMA["tel"]} ／ {UME["name"]} {UME["tel"]}";
+  function show(text, kind) {{
+    status.textContent = text;
+    status.className = "form-status " + kind;
+  }}
+  form.addEventListener("submit", function (event) {{
+    event.preventDefault();
+    var data = {{}};
+    new FormData(form).forEach(function (value, key) {{ data[key] = value; }});
+    button.disabled = true;
+    show("送信しています…", "sending");
+    fetch("/api/inquiry", {{
+      method: "POST",
+      headers: {{ "content-type": "application/json" }},
+      body: JSON.stringify(data)
+    }}).then(function (response) {{
+      return response.json().then(function (body) {{ return {{ response: response, body: body }}; }});
+    }}).then(function (result) {{
+      if (result.response.ok && result.body.ok) {{
+        form.reset();
+        show("送信しました。担当者より折り返しご連絡いたします。", "done");
+        return;
+      }}
+      show(MESSAGES[result.body.error] || FALLBACK, "error");
+      button.disabled = false;
+    }}).catch(function () {{
+      show(FALLBACK, "error");
+      button.disabled = false;
+    }});
+  }});
+}})();
+</script>'''
+
 PHOTO_NOTE = "写真はトリオランドの実際の園生活の記録です。"
 
 # =================================================================== ページ
@@ -467,7 +577,7 @@ def page_contact():
     <h1>まずは、園の空気を<br>見に来てください。</h1>
     <p class="lead">写真や文章でも園の日常はお伝えしていますが、保育室の広さ、子どもへの声のかけ方、職員同士の雰囲気は、実際に見ていただくのがいちばんです。お子さまと一緒のご見学も歓迎しています。</p>
     <div class="actions">
-      <a class="btn pink" href="{CONTACT_URL}" target="_blank" rel="noopener">お問い合わせフォーム</a>
+      <a class="btn pink" href="#form">お問い合わせフォームへ</a>
       <a class="btn outline" href="tel:{KOMA["tel"].replace("-","")}">駒沢大学園 {KOMA["tel"]}</a>
       <a class="btn outline" href="tel:{UME["tel"].replace("-","")}">梅ヶ丘園 {UME["tel"]}</a>
     </div>
@@ -488,6 +598,8 @@ def page_contact():
     <div><b>ご相談・お申し込み</b><p>空き状況を確認のうえ、必要な手続きをご案内します。</p></div>
   </div>
 </section>
+
+{inquiry_form("visit")}
 
 <section class="soft">
   <div class="kicker">BEFORE YOU VISIT</div>
@@ -545,6 +657,7 @@ def page_recruit():
     <p class="lead">トリオランドは世田谷区で2園を運営する企業主導型保育園です。0〜2歳児の少人数保育だからこそ、一人ひとりの育ちにじっくり関わることができます。求人票の条件だけでは分からない園の空気を、応募前の見学で確かめてください。</p>
     <div class="actions">
       <a class="btn pink" href="{RECRUIT_URL}" target="_blank" rel="noopener">最新の募集要項を見る</a>
+      <a class="btn outline" href="#form">応募・相談フォームへ</a>
       <a class="btn outline" href="/contact.html">まずは園見学から相談する</a>
     </div>
   </div>
@@ -641,6 +754,8 @@ def page_recruit():
   給与・シフトは<b>園の公式Instagram採用投稿（2026年7月）で案内されていた条件</b>です。募集職種・雇用形態・勤務時間・待遇などは時期により変わり、このページでは<b>確認できていない条件を推測して掲載していません</b>。応募の際は必ず
   <a href="{RECRUIT_URL}" target="_blank" rel="noopener">公式の募集要項</a>で最新の条件をご確認ください。</div>
 </section>
+
+{inquiry_form("recruit")}
 
 {cta("応募の前に、園の雰囲気を見てみませんか。",
      "実際の保育の様子、子どもたちとの距離感、職員同士の関わり方。見学してから判断していただいて大丈夫です。",
