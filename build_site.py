@@ -244,7 +244,43 @@ def inquiry_form(mode):
   var MESSAGES = {{
     NAME_REQUIRED: "お名前をご記入ください。",
     CONTACT_REQUIRED: "メールアドレスか電話番号のどちらかをご記入ください。",
-    INVALID_EMAIL: "メールアドレスの形式male"
+    INVALID_EMAIL: "メールアドレスの形式をご確認ください。",
+    MESSAGE_REQUIRED: "ご相談内容をご記入ください。",
+    INVALID_DESTINATION: "ご希望の園を選択してください。",
+    TOO_MANY_REQUESTS: "送信が続いています。しばらく時間をおいてからお試しください。"
   }};
+  var FALLBACK = "送信できませんでした。恐れ入りますが、お電話でご連絡ください。"
+    + " {KOMA["name"]} {KOMA["tel"]} ／ {UME["name"]} {UME["tel"]}";
+  function show(text, kind) {{
+    status.textContent = text;
+    status.className = "form-status " + kind;
+  }}
+  form.addEventListener("submit", function (event) {{
+    event.preventDefault();
+    var data = {{}};
+    new FormData(form).forEach(function (value, key) {{ data[key] = value; }});
+    button.disabled = true;
+    show("送信しています…", "sending");
+    fetch("/api/inquiry", {{
+      method: "POST",
+      headers: {{ "content-type": "application/json" }},
+      body: JSON.stringify(data)
+    }}).then(function (response) {{
+      return response.json().then(function (body) {{ return {{ response: response, body: body }}; }});
+    }}).then(function (result) {{
+      if (result.response.ok && result.body.ok) {{
+        form.reset();
+        show("送信しました。担当者より折り返しご連絡いたします。", "done");
+        return;
+      }}
+      show(MESSAGES[result.body.error] || FALLBACK, "error");
+      button.disabled = false;
+    }}).catch(function () {{
+      show(FALLBACK, "error");
+      button.disabled = false;
+    }});
+  }});
 }})();
 </script>'''
+
+PHOTO_NOTE = "写真はトリオランドの実際の園生活の記録です。"
