@@ -76,9 +76,29 @@ async function overRateLimit(env, key) {
   return false;
 }
 
+// 送信先の Webhook URL は Cloudflare 側の設定から読む。
+// 設定の入れ方によって、ただの文字列で来る場合と、Secrets Store の
+// バインディング（.get() で取り出すオブジェクト）で来る場合がある。
+// どちらでも動くようにしておく。
+async function resolveEndpoint(env) {
+  const value = env.INQUIRY_WEBHOOK_URL;
+  if (!value) return "";
+  if (typeof value === "string") return value.trim();
+  if (typeof value.get === "function") {
+    try {
+      return String((await value.get()) || "").trim();
+    } catch {
+      return "";
+    }
+  }
+  return "";
+}
+
 async function forwardToMake(env, record) {
-  const endpoint = env.INQUIRY_WEBHOOK_URL;
-  if (!endpoint) return { delivered: false, reason: "WEBHOOK_NOT_CONFIGURED" };
+  const endpoint = await resolveEndpoint(env);
+  if (!endpoint || !endpoint.startsWith("https://")) {
+    return { delivered: false, reason: "WEBHOOK_NOT_CONFIGURED" };
+  }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT_MS);
