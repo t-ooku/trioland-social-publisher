@@ -33,6 +33,7 @@
     <p class="lead">トリオランドは世田谷区で2園を運営する企業主導型保育園です。0〜2歳児の少人数保育だからこそ、一人ひとりの育ちにじっくり関わることができます。求人票の条件だけでは分からない園の空気を、応募前の見学で確かめてください。</p>
     <div class="actions">
       <a class="btn pink" href="https://www.triocareer.jp/company/recruit/" target="_blank" rel="noopener">最新の募集要項を見る</a>
+      <a class="btn outline" href="#form">応募・相談フォームへ</a>
       <a class="btn outline" href="/contact.html">まずは園見学から相談する</a>
     </div>
   </div>
@@ -77,7 +78,7 @@
 
 <section class="soft">
   <div class="kicker">WORKPLACE</div>
-  <h2>働く場所について</h2>
+  <h2>working場所について</h2>
   <div class="table-scroll"><table class="spec">
     <tr><th>勤務地</th><td>
       トリオランド駒沢大学園（〒154-0003 東京都世田谷区野沢2-33-5 グランドメゾン野沢103号室）<br>
@@ -129,6 +130,84 @@
   給与・シフトは<b>園の公式Instagram採用投稿（2026年7月）で案内されていた条件</b>です。募集職種・雇用形態・勤務時間・待遇などは時期により変わり、このページでは<b>確認できていない条件を推測して掲載していません</b>。応募の際は必ず
   <a href="https://www.triocareer.jp/company/recruit/" target="_blank" rel="noopener">公式の募集要項</a>で最新の条件をご確認ください。</div>
 </section>
+
+
+<section id="form">
+  <div class="kicker">CONTACT</div>
+  <h2>採用へのお問い合わせ</h2>
+  <p class="lead">保育士・保育補助のご応募、見学のご希望、働き方のご相談など、どんな内容でも構いません。</p>
+  <form class="inquiry" id="inquiry-form" novalidate>
+    <input type="hidden" name="destination" value="recruit">
+    <div class="field"><label for="f-name">お名前 <span class="req">必須</span></label>
+      <input id="f-name" name="name" required autocomplete="name"></div>
+    <div class="row">
+      <div class="field"><label for="f-email">メールアドレス</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email"></div>
+      <div class="field"><label for="f-tel">電話番号</label>
+        <input id="f-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel"></div>
+    </div>
+    <p class="hint">メールアドレスと電話番号は、どちらか一方で構いません。</p>
+    <div class="row">
+      <div class="field"><label for="f-child">ご経験</label>
+        <input id="f-child" name="child" placeholder="例：保育士5年 / ブランクあり / 未経験"></div>
+      <div class="field"><label for="f-timing">勤務開始のご希望</label>
+        <input id="f-timing" name="timing" placeholder="例：来月から / 相談したい"></div>
+    </div>
+    <div class="field"><label for="f-message">ご質問・ご相談 <span class="req">必須</span></label>
+      <textarea id="f-message" name="message" rows="6" required></textarea></div>
+    <div class="hp" aria-hidden="true"><label>会社名（入力しないでください）
+      <input name="company" tabindex="-1" autocomplete="off"></label></div>
+    <button class="btn pink" type="submit">この内容で応募・相談する</button>
+    <p class="form-status" role="status" aria-live="polite"></p>
+  </form>
+</section>
+<script>
+(function () {
+  var form = document.getElementById("inquiry-form");
+  if (!form) return;
+  var status = form.querySelector(".form-status");
+  var button = form.querySelector("button[type=submit]");
+  var MESSAGES = {
+    NAME_REQUIRED: "お名前をご記入ください。",
+    CONTACT_REQUIRED: "メールアドレスか電話番号のどちらかをご記入ください。",
+    INVALID_EMAIL: "メールアドレスの形式をご確認ください。",
+    MESSAGE_REQUIRED: "ご相談内容をご記入ください。",
+    INVALID_DESTINATION: "ご希望の園を選択してください。",
+    TOO_MANY_REQUESTS: "送信が続いています。しばらく時間をおいてからお試しください。"
+  };
+  var FALLBACK = "送信できませんでした。恐れ入りますが、お電話でご連絡ください。"
+    + " トリオランド駒沢大学園 03-6450-7390 ／ トリオランド梅ヶ丘園 03-6413-1704";
+  function show(text, kind) {
+    status.textContent = text;
+    status.className = "form-status " + kind;
+  }
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    var data = {};
+    new FormData(form).forEach(function (value, key) { data[key] = value; });
+    button.disabled = true;
+    show("送信しています…", "sending");
+    fetch("/api/inquiry", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(data)
+    }).then(function (response) {
+      return response.json().then(function (body) { return { response: response, body: body }; });
+    }).then(function (result) {
+      if (result.response.ok && result.body.ok) {
+        form.reset();
+        show("送信しました。担当者より折り返しご連絡いたします。", "done");
+        return;
+      }
+      show(MESSAGES[result.body.error] || FALLBACK, "error");
+      button.disabled = false;
+    }).catch(function () {
+      show(FALLBACK, "error");
+      button.disabled = false;
+    });
+  });
+})();
+</script>
 
 <section><div class="cta"><h2>応募の前に、園の雰囲気を見てみませんか。</h2><p>実際の保育の様子、子どもたちとの距離感、職員同士の関わり方。見学してから判断していただいて大丈夫です。</p>
 <div class="actions"><a class="btn" href="/contact.html">園見学・採用相談を申し込む</a><a class="btn ghost" href="https://www.triocareer.jp/company/recruit/">募集要項を見る</a></div></div></section>

@@ -32,7 +32,7 @@
     <h1>まずは、園の空気を<br>見に来てください。</h1>
     <p class="lead">写真や文章でも園の日常はお伝えしていますが、保育室の広さ、子どもへの声のかけ方、職員同士の雰囲気は、実際に見ていただくのがいちばんです。お子さまと一緒のご見学も歓迎しています。</p>
     <div class="actions">
-      <a class="btn pink" href="https://www.triocareer.jp/contact/" target="_blank" rel="noopener">お問い合わせフォーム</a>
+      <a class="btn pink" href="#form">お問い合わせフォームへ</a>
       <a class="btn outline" href="tel:0364507390">駒沢大学園 03-6450-7390</a>
       <a class="btn outline" href="tel:0364131704">梅ヶ丘園 03-6413-1704</a>
     </div>
@@ -53,6 +53,92 @@
     <div><b>ご相談・お申し込み</b><p>空き状況を確認のうえ、必要な手続きをご案内します。</p></div>
   </div>
 </section>
+
+
+<section id="form">
+  <div class="kicker">CONTACT</div>
+  <h2>見学・入園のお問い合わせ</h2>
+  <p class="lead">下のフォームからお送りください。ご希望の園に直接届きます。お電話でも承っています。</p>
+  <form class="inquiry" id="inquiry-form" novalidate>
+    <div class="field">
+      <label for="f-dest">ご希望の園 <span class="req">必須</span></label>
+      <select id="f-dest" name="destination" required>
+        <option value="">選択してください</option>
+        <option value="komazawa">トリオランド駒沢大学園（駒沢大学駅 徒歩約6分）</option>
+        <option value="umegaoka">トリオランド梅ヶ丘園（梅ヶ丘駅 徒歩約1分）</option>
+        <option value="general">まだ決めていない／どちらも見てみたい</option>
+      </select>
+    </div>
+    <div class="field"><label for="f-name">お名前 <span class="req">必須</span></label>
+      <input id="f-name" name="name" required autocomplete="name"></div>
+    <div class="row">
+      <div class="field"><label for="f-email">メールアドレス</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email"></div>
+      <div class="field"><label for="f-tel">電話番号</label>
+        <input id="f-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel"></div>
+    </div>
+    <p class="hint">メールアドレスと電話番号は、どちらか一方で構いません。</p>
+    <div class="row">
+      <div class="field"><label for="f-child">お子さまの月齢・年齢</label>
+        <input id="f-child" name="child" placeholder="例：生後8か月 / 1歳児クラス"></div>
+      <div class="field"><label for="f-timing">入園希望時期</label>
+        <input id="f-timing" name="timing" placeholder="例：来年度4月 / なるべく早く"></div>
+    </div>
+    <div class="field"><label for="f-message">ご相談内容 <span class="req">必須</span></label>
+      <textarea id="f-message" name="message" rows="6" required></textarea></div>
+    <div class="hp" aria-hidden="true"><label>会社名（入力しないでください）
+      <input name="company" tabindex="-1" autocomplete="off"></label></div>
+    <button class="btn pink" type="submit">この内容で送信する</button>
+    <p class="form-status" role="status" aria-live="polite"></p>
+  </form>
+</section>
+<script>
+(function () {
+  var form = document.getElementById("inquiry-form");
+  if (!form) return;
+  var status = form.querySelector(".form-status");
+  var button = form.querySelector("button[type=submit]");
+  var MESSAGES = {
+    NAME_REQUIRED: "お名前をご記入ください。",
+    CONTACT_REQUIRED: "メールアドレスか電話番号のどちらかをご記入ください。",
+    INVALID_EMAIL: "メールアドレスの形式をご確認ください。",
+    MESSAGE_REQUIRED: "ご相談内容をご記入ください。",
+    INVALID_DESTINATION: "ご希望の園を選択してください。",
+    TOO_MANY_REQUESTS: "送信が続いています。しばらく時間をおいてからお試しください。"
+  };
+  var FALLBACK = "送信できませんでした。恐れ入りますが、お電話でご連絡ください。"
+    + " トリオランド駒沢大学園 03-6450-7390 ／ トリオランド梅ヶ丘園 03-6413-1704";
+  function show(text, kind) {
+    status.textContent = text;
+    status.className = "form-status " + kind;
+  }
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    var data = {};
+    new FormData(form).forEach(function (value, key) { data[key] = value; });
+    button.disabled = true;
+    show("送信しています…", "sending");
+    fetch("/api/inquiry", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(data)
+    }).then(function (response) {
+      return response.json().then(function (body) { return { response: response, body: body }; });
+    }).then(function (result) {
+      if (result.response.ok && result.body.ok) {
+        form.reset();
+        show("送信しました。担当者より折り返しご連絡いたします。", "done");
+        return;
+      }
+      show(MESSAGES[result.body.error] || FALLBACK, "error");
+      button.disabled = false;
+    }).catch(function () {
+      show(FALLBACK, "error");
+      button.disabled = false;
+    });
+  });
+})();
+</script>
 
 <section class="soft">
   <div class="kicker">BEFORE YOU VISIT</div>
