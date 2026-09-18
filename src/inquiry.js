@@ -12,10 +12,15 @@
 //      （保護者の申し込みを止める副作用のほうが大きい）。
 
 const DESTINATIONS = {
+  // 保育園（hoiku.triocareer.jp）
   komazawa: "駒沢大学園",
   umegaoka: "梅ヶ丘園",
   general: "総合受付",
   recruit: "採用",
+  // 放課後等デイサービス（afterschool.triocareer.jp）
+  lopp: "放デイ ロップ",
+  compass: "放デイ コンパスマイル落合南長崎",
+  afterschool_recruit: "放デイ 採用",
 };
 
 const LIMITS = {
@@ -24,6 +29,10 @@ const LIMITS = {
   tel: 40,
   child: 120,
   timing: 120,
+  // 放デイのフォームだけが送る項目（学年・学校名・お住まいの町名）
+  grade: 60,
+  school: 120,
+  area: 120,
   message: 4000,
 };
 
@@ -32,13 +41,50 @@ const RATE_WINDOW_SECONDS = 600;    // 10分で5件まで
 const RECORD_TTL_SECONDS = 400 * 24 * 60 * 60;   // 保存は約13か月
 const WEBHOOK_TIMEOUT_MS = 10_000;
 
-const CORS_JSON = {
-  "content-type": "application/json; charset=utf-8",
-  "cache-control": "no-store",
-};
+// このエンドポイントは Worker（workers.dev）に置いたまま、フォーム本体は
+// Cloudflare Pages の hoiku.triocareer.jp / afterschool.triocareer.jp から呼ぶ。
+// オリジンが違うのでブラウザは CORS を要求する。許可するのは自社サイトだけ。
+//   - *.triocareer.jp        本番のサブドメイン
+//   - *.pages.dev            Pages のプレビュー
+//   - *.workers.dev          Worker 自身（従来どおり同一オリジンで動く）
+function allowedOrigin(origin) {
+  if (!origin) return "";
+  let host;
+  try {
+    const u = new URL(origin);
+    if (u.protocol !== "https:") return "";
+    host = u.hostname;
+  } catch {
+    return "";
+  }
+  const ok = host === "triocareer.jp"
+    || host.endsWith(".triocareer.jp")
+    || host.endsWith(".pages.dev")
+    || host.endsWith(".workers.dev");
+  return ok ? origin : "";
+}
 
-function reply(body, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: CORS_JSON });
+function corsHeaders(request) {
+  const origin = allowedOrigin(request.headers.get("origin"));
+  if (!origin) return {};
+  return {
+    "access-control-allow-origin": origin,
+    "access-control-allow-methods": "POST, OPTIONS",
+    "access-control-allow-headers": "content-type",
+    "access-control-max-age": "86400",
+    "vary": "origin",
+  };
+}
+
+function reply(body, status, request) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      ...corsHeaders(request),
+    },
+  });
 }
 
 function clean(value, max) {
@@ -121,26 +167,31 @@ async function forwardToMake(env, record) {
 }
 
 export async function handleInquiry(request, env) {
+  // CORS のプリフライト。許可外のオリジンには許可ヘッダを付けずに返す
+  // （ブラウザ側で止まる）。
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders(request) });
+  }
   if (request.method !== "POST") {
-    return reply({ ok: false, error: "METHOD_NOT_ALLOWED" }, 405);
+    return reply({ ok: false, error: "METHOD_NOT_ALLOWED" }, 405, request);
   }
 
   let payload;
   try {
     payload = await request.json();
   } catch {
-    return reply({ ok: false, error: "INVALID_JSON" }, 400);
+    return reply({ ok: false, error: "INVALID_JSON" }, 400, request);
   }
 
   // honeypot: 人間には見えない項目。埋まっていればボット。
   // 黙って成功を返す（失敗を教えると作り直してくる）。
   if (clean(payload?.company, 50)) {
-    return reply({ ok: true, delivered: true });
+    return reply({ ok: true, delivered: true }, 200, request);
   }
 
   const destination = String(payload?.destination || "").trim();
   if (!DESTINATIONS[destination]) {
-    return reply({ ok: false, error: "INVALID_DESTINATION" }, 400);
+    return reply({ ok: false, error: "INVALID_DESTINATION" }, 400, request);
   }
 
   const name = clean(payload?.name, LIMITS.name);
@@ -148,18 +199,21 @@ export async function handleInquiry(request, env) {
   const tel = clean(payload?.tel, LIMITS.tel);
   const child = clean(payload?.child, LIMITS.child);
   const timing = clean(payload?.timing, LIMITS.timing);
+  const grade = clean(payload?.grade, LIMITS.grade);
+  const school = clean(payload?.school, LIMITS.school);
+  const area = clean(payload?.area, LIMITS.area);
   const message = clean(payload?.message, LIMITS.message);
 
-  if (!name) return reply({ ok: false, error: "NAME_REQUIRED" }, 400);
-  if (!email && !tel) return reply({ ok: false, error: "CONTACT_REQUIRED" }, 400);
+  if (!name) return reply({ ok: false, error: "NAME_REQUIRED" }, 400, request);
+  if (!email && !tel) return reply({ ok: false, error: "CONTACT_REQUIRED" }, 400, request);
   if (email && !looksLikeEmail(email)) {
-    return reply({ ok: false, error: "INVALID_EMAIL" }, 400);
+    return reply({ ok: false, error: "INVALID_EMAIL" }, 400, request);
   }
-  if (!message) return reply({ ok: false, error: "MESSAGE_REQUIRED" }, 400);
+  if (!message) return reply({ ok: false, error: "MESSAGE_REQUIRED" }, 400, request);
 
   const rateKey = await clientKey(request);
   if (await overRateLimit(env, rateKey)) {
-    return reply({ ok: false, error: "TOO_MANY_REQUESTS" }, 429);
+    return reply({ ok: false, error: "TOO_MANY_REQUESTS" }, 429, request);
   }
 
   const receivedAt = new Date().toISOString();
@@ -174,6 +228,9 @@ export async function handleInquiry(request, env) {
     tel,
     child,
     timing,
+    grade,
+    school,
+    area,
     message,
     userAgent: (request.headers.get("user-agent") || "").slice(0, 300),
   };
@@ -193,8 +250,8 @@ export async function handleInquiry(request, env) {
   const result = await forwardToMake(env, record);
   if (!result.delivered) {
     console.log(`inquiry ${id} stored but not delivered: ${result.reason}`);
-    return reply({ ok: false, error: "DELIVERY_FAILED", id }, 502);
+    return reply({ ok: false, error: "DELIVERY_FAILED", id }, 502, request);
   }
 
-  return reply({ ok: true, delivered: true, id });
+  return reply({ ok: true, delivered: true, id }, 200, request);
 }
