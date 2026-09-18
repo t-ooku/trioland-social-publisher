@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/server";
 import { createMcpHandler, getMcpAuthContext } from "agents/mcp/server";
 import { z } from "zod";
 import { handleInquiry } from "./inquiry.js";
+import { handleRecruitApi, renderRecruitAdmin, saveRecruitAdmin, resetRecruitAdmin } from "./afterschool_recruit.js";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -65,6 +66,10 @@ export const appHandler = {
       // 問い合わせフォームの受け口。保護者・応募者が使うので requireAdmin より前に置く。
       if (url.pathname === "/api/inquiry") {
         return await handleInquiry(request, env);
+      }
+      // 放デイ求人ページが読む公開 JSON（管理画面で保存した内容）。
+      if (url.pathname === "/api/afterschool/recruit") {
+        return await handleRecruitApi(request, env);
       }
 
       await requireAdmin(request, env);
@@ -423,6 +428,9 @@ async function handleAdminRequest(request, env) {
     if (request.method === "GET" && url.pathname === "/admin/make") {
       return await renderMakeAdmin(request, env, session);
     }
+    if (request.method === "GET" && url.pathname === "/admin/recruit") {
+      return await renderRecruitAdmin(request, env, session, { adminStyles, securityHeaders, escapeHtml });
+    }
     if (request.method === "GET" && url.pathname === "/admin/connect-instagram") {
       const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
       return redirect(authorizationUrl);
@@ -491,8 +499,23 @@ async function handleAdminRequest(request, env) {
     if (url.pathname === "/admin/make/diagnose") {
       return await runMakeDiagnosis(env);
     }
+    if (url.pathname === "/admin/recruit") {
+      await saveRecruitAdmin(form, env, session);
+      return redirect("/admin/recruit?saved=1");
+    }
+    if (url.pathname === "/admin/recruit/reset") {
+      await resetRecruitAdmin(form, env);
+      return redirect("/admin/recruit?reset=1");
+    }
     throw problem("管理画面の操作が見つかりません", 404);
   } catch (error) {
+    if (url.pathname.startsWith("/admin/recruit")) {
+      try {
+        return await renderRecruitAdmin(request, env, session, { adminStyles, securityHeaders, escapeHtml }, error?.message || "操作に失敗しました", Number(error?.status || 500));
+      } catch {
+        return renderAdminFailure("求人編集画面の表示中にエラーが発生しました。再読み込みしてからもう一度お試しください。", "/admin/recruit");
+      }
+    }
     if (url.pathname.startsWith("/admin/make")) {
       try {
         return await renderMakeAdmin(request, env, session, error?.message || "操作に失敗しました", Number(error?.status || 500));
@@ -820,6 +843,7 @@ ${notices.map((notice) => `<div class="notice ${notice.startsWith("エラー:") 
 <section class="status"><div><span>本人確認</span><strong>${escapeHtml(adminIdentity(session))}</strong></div><div><span>Instagram</span><strong class="${instagramConnected ? "ok" : "warn"}">${instagramConnected ? "接続済み" : "未接続"}</strong></div><div><span>HOSHILU</span><strong class="ok">完全分離</strong></div></section>
 
 <section><div class="section-head"><div><span class="step">M</span><h2>Make / Googleビジネスプロフィール</h2></div><span class="pill ${makeConnected ? "done" : ""}">${makeConnected ? "API接続済み" : "未接続"}</span></div><p>シナリオ ${MAKE_SCENARIO_ID} の構成と直近実行ログを、トークンを表示せずに診断します。</p><a class="button" href="/admin/make">Make診断画面を開く</a></section>
+<section><div class="section-head"><div><span class="step">R</span><h2>放デイ求人の編集</h2></div><span class="pill">afterschool.triocareer.jp</span></div><p>ロップ・コンパスマイルの採用ページに載せる給与・勤務時間・応募資格などを編集します。保存するとすぐ公開されます。</p><a class="button" href="/admin/recruit">求人編集画面を開く</a></section>
 
 <section><div class="section-head"><div><span class="step">1</span><h2>Instagram接続</h2></div><span class="pill ${instagramConnected ? "done" : ""}">${instagramConnected ? "完了" : "初回のみ"}</span></div>
 <p>Instagramプロアカウントを公式APIへ接続します。HOSHILUには影響しません。</p>
