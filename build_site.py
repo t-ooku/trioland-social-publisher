@@ -6,7 +6,9 @@
 """
 import os, re, json, pathlib
 
-BASE = "https://trioland-social-publisher.mygate-jp.workers.dev"
+# 本番 URL。2026-09-18 に Cloudflare Pages（hoiku.triocareer.jp）へ切り替えた。
+# workers.dev 側にも同じ HTML が出るが、canonical はこの URL に統一する（検索エンジンの評価を新ドメインへ集める）。
+BASE = "https://hoiku.triocareer.jp"
 # 問い合わせフォームの送信先。サイト本体を Cloudflare Pages（hoiku.triocareer.jp）へ移しても
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
