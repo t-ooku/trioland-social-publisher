@@ -187,7 +187,7 @@
     new FormData(form).forEach(function (value, key) { data[key] = value; });
     button.disabled = true;
     show("送信しています…", "sending");
-    fetch("/api/inquiry", {
+    fetch("https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data)
