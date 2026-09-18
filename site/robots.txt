@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://trioland-social-publisher.mygate-jp.workers.dev/sitemap.xml
+Sitemap: https://hoiku.triocareer.jp/sitemap.xml
