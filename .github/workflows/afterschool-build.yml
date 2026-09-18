@@ -1,0 +1,70 @@
+# 放課後等デイサービスのサイト（afterschool/site/）を生成してコミットする。
+#
+# 配信: Cloudflare Pages（ルートディレクトリ afterschool、ビルド出力 site、ビルドコマンドなし）。
+#       Pages は main のコミット内容をそのまま配信するので、生成物をリポジトリに入れる必要がある。
+#
+# 入力:
+#   afterschool/build_site.py                … 全ページの HTML / robots.txt / sitemap.xml / _headers
+#   afterschool/tools/assets_manifest.json   … 写真と PDF の Drive ファイル ID と SHA-256
+#   afterschool/tools/fetch_assets.py        … Drive から取得して SHA-256 を照合
+#   afterschool/tools/process_assets.py      … WebP 化（引き伸ばしなし）と PDF 配置、完全デコード検証
+#
+# 前提: Drive の「放課後デイ／画像」フォルダが「リンクを知っている全員（閲覧者）」であること。
+#       非公開だとハッシュ照合で止まる（壊れたファイルは決してコミットされない）。
+name: Build afterschool site
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'afterschool/build_site.py'
+      - 'afterschool/site/assets/site.css'
+      - 'afterschool/tools/**'
+      - '.github/workflows/afterschool-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: afterschool-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: python3 -m pip install --quiet pillow
+
+      - name: Fetch originals from Drive (SHA-256 verified)
+        run: python3 afterschool/tools/fetch_assets.py
+
+      - name: Build photos and docs (no upscaling, full decode check)
+        run: python3 afterschool/tools/process_assets.py
+
+      - name: Generate pages
+        run: python3 afterschool/build_site.py
+
+      - name: Verify pages reference only existing assets
+        run: |
+          set -euo pipefail
+          cd afterschool/site
+          missing=0
+          for ref in $(grep -oh '/assets/[A-Za-z0-9_./-]*' *.html | sort -u); do
+            if [ ! -f ".${ref}" ]; then echo "missing: $ref"; missing=1; fi
+          done
+          [ "$missing" -eq 0 ]
+          echo 'all referenced assets exist'
+
+      - name: Commit
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A afterschool/site/
+          if git diff --cached --quiet; then echo 'afterschool site already current'; exit 0; fi
+          git commit -m 'Build afterschool site (pages + photos + docs)'
+          git push
