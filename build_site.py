@@ -7,6 +7,9 @@
 import os, re, json, pathlib
 
 BASE = "https://trioland-social-publisher.mygate-jp.workers.dev"
+# 問い合わせフォームの送信先。サイト本体を Cloudflare Pages（hoiku.triocareer.jp）へ移しても
+# 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
+API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
 V = "20260915-02"
 
@@ -261,7 +264,7 @@ def inquiry_form(mode):
     new FormData(form).forEach(function (value, key) {{ data[key] = value; }});
     button.disabled = true;
     show("送信しています…", "sending");
-    fetch("/api/inquiry", {{
+    fetch("{API}", {{
       method: "POST",
       headers: {{ "content-type": "application/json" }},
       body: JSON.stringify(data)
