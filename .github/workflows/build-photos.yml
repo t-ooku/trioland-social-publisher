@@ -100,6 +100,16 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # 2026-09-18: 本番は hoiku.triocareer.jp（Pages）。Codex が生成する求人ガイド（site/recruit/*.html）は
+      # 旧 URL（workers.dev）を canonical に書くことがあるので、ここで揃える。
+      # 問い合わせ API（…workers.dev/api/…）は Worker に残るので書き換えない。
+      - name: Normalize canonical base to hoiku.triocareer.jp
+        run: |
+          set -euo pipefail
+          perl -pi -e 's#https://trioland-social-publisher\.mygate-jp\.workers\.dev(?!/api/)#https://hoiku.triocareer.jp#g' site/*.html site/recruit/*.html site/sitemap.xml site/robots.txt
+          ! grep -rhoP 'mygate-jp\.workers\.dev(?!/api/)' site/*.html site/recruit/*.html site/sitemap.xml site/robots.txt | grep .
+          echo 'canonical base normalized'
+
       - name: Verify every photo decodes end to end
         run: python3 tools/verify_photos.py
 

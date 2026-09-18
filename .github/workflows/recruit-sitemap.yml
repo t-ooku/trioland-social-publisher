@@ -27,7 +27,7 @@ jobs:
           from pathlib import Path
           import html, re
 
-          base='https://trioland-social-publisher.mygate-jp.workers.dev'
+          base='https://hoiku.triocareer.jp'
           recruit=Path('site/recruit')
 
           # Sitemap: make every recruitment article discoverable.
