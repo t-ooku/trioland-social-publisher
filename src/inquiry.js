@@ -29,12 +29,30 @@ const LIMITS = {
   tel: 40,
   child: 120,
   timing: 120,
-  // 放デイのフォームだけが送る項目（学年・学校名・お住まいの町名）
+  // 放デイの利用相談だけが送る項目（学年・学校名・お住まいの町名）
   grade: 60,
   school: 120,
   area: 120,
+  // 放デイの採用だけが送る項目
+  facility: 40,
+  jobType: 60,
+  age: 10,
+  gender: 20,
+  experience: 40,
+  license: 200,
+  employment: 40,
   message: 4000,
 };
+
+// 宛先ごとの必須項目。保育園は従来どおり（名前・連絡先・内容）。
+// 放デイは事業所の指示で「利用相談は学年・学校名・町名・電話番号まで必須、採用は希望施設〜電話番号まで必須」。
+const REQUIRED_BY_DESTINATION = {
+  lopp: ["grade", "school", "area", "tel"],
+  compass: ["grade", "school", "area", "tel"],
+  afterschool_recruit: ["facility", "jobType", "age", "gender", "experience", "license", "employment", "tel"],
+};
+// 放デイは「補足」なので本文は任意。
+const MESSAGE_OPTIONAL = new Set(["lopp", "compass", "afterschool_recruit"]);
 
 const RATE_MAX = 5;                 // 同一IPから
 const RATE_WINDOW_SECONDS = 600;    // 10分で5件まで
@@ -64,7 +82,7 @@ function allowedOrigin(origin) {
   return ok ? origin : "";
 }
 
-function corsHeaders(request) {
+export function corsHeaders(request) {
   const origin = allowedOrigin(request.headers.get("origin"));
   if (!origin) return {};
   return {
@@ -199,17 +217,27 @@ export async function handleInquiry(request, env) {
   const tel = clean(payload?.tel, LIMITS.tel);
   const child = clean(payload?.child, LIMITS.child);
   const timing = clean(payload?.timing, LIMITS.timing);
-  const grade = clean(payload?.grade, LIMITS.grade);
-  const school = clean(payload?.school, LIMITS.school);
-  const area = clean(payload?.area, LIMITS.area);
-  const message = clean(payload?.message, LIMITS.message);
+  const extra = {};
+  for (const key of ["grade", "school", "area", "facility", "jobType", "age", "gender", "experience", "license", "employment"]) {
+    extra[key] = clean(payload?.[key], LIMITS[key]);
+  }
+  let message = clean(payload?.message, LIMITS.message);
 
   if (!name) return reply({ ok: false, error: "NAME_REQUIRED" }, 400, request);
   if (!email && !tel) return reply({ ok: false, error: "CONTACT_REQUIRED" }, 400, request);
   if (email && !looksLikeEmail(email)) {
     return reply({ ok: false, error: "INVALID_EMAIL" }, 400, request);
   }
-  if (!message) return reply({ ok: false, error: "MESSAGE_REQUIRED" }, 400, request);
+  for (const key of REQUIRED_BY_DESTINATION[destination] || []) {
+    const value = key === "tel" ? tel : extra[key];
+    if (!value) return reply({ ok: false, error: "FIELD_REQUIRED", field: key }, 400, request);
+  }
+  if (!message) {
+    if (!MESSAGE_OPTIONAL.has(destination)) {
+      return reply({ ok: false, error: "MESSAGE_REQUIRED" }, 400, request);
+    }
+    message = "（補足なし）";
+  }
 
   const rateKey = await clientKey(request);
   if (await overRateLimit(env, rateKey)) {
@@ -228,9 +256,7 @@ export async function handleInquiry(request, env) {
     tel,
     child,
     timing,
-    grade,
-    school,
-    area,
+    ...extra,
     message,
     userAgent: (request.headers.get("user-agent") || "").slice(0, 300),
   };
