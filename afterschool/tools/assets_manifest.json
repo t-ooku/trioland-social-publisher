@@ -185,5 +185,6 @@
    "kind": "pdf",
    "output": "compass-guardian-assessment-20260501.pdf"
   }
- ]
+ ],
+ "_shared": "2026-09-18: Drive「放課後デイ」フォルダを「リンクを知っている全員（閲覧者）」に設定済み。非公開に戻すと CI が止まる。"
 }
