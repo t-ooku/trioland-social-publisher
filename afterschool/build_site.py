@@ -24,7 +24,7 @@ HOIKU = "https://hoiku.triocareer.jp"
 CORP = "https://www.triocareer.jp/"
 HERE = pathlib.Path(__file__).parent
 OUT = HERE / "site"
-V = "20261005-02"
+V = "20261005-03"
 
 SITE_NAME = "トリオキャリア 放課後等デイサービス"
 RECRUIT = json.loads((HERE / "content" / "recruit.json").read_text(encoding="utf-8"))
@@ -117,6 +117,52 @@ HERO_SLIDES = [
 ]
 
 
+# 跳ねる図形（〇△□）。ロップ／コンパスマイルのブランド色で、トランポリンのように弾む。
+def shapes(cls=""):
+    return f'''<span class="shapes {cls}" aria-hidden="true">
+<svg class="sh sh1" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#ef8a3c"/></svg>
+<svg class="sh sh2" viewBox="0 0 40 40"><path d="M20 3 L37 35 L3 35 Z" fill="#2f8fc9" stroke="#2f8fc9" stroke-width="6" stroke-linejoin="round"/></svg>
+<svg class="sh sh3" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="8" fill="#ffc94a"/></svg>
+<svg class="sh sh4" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#5bb57e"/></svg>
+<svg class="sh sh5" viewBox="0 0 40 40"><path d="M20 3 L37 35 L3 35 Z" fill="#f2789f" stroke="#f2789f" stroke-width="6" stroke-linejoin="round"/></svg>
+</span>'''
+
+
+# 1文字ずつ跳ねる見出し
+def bouncy(text, cls="bouncy"):
+    return f'<span class="{cls}" aria-label="{esc(text)}">' + "".join(
+        f'<span style="--i:{i}" aria-hidden="true">{esc(ch)}</span>' for i, ch in enumerate(text)) + "</span>"
+
+
+# 写真が横に流れ続ける壁。原本は 800x600 なので高さ 240px（2x でも 480px）に抑えて粗くしない。
+def photo_wall():
+    keys = ["park", "kart", "star", "craft", "train"]
+    items = "".join(f'<figure class="pw-item" style="--r:{r}deg">{act_img(k)}<figcaption>{ACT[k][2]}</figcaption></figure>'
+                    for k, r in zip(keys, [-3, 2, -2, 3, -1]))
+    return f'''<div class="pwall" aria-hidden="true"><div class="pwall-in">{items}{items}</div></div>'''
+
+
+# スクロールで要素が現れる演出（IntersectionObserver）。「視差効果を減らす」設定では即表示。
+REVEAL_JS = r'''
+<script>
+(function () {
+  var sel = ".card,.fun,.branch,.gallery figure,.job,.quick>div,.steps>div,.recruit-banner,.band,.docs,.spec,.intro-in,.split>*,.hero>*";
+  var els = [].slice.call(document.querySelectorAll(sel));
+  if (!("IntersectionObserver" in window) || (matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+  els.forEach(function (el) {
+    var i = 0, n = el; while ((n = n.previousElementSibling)) i++;
+    el.classList.add("rv"); el.style.setProperty("--i", Math.min(i, 8));
+  });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
+  els.forEach(function (el) { io.observe(el); });
+  // 念のための保険：何かの理由で監視が働かなくても 8 秒後には全部見える
+  setTimeout(function () { els.forEach(function (el) { el.classList.add("in"); }); }, 8000);
+})();
+</script>'''
+
+
 def hero_slider():
     n = len(HERO_SLIDES)
     slides = ""
@@ -130,6 +176,11 @@ def hero_slider():
     dots = "".join(f'<button class="hs-dot" type="button" aria-label="{i+1}枚目へ" data-go="{i}"></button>' for i in range(n))
     return f'''
 <section class="hs" aria-roledescription="carousel" aria-label="子どもたちの活動の様子">
+  {shapes("hs-shapes")}
+  <div class="hs-head">
+    <p class="hs-kicker">練馬区・豊島区の放課後等デイサービス</p>
+    <h1 class="hs-title">{bouncy("あそびきる！")}<span class="hs-title-sub">が、成長の土台になる。</span></h1>
+  </div>
   <div class="hs-stage">{slides}
   </div>
   <div class="hs-bar">
@@ -296,6 +347,7 @@ def footer():
 </div>
 </div><div class="copyright">© トリオキャリア株式会社</div></footer>
 <div class="mobilebar"><a class="a" href="/contact.html">見学・利用相談</a><a class="b" href="/recruit.html">採用情報</a></div>
+{REVEAL_JS}
 </body></html>'''
 
 
@@ -437,11 +489,19 @@ def recruit_banner():
         f'<b data-job="{p["key"]}" data-field="title">{esc(RECRUIT["jobs"][p["key"]]["title"])}</b>'
         f'<span class="job-open">募集中</span><span class="job-closed">募集停止中</span></a>'
         for p in FACILITIES)
-    return f'''<section class="tight"><div class="wrap"><div class="recruit-banner">
-  <div class="rb-head"><span class="badge hot">採用強化中</span><h2>一緒に遊び、一緒に育つ仲間を募集しています</h2></div>
+    return f'''<section class="tight rb-wrap"><div class="wrap"><div class="recruit-banner">
+  {shapes("rb-shapes")}
+  <div class="rb-head"><span class="badge hot pulse">採用強化中</span><h2>{bouncy("一緒に遊ぶ")}仲間、<br>募集しています！</h2>
+    <p class="rb-lead">この職場、楽しそう。そう思ったら、まず見学に来てください。</p></div>
   <div class="rb-jobs">{items}</div>
-  <a class="btn navy" href="/recruit.html">採用情報を見る</a>
-</div></div></section>'''
+  <a class="btn navy wiggle" href="/recruit.html">採用情報を見る</a>
+</div></div>
+<div class="marquee marquee-recruit" aria-hidden="true"><div class="marquee-in">
+  <span>保育士（正職員）募集</span><span>パート・アルバイト募集</span><span>未経験・ブランクOK</span><span>研修あり</span><span>理学療法士と学べる</span><span>遊びが仕事</span><span>見学歓迎</span>
+  <span>保育士（正職員）募集</span><span>パート・アルバイト募集</span><span>未経験・ブランクOK</span><span>研修あり</span><span>理学療法士と学べる</span><span>遊びが仕事</span><span>見学歓迎</span>
+</div></div>
+{photo_wall()}
+</section>'''
 
 
 # ------------------------------------------------------------------ 問い合わせフォーム
@@ -642,7 +702,7 @@ def page_index():
 <article class="branch">
   <a href="/{p["key"]}.html"><img src="/assets/photos/{p["photo"]}?v={V}" alt="{p["photo_alt"]}" loading="lazy" decoding="async"></a>
   <div class="content">
-    <img class="logo" src="/assets/photos/{p["logo"]}?v={V}" width="{p["logo_w"]}" height="{p["logo_h"]}" alt="{p["name"]} ロゴ" loading="lazy" decoding="async">
+    <img class="logo hop" src="/assets/photos/{p["logo"]}?v={V}" width="{p["logo_w"]}" height="{p["logo_h"]}" alt="{p["name"]} ロゴ" loading="lazy" decoding="async">
     <h3>{p["name"]}</h3>
     <div class="meta">{p["access"][0]}</div>
     <ul>
@@ -663,7 +723,7 @@ def page_index():
 
 <section class="intro"><div class="wrap intro-in">
   <div class="badge">小学生〜高校生／両施設とも送迎あり</div>
-  <h1>練馬区・豊島区の放課後等デイサービス<br><span class="h1-sub">ロップ／コンパスマイル落合南長崎</span></h1>
+  <h2 class="intro-h">練馬区・豊島区の放課後等デイサービス<br><span class="h1-sub">ロップ／コンパスマイル落合南長崎</span></h2>
   <p class="lead">一人ひとりの個性と感覚特性に寄り添い、「好き」「楽しい」から育つ力を支える放課後等デイサービスです。練馬区関町東（ロップ・武蔵関駅）と豊島区南長崎（コンパスマイル落合南長崎・落合南長崎駅）の2事業所で、小学生から高校生までのお子さまをお迎えしています。</p>
   <div class="actions"><a class="btn accent" href="/contact.html">見学・利用のご相談</a><a class="btn outline" href="/approach.html">支援の考え方を見る</a></div>
 </div></section>
@@ -884,12 +944,16 @@ def page_recruit():
 <main>
 <section class="hero-wrap"><div class="wrap hero">
   <div>
-    <div class="badge hot">採用強化中</div>
-    <h1>一緒に遊び、一緒に育つ。</h1>
+    <div class="badge hot pulse">採用強化中</div>
+    <h1>{bouncy("一緒に遊び、")}<br>{bouncy("一緒に育つ。")}</h1>
     <p class="lead">遊びの中にある成長を、支える仕事です。お子さまが夢中になれる時間をつくり、小さな「できた」を一緒に喜ぶ。ロップ（練馬区関町東）では保育士の正職員を、コンパスマイル落合南長崎（豊島区）ではパート・アルバイトのスタッフを募集しています。</p>
-    <div class="actions"><a class="btn accent" href="#jobs">募集中の求人を見る</a><a class="btn outline" href="/contact.html?kind=recruit">応募・問い合わせ</a></div>
+    <div class="actions"><a class="btn accent wiggle" href="#jobs">募集中の求人を見る</a><a class="btn outline" href="/contact.html?kind=recruit">応募・問い合わせ</a></div>
   </div>
-  <div class="hero-media"><figure>{act_img("star", lazy=False)}<figcaption>ロップの職員と子どもたち（お子さまのお顔はスタンプで隠しています）</figcaption></figure></div>
+  <div class="hero-media fan" aria-label="ロップの職員と子どもたち（お子さまのお顔はスタンプで隠しています）">
+    <figure class="fan-item f1">{act_img("kart", lazy=False)}</figure>
+    <figure class="fan-item f2">{act_img("star", lazy=False)}</figure>
+    <figure class="fan-item f3">{act_img("craft", lazy=False)}</figure>
+  </div>
 </div></section>
 
 <section class="tight" id="jobs"><div class="wrap">
@@ -898,6 +962,7 @@ def page_recruit():
   <div class="jobs">{cards}</div>
 </div></section>
 
+{photo_wall()}
 <section><div class="wrap">
   <div class="kicker">WORK</div>
   <h2>こんな方と働きたい</h2>

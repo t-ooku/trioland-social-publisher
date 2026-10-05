@@ -321,20 +321,20 @@ section h2{position:relative}
 .hs::before,.hs::after{content:"";position:absolute;border-radius:50%;pointer-events:none;opacity:.55;z-index:0}
 .hs::before{width:220px;height:220px;background:var(--orange);left:-60px;top:-70px;filter:blur(2px)}
 .hs::after{width:160px;height:160px;background:var(--blue);right:-40px;bottom:40px}
-.hs-stage{position:relative;height:clamp(300px,46vw,560px);z-index:1}
-.hs-slide{position:absolute;top:50%;left:50%;width:min(58vw,760px);aspect-ratio:4/3;max-height:100%;
-  transform:translate(calc(-50% + var(--d,0) * (min(58vw,760px) + 22px)),-50%) scale(.84);
+.hs-stage{position:relative;height:clamp(280px,36vw,430px);z-index:1}
+.hs-slide{position:absolute;top:50%;left:50%;width:min(46vw,560px);aspect-ratio:4/3;max-height:100%;
+  transform:translate(calc(-50% + var(--d,0) * (min(46vw,560px) + 22px)),-50%) scale(.84);
   transition:transform .9s cubic-bezier(.22,.8,.24,1),opacity .9s ease,filter .9s ease;
   border-radius:26px;overflow:hidden;opacity:0;filter:saturate(.75) brightness(.7);cursor:pointer;box-shadow:0 20px 50px rgba(0,0,0,.35)}
 .hs-slide.is-near{opacity:.75}
 .hs-slide.is-active{opacity:1;filter:none;transform:translate(-50%,-50%) scale(1);cursor:default;z-index:2}
 .hs-slide img{width:100%;height:100%;object-fit:cover;display:block}
-.hs-cap{position:absolute;inset:auto 0 0 0;padding:70px 34px 30px;background:linear-gradient(180deg,rgba(15,28,44,0) 0%,rgba(15,28,44,.55) 45%,rgba(15,28,44,.82) 100%);
+.hs-cap{position:absolute;inset:auto 0 0 0;padding:50px 24px 20px;background:linear-gradient(180deg,rgba(15,28,44,0) 0%,rgba(15,28,44,.55) 45%,rgba(15,28,44,.82) 100%);
   opacity:0;transform:translateY(16px);transition:opacity .7s ease .35s,transform .7s ease .35s}
 .hs-slide.is-active .hs-cap{opacity:1;transform:none}
 .hs-tag{margin:0 0 6px;font-size:11px;font-weight:900;letter-spacing:.22em;color:var(--yellow)}
 .hs-tag::before{content:"●";color:var(--orange);margin-right:8px}
-.hs-catch{margin:0;color:#fff;font-size:clamp(24px,3.4vw,44px);line-height:1.3;font-weight:900;text-shadow:0 3px 14px rgba(0,0,0,.35)}
+.hs-catch{margin:0;color:#fff;font-size:clamp(20px,2.4vw,30px);line-height:1.3;font-weight:900;text-shadow:0 3px 14px rgba(0,0,0,.35)}
 .hs-sub{margin:10px 0 0;color:rgba(255,255,255,.92);font-size:14.5px;font-weight:700;line-height:1.7}
 .hs-bar{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:14px;padding:18px 16px 8px}
 .hs-bar button{background:none;border:0;color:#fff;cursor:pointer;font:inherit}
@@ -408,3 +408,80 @@ main{overflow-x:clip}
 }
 .h1-sub{display:block;font-size:.62em;color:var(--orange-d);margin-top:6px}
 .fun>*{position:relative;z-index:1}
+
+
+/* =====================================================================
+   2026-10-05 第2弾：「動」を増やす（採用強化）。画質を落とさないよう、写真は原本 800px の 1.4 倍以内で表示する。
+   ===================================================================== */
+/* ヒーローの見出し（1文字ずつ跳ねる） */
+.hs-head{position:relative;z-index:2;text-align:center;padding:0 16px 14px}
+.hs-kicker{margin:0 0 4px;font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--yellow)}
+.hs-title{margin:0;color:#fff;font-size:clamp(26px,4vw,48px);line-height:1.2}
+.hs-title-sub{display:block;font-size:.5em;font-weight:700;color:rgba(255,255,255,.9);margin-top:6px}
+.bouncy>span{display:inline-block;animation:letter 2.6s cubic-bezier(.3,0,.2,1) infinite;animation-delay:calc(var(--i) * .08s)}
+@keyframes letter{0%,20%,100%{transform:translateY(0)}8%{transform:translateY(-.35em) rotate(-4deg)}14%{transform:translateY(0) scaleY(.94)}}
+/* 跳ねる図形 */
+.shapes{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.sh{position:absolute;width:38px;height:38px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18));animation:sh-bounce 2.4s cubic-bezier(.45,0,.55,1) infinite}
+.sh1{left:6%;top:18%}.sh2{left:14%;top:62%;animation-delay:-.6s;width:30px;height:30px}.sh3{right:9%;top:14%;animation-delay:-1.2s}
+.sh4{right:16%;top:66%;animation-delay:-1.8s;width:26px;height:26px}.sh5{left:50%;top:8%;animation-delay:-.3s;width:24px;height:24px}
+@keyframes sh-bounce{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-42px) rotate(180deg)}}
+.hs-shapes .sh1{top:30%}.hs-shapes .sh3{top:26%}
+/* 募集バナー */
+.rb-wrap{overflow:hidden}
+.recruit-banner{position:relative;overflow:hidden}
+.recruit-banner>*{position:relative;z-index:1}
+.rb-shapes .sh{opacity:.55;width:26px;height:26px}
+.rb-lead{margin:8px 0 0;font-size:14px;color:var(--body)}
+.badge.pulse{animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(239,138,60,.5)}50%{transform:scale(1.06);box-shadow:0 0 0 10px rgba(239,138,60,0)}}
+.btn.wiggle{animation:wiggle 3.2s ease-in-out infinite;white-space:nowrap;align-self:center;justify-self:start}
+.recruit-banner .btn.navy{width:auto;min-width:160px}
+@keyframes wiggle{0%,86%,100%{transform:rotate(0)}89%{transform:rotate(-3deg) scale(1.04)}92%{transform:rotate(3deg) scale(1.04)}95%{transform:rotate(-2deg)}}
+.marquee-recruit{background:var(--navy);transform:rotate(1deg);margin-top:26px}
+.marquee-recruit span::after{content:"✦";color:var(--yellow)}
+/* 写真が流れる壁（高さ 240px：原本 800x600 を 2x でも引き伸ばさない） */
+.pwall{overflow:hidden;margin:26px -12px 0;padding:14px 0}
+.pwall-in{display:flex;gap:22px;width:max-content;animation:pwall 40s linear infinite}
+.pwall:hover .pwall-in{animation-play-state:paused}
+.pw-item{margin:0;background:#fff;padding:10px 10px 8px;border-radius:14px;box-shadow:0 10px 24px rgba(35,48,66,.14);transform:rotate(var(--r));flex:none}
+.pw-item img{height:240px;width:auto;display:block;border-radius:8px}
+.pw-item figcaption{font-size:12px;font-weight:800;text-align:center;padding-top:6px;color:var(--body)}
+@keyframes pwall{to{transform:translateX(-50%)}}
+/* ロゴが跳ねる */
+.hop{animation:hop 2.8s cubic-bezier(.45,0,.55,1) infinite;transform-origin:50% 100%}
+@keyframes hop{0%,100%{transform:translateY(0)}10%{transform:scaleX(1.06) scaleY(.92)}45%{transform:translateY(-14px) rotate(-4deg)}}
+/* 求人ページ：写真を扇状に */
+.hero-media.fan{position:relative;height:340px;justify-content:center;align-items:center;overflow:visible}
+.hero-media.fan figure.fan-item{position:absolute;left:50%;top:50%;margin:0;background:#fff;padding:8px;border-radius:14px;box-shadow:0 14px 34px rgba(35,48,66,.18);width:52%;max-width:240px;animation:fan-float 5s ease-in-out infinite}
+.fan-item img{width:100%;height:auto;border-radius:8px;display:block}
+.fan-item.f1{transform:translate(-50%,-50%) rotate(-10deg) translate(-60%,12%);animation-delay:-1s}
+.fan-item.f2{transform:translate(-50%,-50%) rotate(2deg) translate(0,-6%);z-index:2;animation-delay:-2.5s}
+.fan-item.f3{transform:translate(-50%,-50%) rotate(9deg) translate(60%,14%);animation-delay:-4s}
+@keyframes fan-float{0%,100%{margin-top:0}50%{margin-top:-10px}}
+/* スクロールで現れる */
+.rv{opacity:0;transform:translateY(26px) scale(.985)}
+.rv.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 70ms)}
+.gallery figure.rv.in{transform:rotate(-1.4deg)}
+.gallery figure:nth-child(3n+2).rv.in{transform:rotate(1deg)}
+.gallery figure:nth-child(3n+3).rv.in{transform:rotate(-.6deg)}
+.gallery figure.rv.in:hover{transform:rotate(0) translateY(-4px)}
+.gallery figure img{transition:transform .5s ease}
+.gallery figure:hover img{transform:scale(1.04)}
+.intro-h{font-size:clamp(22px,2.6vw,32px)}
+@media (prefers-reduced-motion: reduce){.bouncy>span,.sh,.badge.pulse,.btn.wiggle,.pwall-in,.hop,.fan-item{animation:none}}
+@media(max-width:940px){
+  .hs-slide{width:min(70vw,560px);transform:translate(calc(-50% + var(--d,0) * (min(70vw,560px) + 16px)),-50%) scale(.86)}
+  .hero-media.fan{height:300px}
+}
+@media(max-width:600px){
+  .hs-head{padding-bottom:8px}
+  .hs-title{font-size:26px}
+  .sh{width:22px;height:22px}
+  .hs-stage{height:calc((100vw - 32px) * .75 + 8px)}
+  .pw-item img{height:170px}
+  .pwall-in{animation-duration:30s}
+  .hero-media.fan{height:250px}
+  .hero-media.fan figure.fan-item{width:54%;padding:6px}
+  .marquee-recruit{margin-top:18px}
+}
