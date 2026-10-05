@@ -24,7 +24,7 @@ HOIKU = "https://hoiku.triocareer.jp"
 CORP = "https://www.triocareer.jp/"
 HERE = pathlib.Path(__file__).parent
 OUT = HERE / "site"
-V = "20261005-01"
+V = "20261005-02"
 
 SITE_NAME = "トリオキャリア 放課後等デイサービス"
 RECRUIT = json.loads((HERE / "content" / "recruit.json").read_text(encoding="utf-8"))
@@ -104,6 +104,97 @@ def act_img(key, cls="", lazy=True):
     return f'<img{c} src="/assets/photos/{f}?v={V}" alt="{alt}"{l} decoding="async">'
 
 
+# トップの自動スライド。写真の中にキャッチコピーを重ねる。
+# (写真, alt, キャッチ, サブコピー, object-position)
+HERO_SLIDES = [
+    ("lopp-act-park.webp", ACT["park"][1], "遊びきる時間が、<br>成長の土台になる。", "公園の芝生で、思いきり。からだ全部で「楽しい」を感じる時間です。", "50% 45%"),
+    ("lopp-act-kart.webp", ACT["kart"][1], "「やってみたい！」を、<br>まるごと応援。", "ゴーカートも、はじめての挑戦も。職員がとなりで見守ります。", "50% 55%"),
+    ("lopp-act-star.webp", ACT["star"][1], "みんなで笑うと、<br>もっと楽しい。", "七夕、お花見、水遊び。季節の行事を子どもたちと一緒に。", "50% 50%"),
+    ("lopp-act-craft.webp", ACT["craft"][1], "「できた！」を、<br>いっしょに喜ぶ。", "小さな「できた」が、自信と次の挑戦につながります。", "50% 58%"),
+    ("lopp-act-train.webp", ACT["train"][1], "まちに出て、<br>世界をひろげる。", "電車でのおでかけも、ルールや順番を自然に学ぶ大切な経験です。", "50% 50%"),
+    ("lopp-room.webp", "ロップの室内。トランポリン、バランスボール、ハンモックのある感覚遊びのスペース", "からだで感じて、<br>こころが整う。", "トランポリン、ハンモック、バランスボール。感覚を育てる遊び場です。", "50% 60%"),
+    ("compass-playroom.webp", "コンパスマイル落合南長崎の遊戯スペース。トランポリンとボールプール", "跳んで、転がって、<br>好きに出会う。", "コンパスマイル落合南長崎にも、夢中になれる遊びがいっぱい。", "50% 60%"),
+]
+
+
+def hero_slider():
+    n = len(HERO_SLIDES)
+    slides = ""
+    for i, (f, alt, catch, sub, pos) in enumerate(HERO_SLIDES):
+        lazy = "" if i < 3 else ' loading="lazy"'
+        slides += f'''
+    <div class="hs-slide" role="group" aria-roledescription="slide" aria-label="{i+1} / {n}" data-i="{i}">
+      <img src="/assets/photos/{f}?v={V}" alt="{alt}" style="object-position:{pos}"{lazy} decoding="async">
+      <div class="hs-cap"><p class="hs-tag">PLAY · SENSE · SMILE</p><p class="hs-catch">{catch}</p><p class="hs-sub">{sub}</p></div>
+    </div>'''
+    dots = "".join(f'<button class="hs-dot" type="button" aria-label="{i+1}枚目へ" data-go="{i}"></button>' for i in range(n))
+    return f'''
+<section class="hs" aria-roledescription="carousel" aria-label="子どもたちの活動の様子">
+  <div class="hs-stage">{slides}
+  </div>
+  <div class="hs-bar">
+    <button class="hs-prev" type="button" aria-label="前の写真">‹</button>
+    <div class="hs-dots">{dots}</div>
+    <span class="hs-count"><b>01</b> / {n:02d}</span>
+    <button class="hs-next" type="button" aria-label="次の写真">›</button>
+    <button class="hs-pause" type="button" aria-label="自動再生を一時停止" aria-pressed="false"><span></span></button>
+  </div>
+  <p class="hs-note">{FACE_NOTE}</p>
+</section>
+<script>
+(function () {{
+  var root = document.querySelector(".hs");
+  if (!root) return;
+  var slides = [].slice.call(root.querySelectorAll(".hs-slide"));
+  var dots = [].slice.call(root.querySelectorAll(".hs-dot"));
+  var count = root.querySelector(".hs-count b");
+  var pauseBtn = root.querySelector(".hs-pause");
+  var n = slides.length, cur = 0, timer = null;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var paused = reduce;
+  function render() {{
+    slides.forEach(function (el, i) {{
+      var d = i - cur;
+      if (d > n / 2) d -= n;
+      if (d < -n / 2) d += n;
+      el.style.setProperty("--d", d);
+      el.classList.toggle("is-active", d === 0);
+      el.classList.toggle("is-near", Math.abs(d) === 1);
+      el.setAttribute("aria-hidden", d === 0 ? "false" : "true");
+    }});
+    dots.forEach(function (b, i) {{ b.classList.toggle("on", i === cur); b.setAttribute("aria-current", i === cur ? "true" : "false"); }});
+    count.textContent = (cur + 1 < 10 ? "0" : "") + (cur + 1);
+  }}
+  function go(i) {{ cur = (i + n) % n; render(); restart(); }}
+  function restart() {{
+    clearInterval(timer);
+    if (!paused && !document.hidden) timer = setInterval(function () {{ cur = (cur + 1) % n; render(); }}, 5200);
+  }}
+  root.querySelector(".hs-prev").addEventListener("click", function () {{ go(cur - 1); }});
+  root.querySelector(".hs-next").addEventListener("click", function () {{ go(cur + 1); }});
+  dots.forEach(function (b) {{ b.addEventListener("click", function () {{ go(+b.getAttribute("data-go")); }}); }});
+  slides.forEach(function (el, i) {{ el.addEventListener("click", function () {{ if (i !== cur) go(i); }}); }});
+  pauseBtn.addEventListener("click", function () {{
+    paused = !paused;
+    pauseBtn.setAttribute("aria-pressed", paused ? "true" : "false");
+    pauseBtn.setAttribute("aria-label", paused ? "自動再生を再開" : "自動再生を一時停止");
+    root.classList.toggle("paused", paused);
+    restart();
+  }});
+  var x0 = null;
+  root.addEventListener("touchstart", function (e) {{ x0 = e.touches[0].clientX; }}, {{ passive: true }});
+  root.addEventListener("touchend", function (e) {{
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
+  }});
+  document.addEventListener("visibilitychange", restart);
+  if (paused) {{ root.classList.add("paused"); pauseBtn.setAttribute("aria-pressed", "true"); }}
+  render(); restart();
+}})();
+</script>'''
+
+
 def act_figure(key):
     f, alt, cap = ACT[key]
     return f'<figure><img src="/assets/photos/{f}?v={V}" alt="{alt}" loading="lazy" decoding="async"><figcaption>{cap}</figcaption></figure>'
@@ -151,6 +242,9 @@ def head(title, desc, path, extra_ld=None, og_image="compass-room-a.webp",
 <meta property="og:image" content="{BASE}/assets/photos/{og_image}?v={V}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#fffdf8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <link rel="stylesheet" href="/assets/site.css?v={V}">
 {ldtags}
 </head>
@@ -565,19 +659,19 @@ def page_index():
         "遊びきる時間が、成長の土台になる。感覚特性に寄り添い「好き」「楽しい」から育つ力を支える放課後等デイサービス。練馬区関町東・武蔵関駅徒歩3分のロップ、豊島区南長崎・落合南長崎駅徒歩5分のコンパスマイル落合南長崎。小学生〜高校生、送迎あり。保育士・児童指導員も募集中。",
         "/", ld) + nav("/") + f'''
 <main>
-<section class="hero-wrap"><div class="wrap hero">
-  <div>
-    <div class="badge">小学生〜高校生／両施設とも送迎あり</div>
-    <h1>遊びきる時間が、<br>成長の土台になる。</h1>
-    <p class="lead">一人ひとりの個性と感覚特性に寄り添い、「好き」「楽しい」から育つ力を支える放課後等デイサービスです。練馬区関町東（ロップ・武蔵関駅）と豊島区南長崎（コンパスマイル落合南長崎・落合南長崎駅）の2事業所で、小学生から高校生までのお子さまをお迎えしています。</p>
-    <div class="actions"><a class="btn accent" href="/contact.html">見学・利用のご相談</a><a class="btn outline" href="/approach.html">支援の考え方を見る</a></div>
-  </div>
-  <div class="collage">
-    {act_img("craft", "big", lazy=False)}
-    {act_img("kart", "small")}
-    <img class="small" src="/assets/photos/lopp-room.webp?v={V}" alt="ロップの室内。トランポリンやバランスボール、ハンモックのある運動・感覚遊びのスペース" loading="lazy" decoding="async">
-  </div>
+{hero_slider()}
+
+<section class="intro"><div class="wrap intro-in">
+  <div class="badge">小学生〜高校生／両施設とも送迎あり</div>
+  <h1>練馬区・豊島区の放課後等デイサービス<br><span class="h1-sub">ロップ／コンパスマイル落合南長崎</span></h1>
+  <p class="lead">一人ひとりの個性と感覚特性に寄り添い、「好き」「楽しい」から育つ力を支える放課後等デイサービスです。練馬区関町東（ロップ・武蔵関駅）と豊島区南長崎（コンパスマイル落合南長崎・落合南長崎駅）の2事業所で、小学生から高校生までのお子さまをお迎えしています。</p>
+  <div class="actions"><a class="btn accent" href="/contact.html">見学・利用のご相談</a><a class="btn outline" href="/approach.html">支援の考え方を見る</a></div>
 </div></section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-in">
+  <span>あそぶ</span><span>かんじる</span><span>できた！</span><span>すき</span><span>わらう</span><span>ちょうせん</span><span>なかま</span>
+  <span>あそぶ</span><span>かんじる</span><span>できた！</span><span>すき</span><span>わらう</span><span>ちょうせん</span><span>なかま</span>
+</div></div>
 
 {recruit_banner()}
 
@@ -601,8 +695,12 @@ def page_index():
   <div class="kicker">ACTIVITIES</div>
   <h2>子どもたちと過ごす、毎日の時間</h2>
   <p class="lead">室内での感覚遊びだけでなく、公園や季節の行事、電車でのおでかけなど、外に出る活動も大切にしています。職員も一緒に遊び、一緒に笑いながら、お子さまの「楽しい」を増やしていきます。</p>
-  <div class="gallery">{act_figure("star")}{act_figure("park")}{act_figure("train")}</div>
-  <p class="note">{FACE_NOTE}</p>
+  <div class="fun-grid">
+    <div class="fun c1"><span class="fun-ico">🌳</span><b>公園あそび</b><p>芝生をかけ回り、寝転んで、からだ全部で遊びます。</p></div>
+    <div class="fun c2"><span class="fun-ico">🎋</span><b>季節の行事</b><p>お花見・七夕・水遊び・芋ほり・いちご狩りなど。</p></div>
+    <div class="fun c3"><span class="fun-ico">✂️</span><b>工作・制作</b><p>職員と一緒に、つくる楽しさと「できた！」を。</p></div>
+    <div class="fun c4"><span class="fun-ico">🚃</span><b>おでかけ</b><p>電車に乗って、まちのルールも自然に学びます。</p></div>
+  </div>
 </div></section>
 
 <section><div class="wrap">
