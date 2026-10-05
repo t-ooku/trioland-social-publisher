@@ -407,3 +407,4 @@ main{overflow-x:clip}
   .gallery figure:nth-child(n){transform:none}
 }
 .h1-sub{display:block;font-size:.62em;color:var(--orange-d);margin-top:6px}
+.fun>*{position:relative;z-index:1}
