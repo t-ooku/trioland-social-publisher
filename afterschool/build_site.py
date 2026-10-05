@@ -24,7 +24,7 @@ HOIKU = "https://hoiku.triocareer.jp"
 CORP = "https://www.triocareer.jp/"
 HERE = pathlib.Path(__file__).parent
 OUT = HERE / "site"
-V = "20260918-02"
+V = "20261005-01"
 
 SITE_NAME = "トリオキャリア 放課後等デイサービス"
 RECRUIT = json.loads((HERE / "content" / "recruit.json").read_text(encoding="utf-8"))
@@ -83,6 +83,30 @@ COMPASS = dict(
     job_label="パート・アルバイトを募集中",
 )
 FACILITIES = [LOPP, COMPASS]
+
+# ロップの活動写真（旧サイトに掲載していたもの）。お子さまの顔はスタンプで隠してある。
+# スタンプは外さないこと・顔が写った写真を追加しないこと（掲載許諾の範囲を超える）。
+# 原本は 800x600（4 だけ 450x600）。表示幅はこれ以下に収めて引き伸ばさない。
+ACT = {
+    "park":  ("lopp-act-park.webp",  "公園の芝生で、職員と子どもたちが寝転んで遊んでいる様子", "公園の芝生で思いきり遊ぶ"),
+    "kart":  ("lopp-act-kart.webp",  "子どもたちがゴーカートを運転し、職員が横で見守っている様子", "ゴーカートに挑戦"),
+    "star":  ("lopp-act-star.webp",  "七夕飾りの下で、職員と子どもたちがピースをしている様子", "七夕の飾りの下でみんなでピース"),
+    "craft": ("lopp-act-craft.webp", "職員と子どもが一緒に工作をしている様子", "職員と一緒に工作"),
+    "train": ("lopp-act-train.webp", "電車の座席に職員と子どもが並んで座っている様子", "電車でおでかけ"),
+}
+FACE_NOTE = "写真はロップでの活動の様子です。お子さまのお顔はスタンプで隠しています。"
+
+
+def act_img(key, cls="", lazy=True):
+    f, alt, _ = ACT[key]
+    c = f' class="{cls}"' if cls else ""
+    l = ' loading="lazy"' if lazy else ""
+    return f'<img{c} src="/assets/photos/{f}?v={V}" alt="{alt}"{l} decoding="async">'
+
+
+def act_figure(key):
+    f, alt, cap = ACT[key]
+    return f'<figure><img src="/assets/photos/{f}?v={V}" alt="{alt}" loading="lazy" decoding="async"><figcaption>{cap}</figcaption></figure>'
 BY_KEY = {p["key"]: p for p in FACILITIES}
 
 # 求人ページと管理画面で共通の項目定義（順番＝表示順）。src/afterschool_recruit.js と合わせること。
@@ -549,9 +573,9 @@ def page_index():
     <div class="actions"><a class="btn accent" href="/contact.html">見学・利用のご相談</a><a class="btn outline" href="/approach.html">支援の考え方を見る</a></div>
   </div>
   <div class="collage">
-    <img class="big" src="/assets/photos/lopp-room.webp?v={V}" alt="ロップの室内。トランポリンやバランスボール、ハンモックのある運動・感覚遊びのスペース" decoding="async">
-    <img class="small" src="/assets/photos/compass-playroom.webp?v={V}" alt="コンパスマイル落合南長崎の遊戯スペース" loading="lazy" decoding="async">
-    <img class="small" src="/assets/photos/compass-room-a.webp?v={V}" alt="コンパスマイル落合南長崎の活動室" loading="lazy" decoding="async">
+    {act_img("craft", "big", lazy=False)}
+    {act_img("kart", "small")}
+    <img class="small" src="/assets/photos/lopp-room.webp?v={V}" alt="ロップの室内。トランポリンやバランスボール、ハンモックのある運動・感覚遊びのスペース" loading="lazy" decoding="async">
   </div>
 </div></section>
 
@@ -572,6 +596,14 @@ def page_index():
   <div class="cards">{approach}</div>
   <div class="actions"><a class="btn outline" href="/approach.html">支援についてくわしく</a></div>
 </div></div></section>
+
+<section><div class="wrap">
+  <div class="kicker">ACTIVITIES</div>
+  <h2>子どもたちと過ごす、毎日の時間</h2>
+  <p class="lead">室内での感覚遊びだけでなく、公園や季節の行事、電車でのおでかけなど、外に出る活動も大切にしています。職員も一緒に遊び、一緒に笑いながら、お子さまの「楽しい」を増やしていきます。</p>
+  <div class="gallery">{act_figure("star")}{act_figure("park")}{act_figure("train")}</div>
+  <p class="note">{FACE_NOTE}</p>
+</div></section>
 
 <section><div class="wrap">
   <div class="kicker">FACILITIES</div>
@@ -621,6 +653,17 @@ def page_approach():
     <p>トランポリンで跳ぶ、ハンモックで揺れる、ボールプールに沈む。こうした遊びは、前庭覚や固有覚といった「身体の感覚」を心地よく整え、姿勢や集中、気持ちの落ち着きにつながります。</p>
     <p>机上のプリント課題やソーシャルスキルトレーニングは行いません。お子さまが自分で選び、夢中になれることを大切にし、職員はその遊びに一緒に入りながら、無理のない範囲で少しずつ挑戦の幅を広げていきます。</p>
   </div>
+</div></section>
+
+<section class="tight"><div class="wrap split">
+  <div>
+    <div class="kicker">OUTINGS</div>
+    <h2>外に出て、いろいろな体験を</h2>
+    <p>公園の芝生を走り回ったり、ゴーカートに挑戦したり、電車に乗っておでかけしたり。外での活動は、身体を大きく使う機会であると同時に、順番を待つ・ルールを守る・公共の場で過ごすといった経験を自然に重ねる場にもなります。</p>
+    <p>お花見や七夕、水遊びなど季節の行事も、子どもたちと一緒に楽しんでいます。</p>
+    <p class="note">{FACE_NOTE}</p>
+  </div>
+  <div class="imgcol">{act_img("train")}</div>
 </div></section>
 
 <section><div class="wrap">
@@ -678,8 +721,9 @@ def page_facility(p, path, gallery, intro, about, active):
 
 <section><div class="wrap">
   <div class="kicker">PHOTOS</div>
-  <h2>施設の様子</h2>
+  <h2>{"施設と活動の様子" if p is LOPP else "施設の様子"}</h2>
   <div class="gallery">{gal}</div>
+  {f'<p class="note">{FACE_NOTE}</p>' if any(f.startswith("lopp-act-") for f, _, _ in gallery) else ""}
 </div></section>
 
 <section class="tight"><div class="wrap">{docs_list(p)}</div></section>
@@ -738,7 +782,7 @@ def page_recruit():
     return head(
         f"採用情報｜保育士（正職員）・児童指導員・指導員（パート・アルバイト）募集｜{SITE_NAME}",
         "放課後等デイサービス ロップ（練馬区関町東・武蔵関駅徒歩3分）で保育士の正職員、コンパスマイル落合南長崎（豊島区・落合南長崎駅徒歩5分）でパート・アルバイトの児童指導員・保育士・指導員を募集。遊びの中にある成長を支える仕事です。",
-        "/recruit.html", ld, og_image="compass-room-b.webp") + nav("/recruit.html") + f'''
+        "/recruit.html", ld, og_image="lopp-act-star.webp") + nav("/recruit.html") + f'''
 <main>
 <section class="hero-wrap"><div class="wrap hero">
   <div>
@@ -747,7 +791,7 @@ def page_recruit():
     <p class="lead">遊びの中にある成長を、支える仕事です。お子さまが夢中になれる時間をつくり、小さな「できた」を一緒に喜ぶ。ロップ（練馬区関町東）では保育士の正職員を、コンパスマイル落合南長崎（豊島区）ではパート・アルバイトのスタッフを募集しています。</p>
     <div class="actions"><a class="btn accent" href="#jobs">募集中の求人を見る</a><a class="btn outline" href="/contact.html?kind=recruit">応募・問い合わせ</a></div>
   </div>
-  <div class="hero-media"><figure><img src="/assets/photos/compass-room-b.webp?v={V}" alt="コンパスマイル落合南長崎の活動室" decoding="async"><figcaption>コンパスマイル落合南長崎 活動室</figcaption></figure></div>
+  <div class="hero-media"><figure>{act_img("star", lazy=False)}<figcaption>ロップの職員と子どもたち（お子さまのお顔はスタンプで隠しています）</figcaption></figure></div>
 </div></section>
 
 <section class="tight" id="jobs"><div class="wrap">
@@ -764,6 +808,7 @@ def page_recruit():
     <div class="card"><h3>行動の背景を考えられる</h3><p>「困った行動」の裏にある感覚や気持ちに目を向け、職員同士で話し合いながら関わり方を考えます。</p></div>
     <div class="card"><h3>学び続けたい</h3><p>感覚統合・ポリヴェーガル理論・原始反射といった考え方を、理学療法士などの専門職と一緒に現場で学べます。</p></div>
   </div>
+  <div class="gallery">{act_figure("craft")}{act_figure("park")}{act_figure("kart")}</div>
 </div></section>
 
 <section class="tight"><div class="wrap">
@@ -836,8 +881,9 @@ def main():
     write("/approach.html", page_approach())
     write("/lopp.html", page_facility(
         LOPP, "/lopp.html",
-        [("lopp-exterior.webp", "ロップの入口。橋本ビル1階、ガラス面にうさぎのイラスト", "入口（橋本ビル1階）"),
-         ("lopp-room.webp", "ロップの室内。トランポリン、バランスボール、ハンモック", "運動・感覚遊びのスペース")],
+        # 入口の写真はページ上部に大きく出しているので、ギャラリーには入れない（同じ写真を並べない）。
+        [("lopp-room.webp", "ロップの室内。トランポリン、バランスボール、ハンモック", "運動・感覚遊びのスペース")]
+        + [ACT[k] for k in ("park", "kart", "star", "craft", "train")],
         "練馬区関町東、武蔵関駅から徒歩約3分。感覚統合療法や遊戯・運動療法の考え方をもとに、身体を思いきり使う遊びから発達の土台を育てます。練馬区・武蔵野市・西東京市への送迎に対応しています。",
         LOPP_ABOUT, "/lopp.html"))
     write("/compass.html", page_facility(

@@ -260,7 +260,8 @@ footer .fac b{color:#fff}
   .lead{font-size:15.5px}
   .page-logo{height:56px}
   .collage{grid-template-columns:1fr 1fr}
-  .collage .big{grid-column:1/-1;grid-row:auto;min-height:230px}
+  /* 活動写真は原本が 800px 以下。スマホで縦長に全幅表示すると粗くなるので、横長の枠に収める。 */
+  .collage .big{grid-column:1/-1;grid-row:auto;min-height:0;aspect-ratio:4/3;object-position:50% 45%}
   .collage .small{min-height:120px}
   .hero-media figure{max-width:100%}
   .hero-media{justify-content:center}

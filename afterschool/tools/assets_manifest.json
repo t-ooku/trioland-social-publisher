@@ -1,5 +1,5 @@
 {
- "_comment": "放デイサイトの元素材。Google Drive「放課後デイ／画像」フォルダ内のファイル。id は Drive のファイルID、sha256 は元ファイルのハッシュ（取得後に照合し、違えば失敗させる）。output は site/assets/ 配下の出力名。絵文字スタンプ入りの lopp-activity-*.jpg は使わない。 lopp-room（室内写真）は Drive アプリがアップロード時に PNG→WebP 変換したもの（放課後デイ／ロップ フォルダ直下）。",
+ "_comment": "放デイサイトの元素材。Google Drive「放課後デイ／画像」フォルダ内のファイル。id は Drive のファイルID、sha256 は元ファイルのハッシュ（取得後に照合し、違えば失敗させる）。output は site/assets/ 配下の出力名。lopp-activity-*.jpg はロップの活動写真で、お子さまの顔はスタンプで隠してある（2026-10-05 掲載。スタンプは外さない）。 lopp-room（室内写真）は Drive アプリがアップロード時に PNG→WebP 変換したもの（放課後デイ／ロップ フォルダ直下）。",
  "files": [
   {
    "id": "1rX2lX9J-lyniv7hOVJrLxe1KAyNm718H",
@@ -40,6 +40,76 @@
     600,
     600
    ]
+  },
+  {
+   "id": "1Vgxq-4bca_vG7xMyS4nGBwisGj0B-MFw",
+   "name": "lopp-activity-1.jpg",
+   "bytes": 123525,
+   "sha256": "4dbd5108f257828a8d8f2b9bb426917116dd5efb2ce69586ad6b940a5808c610",
+   "kind": "photo",
+   "output": "lopp-act-park.webp",
+   "expect": [
+    800,
+    600
+   ],
+   "width": 800,
+   "quality": 90
+  },
+  {
+   "id": "1SfYVUfBNgqbgRlCZHoIo_2ADlhvnE_Hi",
+   "name": "lopp-activity-2.jpg",
+   "bytes": 101392,
+   "sha256": "21e2980bdb2cfeb471cd3dc991a8c929e3cab74af5842e58a6c5b74e0b384547",
+   "kind": "photo",
+   "output": "lopp-act-kart.webp",
+   "expect": [
+    800,
+    600
+   ],
+   "width": 800,
+   "quality": 90
+  },
+  {
+   "id": "12ewY5j3eaQWR7wfcJoCyf2AeTfDJPo9n",
+   "name": "lopp-activity-3.jpg",
+   "bytes": 74131,
+   "sha256": "7030b8f6169ffd885b052b344f8093079514816196b5d46d48407e1000c4058c",
+   "kind": "photo",
+   "output": "lopp-act-star.webp",
+   "expect": [
+    800,
+    600
+   ],
+   "width": 800,
+   "quality": 90
+  },
+  {
+   "id": "1b3-7ulN6zgvmibHj6I4e_N9Z8ICSwdYD",
+   "name": "lopp-activity-4.jpg",
+   "bytes": 38950,
+   "sha256": "20f496bfba3a6e6c9589f50ab340053870a2af59e7ff930d6ee2d6f9b41a9315",
+   "kind": "photo",
+   "output": "lopp-act-craft.webp",
+   "expect": [
+    450,
+    600
+   ],
+   "width": 450,
+   "quality": 90
+  },
+  {
+   "id": "1OoFAI9SCw9Mhav0urGYCmrhLE2xnkKA3",
+   "name": "lopp-activity-5.jpg",
+   "bytes": 86633,
+   "sha256": "415fcc971721882d38b76a2ace0384b4391f114189d36ba5905f26851ac4f491",
+   "kind": "photo",
+   "output": "lopp-act-train.webp",
+   "expect": [
+    800,
+    600
+   ],
+   "width": 800,
+   "quality": 90
   },
   {
    "id": "1zQscSzB7ORn4H1DvG_dXw6P2UJBuxvym",
