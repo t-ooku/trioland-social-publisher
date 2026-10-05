@@ -1,6 +1,9 @@
 # Google Drive にある元写真から site/assets/photos/*.webp を生成してコミットする。
 #
 # 2026-10-05 から、子どもの写真（life-*）はこのワークフローが唯一の生成元。photo-src の base64 版は撤去した。
+# 元写真の置き場：Drive「放課後デイ／HP用写真（公開・CIが自動取込）」フォルダ（ID 10qC5qLJVOrUbfLWoezOUPEVkUh8JlAtw）。
+#   このフォルダは「リンクを知っている全員（閲覧者）」。トリオランド側の原本（IMG_*.JPG）は非公開なので、
+#   ここに life-* の名前でコピーを置いている（2026-10-05）。写真を差し替えるときもこのフォルダにコピーして ID を書き換える。
 # 前提：対象ファイルが Drive で「リンクを知っている全員が閲覧可」になっていること。
 #       非公開のままだと Drive が HTML のログインページを返すため、サイズ検証で
 #       失敗して止まる（壊れた画像はコミットされない）。
@@ -57,13 +60,13 @@ jobs:
               exit 1
             fi
           }
-          dl 1TaEWEmgsfj06Mb6QEOQdPvFCfSfaEoxg life-room
-          dl 1nuspJ-3WKh_jZP5A_g8Ez_3F-zCDgpqA life-play
-          dl 1RmgrdK-YLCHcc-qJAsaKSgTWfkkuWQlD life-toys
-          dl 1FtOwi0Giwjv396YaQz3QfqKSCkrr1Zja life-nature
-          dl 1dlX2jVRZIBdznMhSsK37qOrJ1ZT0jBtS life-table
-          dl 1nG5tM5WNSJ077DaiCQp-qJqMd1Xns7du life-summer
-          dl 1jiXg1imGUyH1LnCmcRpuXqiKcd9t3CQa life-water
+          dl 1_dGCwN0j7OpGYDR7Z8rokJqe4aPjHRjN life-room
+          dl 1GNaP5ztdrOVfureh7tPYJgklC12kcR_c life-play
+          dl 1c8j6HlfBm6rThg6hRzLClTZBR6Ykoz0w life-toys
+          dl 1rJF3Q4dZeK0XRHLRGiDqeo6pW0Fjz1xj life-nature
+          dl 1RD9J_Q0PYGyuBbY3WxK8ExZxYMEVIB52 life-table
+          dl 1oDf9Yaa9_X0JXwyGKlrnMYB6zqgHkRcx life-summer
+          dl 1MzM_URSdRNABCyGJ_3yVLwgttuw2VtPs life-water
 
       - name: Build web images
         shell: bash
