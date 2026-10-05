@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261005-01"
+V = "20261005-02"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -323,11 +323,16 @@ def hero_slider():
         slides += f'''
     <div class="hs-slide" role="group" aria-roledescription="slide" aria-label="{i+1} / {n}">
       <img src="/assets/photos/{f}?v={V}" width="{w}" height="{h}" alt="{alt}" style="object-position:{pos}"{lazy} decoding="async">
-      <div class="hs-cap"><p class="hs-tag">PLAY · GROW · SMILE</p><p class="hs-catch">{catch}</p><p class="hs-sub">{sub}</p></div>
+      <div class="hs-cap"><div class="hs-bubble"><p class="hs-tag">0・1・2さいの まいにち</p><p class="hs-catch">{catch}</p><p class="hs-sub">{sub}</p></div></div>
     </div>'''
     dots = "".join(f'<button class="hs-dot" type="button" aria-label="{i+1}枚目へ" data-go="{i}"></button>' for i in range(n))
     return f'''
 <section class="hs" aria-roledescription="carousel" aria-label="トリオランドの園生活">
+  <div class="hs-deco" aria-hidden="true">
+    <span class="dc balloon b1"></span><span class="dc balloon b2"></span><span class="dc balloon b3"></span>
+    <span class="dc star s1">★</span><span class="dc star s2">★</span><span class="dc star s3">✦</span>
+    <span class="dc cloud c1"></span><span class="dc cloud c2"></span>
+  </div>
   <div class="hs-stage">{slides}
   </div>
   <div class="hs-bar">
@@ -338,6 +343,7 @@ def hero_slider():
     <button class="hs-pause" type="button" aria-label="自動再生を一時停止" aria-pressed="false"><span></span></button>
   </div>
   <p class="hs-note">{PHOTO_NOTE}</p>
+  <svg class="wave" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0,40 C180,80 360,0 540,30 C720,60 900,70 1080,35 C1260,0 1350,20 1440,40 L1440,70 L0,70 Z" fill="#fffdf9"/></svg>
 </section>
 <script>
 (function () {{
@@ -391,8 +397,8 @@ def hero_slider():
 }})();
 </script>
 <div class="marquee" aria-hidden="true"><div class="marquee-in">
-  <span>あそぶ</span><span>たべる</span><span>ねんね</span><span>わらう</span><span>できた！</span><span>だいすき</span><span>おさんぽ</span>
-  <span>あそぶ</span><span>たべる</span><span>ねんね</span><span>わらう</span><span>できた！</span><span>だいすき</span><span>おさんぽ</span>
+  <span>🍼 あそぶ</span><span>🍙 たべる</span><span>😴 ねんね</span><span>😊 わらう</span><span>🎉 できた！</span><span>💛 だいすき</span><span>🌳 おさんぽ</span><span>🎈 えがお</span>
+  <span>🍼 あそぶ</span><span>🍙 たべる</span><span>😴 ねんね</span><span>😊 わらう</span><span>🎉 できた！</span><span>💛 だいすき</span><span>🌳 おさんぽ</span><span>🎈 えがお</span>
 </div></div>'''
 
 # =================================================================== ページ
@@ -411,7 +417,7 @@ def page_index():
 <section class="hero single home-intro">
   <div>
     <span class="badge">東京都世田谷区／企業主導型保育園</span>
-    <h1>0・1・2歳の「やってみたい」を、<br>いちばん近くで見守る保育園。</h1>
+    <h1><span class="num n0">0</span><span class="dot">・</span><span class="num n1">1</span><span class="dot">・</span><span class="num n2">2</span>歳の「やってみたい」を、<br>いちばん近くで見守る保育園。</h1>
     <p class="lead">トリオランドは、世田谷区で<b>駒沢大学園</b>と<b>梅ヶ丘園</b>の2園を運営する企業主導型保育園です。生後57日目から2歳児クラスまで、少人数だからこそできる一人ひとりに合わせた保育で、子どもの毎日の「できた」を積み重ねます。</p>
     <div class="actions">
       <a class="btn pink" href="/contact.html">園見学・入園相談（受付中）</a>

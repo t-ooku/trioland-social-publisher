@@ -371,3 +371,83 @@ main{overflow-x:clip}
   .home-intro{padding-top:28px}
 }
 .fun>*{position:relative;z-index:1}
+
+/* ---------- 保育園らしく、放デイより「もっと楽しく」（2026-10-05 第2弾） ---------- */
+/* スライドの舞台：紺 → パステルの空色。吹き出し・風船・星・雲を浮かべる。 */
+.hs{background:linear-gradient(180deg,#dff1fb 0%,#fff6e3 100%);color:var(--ink);padding-top:30px;padding-bottom:0}
+.hs::before,.hs::after{display:none}
+.hs-deco{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.dc{position:absolute;display:block}
+.balloon{width:46px;height:58px;border-radius:50% 50% 50% 50%/45% 45% 55% 55%;animation:float 6s ease-in-out infinite}
+.balloon::after{content:"";position:absolute;left:50%;bottom:-40px;width:2px;height:40px;background:rgba(34,48,63,.25);transform:translateX(-50%)}
+.b1{left:4%;top:14%;background:var(--pink);animation-delay:0s}
+.b2{left:9%;top:52%;background:var(--yellow);width:36px;height:46px;animation-delay:-2s}
+.b3{right:5%;top:20%;background:#7fc7e8;animation-delay:-4s}
+.star{font-size:26px;color:var(--yellow);animation:twinkle 2.6s ease-in-out infinite}
+.s1{left:16%;top:8%}.s2{right:14%;top:58%;font-size:18px;animation-delay:-1s}.s3{right:9%;top:6%;color:var(--pink);font-size:20px;animation-delay:-.5s}
+.cloud{width:110px;height:36px;background:#fff;border-radius:40px;opacity:.9;animation:drift 18s linear infinite}
+.cloud::before{content:"";position:absolute;left:22px;top:-20px;width:46px;height:46px;background:#fff;border-radius:50%}
+.cloud::after{content:"";position:absolute;left:58px;top:-10px;width:34px;height:34px;background:#fff;border-radius:50%}
+.c1{left:-120px;top:6%}.c2{left:-120px;top:64%;animation-delay:-9s;transform:scale(.7)}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+@keyframes twinkle{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.35);opacity:.6}}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 240px))}}
+.hs-slide{border:8px solid #fff;border-radius:22px;box-shadow:0 18px 40px rgba(34,48,63,.18);filter:saturate(.85) brightness(.9)}
+.hs-slide.is-active{filter:none}
+/* マスキングテープ風の飾り */
+.hs-slide.is-active::before{content:"";position:absolute;left:50%;top:-14px;width:110px;height:26px;transform:translateX(-50%) rotate(-3deg);
+  background:rgba(255,201,74,.85);border-radius:3px;z-index:3}
+.hs-cap{background:none;padding:0 18px 18px}
+.hs-bubble{display:inline-block;background:#fff;border:3px solid var(--pink);border-radius:22px;padding:14px 20px 12px;position:relative;max-width:min(92%,520px);box-shadow:0 10px 24px rgba(34,48,63,.15)}
+.hs-bubble::after{content:"";position:absolute;left:38px;bottom:-16px;border:10px solid transparent;border-top-color:var(--pink);border-bottom:0}
+.hs-tag{color:var(--green);margin-bottom:4px}
+.hs-tag::before{content:"🌼";margin-right:6px}
+.hs-catch{color:var(--ink);font-size:clamp(20px,2.4vw,30px);text-shadow:none}
+.hs-sub{color:var(--body);font-size:13.5px;margin-top:6px}
+.hs-bar button{color:var(--ink)}
+.hs-prev,.hs-next{background:#fff!important;box-shadow:0 4px 12px rgba(34,48,63,.12)}
+.hs-prev:hover,.hs-next:hover{background:var(--pink)!important;color:#fff}
+.hs-dot{background:rgba(34,48,63,.2)!important}
+.hs-dot.on{background:var(--pink)!important}
+.hs-count{color:var(--muted)}.hs-count b{color:var(--ink)}
+.hs-pause span{border-color:var(--ink)}
+.hs.paused .hs-pause span{border-color:transparent transparent transparent var(--ink)}
+.hs-note{color:var(--muted);padding-bottom:0}
+.wave{display:block;width:100%;height:56px;margin-top:-6px;position:relative;z-index:1}
+/* 帯：スカラップ（波形）の縁とパステルのストライプ */
+.marquee{background:repeating-linear-gradient(135deg,var(--pink) 0 40px,#f78fb0 40px 80px);transform:rotate(-1.6deg);padding:14px 0;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box,radial-gradient(circle at 50% 0,transparent 7px,#000 8px) top/28px 14px repeat-x,radial-gradient(circle at 50% 100%,transparent 7px,#000 8px) bottom/28px 14px repeat-x;
+  -webkit-mask-composite:destination-in;mask-composite:intersect;mask:linear-gradient(#000 0 0) padding-box,radial-gradient(circle at 50% 0,transparent 7px,#000 8px) top/28px 14px repeat-x,radial-gradient(circle at 50% 100%,transparent 7px,#000 8px) bottom/28px 14px repeat-x}
+.marquee span::after{content:"";margin:0}
+.marquee span{font-size:21px}
+/* 数字をカラフルに */
+.home-intro h1 .num{display:inline-block;font-size:1.25em;line-height:1;padding:0 .08em;transform:rotate(-6deg)}
+.home-intro h1 .n0{color:var(--pink)}.home-intro h1 .n1{color:#f0b43c;transform:rotate(5deg)}.home-intro h1 .n2{color:var(--green);transform:rotate(-4deg)}
+.home-intro h1 .dot{color:var(--muted);font-size:.7em}
+/* 見出しの下線をクレヨン風に */
+section>h2::after{height:8px;border-radius:8px 3px 8px 3px;transform:rotate(-1deg);opacity:.9}
+/* 毎日のカード：角をもっと丸く、アイコンをゆらす */
+.fun{border-radius:32px 32px 32px 10px;border:3px solid #fff}
+.fun-ico{animation:bob 3.2s ease-in-out infinite;display:inline-block}
+.fun:nth-child(2) .fun-ico{animation-delay:-.8s}.fun:nth-child(3) .fun-ico{animation-delay:-1.6s}.fun:nth-child(4) .fun-ico{animation-delay:-2.4s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(4deg)}}
+/* 園カードにパステルの背景と角丸 */
+.branch{border:0;border-radius:30px;box-shadow:0 14px 34px rgba(34,48,63,.1)}
+.branch-grid .branch:nth-child(1) .content{background:linear-gradient(180deg,#fff,#fff4f7)}
+.branch-grid .branch:nth-child(2) .content{background:linear-gradient(180deg,#fff,#eef8f1)}
+/* 背景に淡い水玉 */
+body{background-image:radial-gradient(rgba(228,84,127,.07) 2px,transparent 2.5px),radial-gradient(rgba(95,146,115,.07) 2px,transparent 2.5px);background-size:46px 46px,46px 46px;background-position:0 0,23px 23px}
+header,footer,.hs,.soft,.blue,.mintbox,.cta,.card,.branch,.inquiry,.quick div,.facts div,.flow div,.steps div,.faq details,.spec,.fun{background-image:none}
+@media (prefers-reduced-motion: reduce){.balloon,.star,.cloud,.fun-ico{animation:none}}
+@media(max-width:600px){
+  .hs{padding-top:16px}
+  .hs-slide{border-width:5px}
+  .hs-bubble{padding:10px 14px 9px;border-width:2px;border-radius:16px}
+  .hs-catch{font-size:17px}
+  .hs-sub{display:none}
+  .hs-tag{display:block;font-size:10px}
+  .balloon{width:28px;height:36px}.balloon::after{height:24px;bottom:-24px}
+  .cloud{transform:scale(.6)}
+  .marquee span{font-size:16px}
+  .wave{height:34px}
+}
