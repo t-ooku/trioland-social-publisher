@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20260915-02"
+V = "20261005-01"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -79,6 +79,9 @@ def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-previe
 <meta property="og:image" content="{BASE}/assets/photos/{og_image}?v={V}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#fffdf9">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <link rel="stylesheet" href="/assets/site.css?v={V}">
 {ldtags}
 </head>
@@ -290,6 +293,108 @@ def inquiry_form(mode):
 
 PHOTO_NOTE = "写真はトリオランドの実際の園生活の記録です。"
 
+# トップの自動スライド。写真の中にキャッチコピーを重ねる（放デイサイトと同じ仕組み）。
+# (写真, 幅, 高さ, alt, キャッチ, サブコピー, object-position)
+# 写真の原本は 880px 幅（life-water は 675x900）。スライドの枠は 680px までに抑えて引き伸ばさない。
+# 外観写真は下の「2園」カードで使うので、ここには入れない（同じ写真を並べない）。
+HERO_SLIDES = [
+    ("life-play.webp", 880, 565, "保育室でカラフルな器を手に取ってあそぶ子どもと保育士",
+     "はじめての「できた！」が、<br>毎日うまれる。", "0・1・2歳の小さな挑戦を、保育士がいちばん近くで見守ります。", "50% 45%"),
+    ("life-water.webp", 675, 900, "タライのそばに立って水あそびに夢中になっている子ども",
+     "水しぶきも、笑い声も、<br>夏のたからもの。", "季節を感じるあそびを、毎日の保育に取り入れています。", "50% 40%"),
+    ("life-nature.webp", 880, 506, "机を囲んで保育士と一緒に生き物をやさしく観察する子どもたち",
+     "小さな命に、<br>そっとふれる。", "力を加減しながら、生き物とふれあう時間。", "50% 50%"),
+    ("life-table.webp", 880, 489, "机の上にのりやはさみ、紙の丸シールを広げて制作活動をしているところ",
+     "つくるって、<br>たのしい！", "のり、はさみ、シール。指先をたくさん使う制作あそび。", "50% 50%"),
+    ("life-room.webp", 880, 565, "保育室で保育士が子どもたちにおもちゃの器を手渡しているところ",
+     "雨の日だって、<br>からだを動かそう。", "お散歩に行けない日も、室内で体をたっぷり動かします。", "50% 45%"),
+    ("life-summer.webp", 880, 429, "水をはったタライでボールなどを使って水あそびをする子どもたち",
+     "みんなで遊ぶと、<br>もっと楽しい。", "お友だちと一緒に、ぱしゃぱしゃ水あそび。", "50% 50%"),
+    ("life-toys.webp", 880, 565, "保育室でベビーベッドのそばを歩く子どもと見守る保育士",
+     "安心できる場所だから、<br>のびのび育つ。", "少人数の保育室で、一人ひとりに目が届きます。", "50% 45%"),
+]
+
+
+def hero_slider():
+    n = len(HERO_SLIDES)
+    slides = ""
+    for i, (f, w, h, alt, catch, sub, pos) in enumerate(HERO_SLIDES):
+        lazy = "" if i < 3 else ' loading="lazy"'
+        slides += f'''
+    <div class="hs-slide" role="group" aria-roledescription="slide" aria-label="{i+1} / {n}">
+      <img src="/assets/photos/{f}?v={V}" width="{w}" height="{h}" alt="{alt}" style="object-position:{pos}"{lazy} decoding="async">
+      <div class="hs-cap"><p class="hs-tag">PLAY · GROW · SMILE</p><p class="hs-catch">{catch}</p><p class="hs-sub">{sub}</p></div>
+    </div>'''
+    dots = "".join(f'<button class="hs-dot" type="button" aria-label="{i+1}枚目へ" data-go="{i}"></button>' for i in range(n))
+    return f'''
+<section class="hs" aria-roledescription="carousel" aria-label="トリオランドの園生活">
+  <div class="hs-stage">{slides}
+  </div>
+  <div class="hs-bar">
+    <button class="hs-prev" type="button" aria-label="前の写真">‹</button>
+    <div class="hs-dots">{dots}</div>
+    <span class="hs-count"><b>01</b> / {n:02d}</span>
+    <button class="hs-next" type="button" aria-label="次の写真">›</button>
+    <button class="hs-pause" type="button" aria-label="自動再生を一時停止" aria-pressed="false"><span></span></button>
+  </div>
+  <p class="hs-note">{PHOTO_NOTE}</p>
+</section>
+<script>
+(function () {{
+  var root = document.querySelector(".hs");
+  if (!root) return;
+  var slides = [].slice.call(root.querySelectorAll(".hs-slide"));
+  var dots = [].slice.call(root.querySelectorAll(".hs-dot"));
+  var count = root.querySelector(".hs-count b");
+  var pauseBtn = root.querySelector(".hs-pause");
+  var n = slides.length, cur = 0, timer = null;
+  var paused = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  function render() {{
+    slides.forEach(function (el, i) {{
+      var d = i - cur;
+      if (d > n / 2) d -= n;
+      if (d < -n / 2) d += n;
+      el.style.setProperty("--d", d);
+      el.classList.toggle("is-active", d === 0);
+      el.classList.toggle("is-near", Math.abs(d) === 1);
+      el.setAttribute("aria-hidden", d === 0 ? "false" : "true");
+    }});
+    dots.forEach(function (b, i) {{ b.classList.toggle("on", i === cur); b.setAttribute("aria-current", i === cur ? "true" : "false"); }});
+    count.textContent = (cur + 1 < 10 ? "0" : "") + (cur + 1);
+  }}
+  function restart() {{
+    clearInterval(timer);
+    if (!paused && !document.hidden) timer = setInterval(function () {{ cur = (cur + 1) % n; render(); }}, 5200);
+  }}
+  function go(i) {{ cur = (i + n) % n; render(); restart(); }}
+  root.querySelector(".hs-prev").addEventListener("click", function () {{ go(cur - 1); }});
+  root.querySelector(".hs-next").addEventListener("click", function () {{ go(cur + 1); }});
+  dots.forEach(function (b) {{ b.addEventListener("click", function () {{ go(+b.getAttribute("data-go")); }}); }});
+  slides.forEach(function (el, i) {{ el.addEventListener("click", function () {{ if (i !== cur) go(i); }}); }});
+  pauseBtn.addEventListener("click", function () {{
+    paused = !paused;
+    pauseBtn.setAttribute("aria-pressed", paused ? "true" : "false");
+    pauseBtn.setAttribute("aria-label", paused ? "自動再生を再開" : "自動再生を一時停止");
+    root.classList.toggle("paused", paused);
+    restart();
+  }});
+  var x0 = null;
+  root.addEventListener("touchstart", function (e) {{ x0 = e.touches[0].clientX; }}, {{ passive: true }});
+  root.addEventListener("touchend", function (e) {{
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
+  }});
+  document.addEventListener("visibilitychange", restart);
+  if (paused) {{ root.classList.add("paused"); pauseBtn.setAttribute("aria-pressed", "true"); }}
+  render(); restart();
+}})();
+</script>
+<div class="marquee" aria-hidden="true"><div class="marquee-in">
+  <span>あそぶ</span><span>たべる</span><span>ねんね</span><span>わらう</span><span>できた！</span><span>だいすき</span><span>おさんぽ</span>
+  <span>あそぶ</span><span>たべる</span><span>ねんね</span><span>わらう</span><span>できた！</span><span>だいすき</span><span>おさんぽ</span>
+</div></div>'''
+
 # =================================================================== ページ
 def page_index():
     ld = [ORG_LD, {
@@ -300,9 +405,10 @@ def page_index():
         "東京都世田谷区の企業主導型保育園トリオランド。駒沢大学駅・三軒茶屋駅の駒沢大学園と、梅ヶ丘駅すぐの梅ヶ丘園。生後57日目〜2歳児クラス、自園調理・園庭あり・7:30〜20:30開園。園見学・入園相談、保育士／保育補助の求人も受付中です。",
         "/", ld) + nav("/") + f'''
 <main>
+{hero_slider()}
 <div class="wrap">
 
-<section class="hero single">
+<section class="hero single home-intro">
   <div>
     <span class="badge">東京都世田谷区／企業主導型保育園</span>
     <h1>0・1・2歳の「やってみたい」を、<br>いちばん近くで見守る保育園。</h1>
@@ -386,23 +492,14 @@ def page_index():
 
 <section class="soft">
   <div class="kicker">DAILY LIFE</div>
-  <h2>写真で見る、トリオランドの毎日。</h2>
-  <p class="lead">文章だけでは伝わりにくい「楽しそう」「安心して預けられそう」を、実際の園生活の記録からご紹介します。</p>
-  <div class="gallery">
-    <figure>
-      <img src="/assets/photos/life-room.webp?v={V}" width="880" height="565" alt="保育室で保育士が子どもたちにおもちゃの器を手渡しているところ" loading="lazy" decoding="async">
-      <figcaption>お散歩に行けない日も、室内で体をたっぷり動かします。</figcaption>
-    </figure>
-    <figure>
-      <img src="/assets/photos/life-play.webp?v={V}" width="880" height="565" alt="保育室でカラフルな器を手に取ってあそぶ子どもと保育士" loading="lazy" decoding="async">
-      <figcaption>「やってみたい」に、そっと手が届く距離で。</figcaption>
-    </figure>
-    <figure>
-      <img src="/assets/photos/life-nature.webp?v={V}" width="880" height="506" alt="机を囲んで保育士と一緒に生き物をやさしく観察する子どもたち" loading="lazy" decoding="async">
-      <figcaption>力を加減しながら、生き物とふれあう時間。</figcaption>
-    </figure>
+  <h2>毎日が、ちいさな発見でいっぱい。</h2>
+  <p class="lead">お散歩、給食、水あそび、制作。0・1・2歳の毎日は、「はじめて」と「できた！」の連続です。保育士も一緒に笑いながら、子どもたちの毎日を見守っています。</p>
+  <div class="fun-grid">
+    <div class="fun c1"><span class="fun-ico">🌳</span><b>お散歩・園庭あそび</b><p>天気の良い日は近くの公園へ。園庭でも思いきり体を動かします。</p></div>
+    <div class="fun c2"><span class="fun-ico">🍙</span><b>自園調理の給食</b><p>両園とも園内のキッチンで調理。食べる量やペースも一人ひとりに合わせます。</p></div>
+    <div class="fun c3"><span class="fun-ico">💦</span><b>季節のあそび</b><p>夏は水あそび。季節を感じるあそびを保育に取り入れています。</p></div>
+    <div class="fun c4"><span class="fun-ico">✂️</span><b>制作あそび</b><p>のり・はさみ・シール。指先をたくさん使って「つくる」を楽しみます。</p></div>
   </div>
-  <p class="lead" style="margin-top:18px;font-size:14px;color:#6d7a88">※園ごとの写真は順次追加しています。園内の雰囲気は園見学でもご確認いただけます。</p>
 </section>
 
 <section>
