@@ -89,6 +89,10 @@ jobs:
           for f in "${legacy[@]}"; do
             if [ -e "$f" ]; then git rm -r --quiet "$f"; echo "removed $f"; fi
           done
+          # 2026-10-05: 子どもの写真は sync-site-images.yml が Drive の原本から作る。base64 版（880px）は撤去。
+          for f in site/assets/photo-src/life-*.b64; do
+            if [ -e "$f" ]; then git rm --quiet "$f"; echo "removed $f"; fi
+          done
 
       - name: Show what the build produced
         if: always()
