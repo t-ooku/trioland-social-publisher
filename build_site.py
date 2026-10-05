@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261005-04"
+V = "20261005-05"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -325,22 +325,22 @@ def trio(cls="", anim="dance"):
 
 # トップの自動スライド。写真の中にキャッチコピーを重ねる（放デイサイトと同じ仕組み）。
 # (写真, 幅, 高さ, alt, キャッチ, サブコピー, object-position)
-# 写真の原本は 880px 幅（life-water は 675x900）。スライドの枠は 680px までに抑えて引き伸ばさない。
+# 写真は Drive の原本から 1200px 幅（life-water は 900x1200）で生成（sync-site-images.yml）。スライドの枠は最大 680px。
 # 外観写真は下の「2園」カードで使うので、ここには入れない（同じ写真を並べない）。
 HERO_SLIDES = [
-    ("life-play.webp", 880, 565, "保育室でカラフルな器を手に取ってあそぶ子どもと保育士",
+    ("life-play.webp", 1200, 770, "保育室でカラフルな器を手に取ってあそぶ子どもと保育士",
      "はじめての「できた！」が、<br>毎日うまれる。", "0・1・2歳の小さな挑戦を、保育士がいちばん近くで見守ります。", "50% 45%"),
-    ("life-water.webp", 675, 900, "タライのそばに立って水あそびに夢中になっている子ども",
+    ("life-water.webp", 900, 1200, "タライのそばに立って水あそびに夢中になっている子ども",
      "水しぶきも、笑い声も、<br>夏のたからもの。", "季節を感じるあそびを、毎日の保育に取り入れています。", "50% 40%"),
-    ("life-nature.webp", 880, 506, "机を囲んで保育士と一緒に生き物をやさしく観察する子どもたち",
+    ("life-nature.webp", 1200, 690, "机を囲んで保育士と一緒に生き物をやさしく観察する子どもたち",
      "小さな命に、<br>そっとふれる。", "力を加減しながら、生き物とふれあう時間。", "50% 50%"),
-    ("life-table.webp", 880, 489, "机の上にのりやはさみ、紙の丸シールを広げて制作活動をしているところ",
+    ("life-table.webp", 1110, 617, "机の上にのりやはさみ、紙の丸シールを広げて制作活動をしているところ",
      "つくるって、<br>たのしい！", "のり、はさみ、シール。指先をたくさん使う制作あそび。", "50% 50%"),
-    ("life-room.webp", 880, 565, "保育室で保育士が子どもたちにおもちゃの器を手渡しているところ",
+    ("life-room.webp", 1200, 770, "保育室で保育士が子どもたちにおもちゃの器を手渡しているところ",
      "雨の日だって、<br>からだを動かそう。", "お散歩に行けない日も、室内で体をたっぷり動かします。", "50% 45%"),
-    ("life-summer.webp", 880, 429, "水をはったタライでボールなどを使って水あそびをする子どもたち",
+    ("life-summer.webp", 1080, 527, "水をはったタライでボールなどを使って水あそびをする子どもたち",
      "みんなで遊ぶと、<br>もっと楽しい。", "お友だちと一緒に、ぱしゃぱしゃ水あそび。", "50% 50%"),
-    ("life-toys.webp", 880, 565, "保育室でベビーベッドのそばを歩く子どもと見守る保育士",
+    ("life-toys.webp", 1200, 770, "保育室でベビーベッドのそばを歩く子どもと見守る保育士",
      "安心できる場所だから、<br>のびのび育つ。", "少人数の保育室で、一人ひとりに目が届きます。", "50% 45%"),
 ]
 
@@ -726,7 +726,7 @@ def page_contact():
     </div>
   </div>
   <div class="hero-media"><figure>
-    <img src="/assets/photos/life-summer.webp?v={V}" width="880" height="429" alt="水をはったタライでボールなどを使って水あそびをする子どもたち" loading="lazy" decoding="async">
+    <img src="/assets/photos/life-summer.webp?v={V}" width="1080" height="527" alt="水をはったタライでボールなどを使って水あそびをする子どもたち" loading="lazy" decoding="async">
     <figcaption>園での過ごし方も、見学でご案内します</figcaption>
   </figure></div>
 </section>
@@ -805,7 +805,7 @@ def page_recruit():
     </div>
   </div>
   <div class="hero-media"><figure>
-    <img src="/assets/photos/life-table.webp?v={V}" width="880" height="489" alt="机の上にのりやはさみ、紙の丸シールを広げて制作活動をしているところ" fetchpriority="high" decoding="async">
+    <img src="/assets/photos/life-table.webp?v={V}" width="1110" height="617" alt="机の上にのりやはさみ、紙の丸シールを広げて制作活動をしているところ" fetchpriority="high" decoding="async">
     <figcaption>0〜2歳の少人数保育です</figcaption>
   </figure></div>
 </section>
@@ -887,7 +887,7 @@ def page_recruit():
       <div class="actions"><a class="btn navy" href="/recruit/">求人ガイド一覧を見る</a><a class="btn outline" href="/column.html">保育士求人コラム</a></div>
     </div>
     <div class="imgcol">
-      <img class="portrait" src="/assets/photos/life-water.webp?v={V}" width="675" height="900" alt="タライのそばに立って水あそびに夢中になっている子ども" loading="lazy" decoding="async">
+      <img class="portrait" src="/assets/photos/life-water.webp?v={V}" width="900" height="1200" alt="タライのそばに立って水あそびに夢中になっている子ども" loading="lazy" decoding="async">
     </div>
   </div>
 </section>
@@ -1043,7 +1043,7 @@ def page_column():
     </div>
   </div>
   <div class="hero-media"><figure>
-    <img src="/assets/photos/life-toys.webp?v={V}" width="880" height="565" alt="保育室でベビーベッドのそばを歩く子どもと見守る保育士" loading="lazy" decoding="async">
+    <img src="/assets/photos/life-toys.webp?v={V}" width="1200" height="770" alt="保育室でベビーベッドのそばを歩く子どもと見守る保育士" loading="lazy" decoding="async">
     <figcaption>0〜2歳の少人数保育の現場です</figcaption>
   </figure></div>
 </section>
