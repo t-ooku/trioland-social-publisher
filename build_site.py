@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261005-02"
+V = "20261005-04"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -126,7 +126,7 @@ def footer():
 <li><a href="/column.html">保育士求人コラム</a></li>
 </ul>
 </div>
-</div><div class="copyright">© トリオランド／トリオキャリア株式会社</div></footer>
+</div><div class="copyright">{trio("trio-sm", "bounce")}<br>© トリオランド／トリオキャリア株式会社</div></footer>
 <div class="mobilebar"><a class="a" href="/contact.html">見学・入園相談</a><a class="b" href="/recruit.html">採用情報</a></div>
 </body></html>'''
 
@@ -178,7 +178,7 @@ def crumbs(items):
 
 def cta(title, text, primary=("/contact.html", "見学・入園相談をする"), second=None):
     s = f'<a class="btn ghost" href="{second[0]}">{second[1]}</a>' if second else ""
-    return f'''<section><div class="cta"><h2>{title}</h2><p>{text}</p>
+    return f'''<section><div class="cta">{trio("trio-cta", "wobble")}<h2>{title}</h2><p>{text}</p>
 <div class="actions"><a class="btn" href="{primary[0]}">{primary[1]}</a>{s}</div></div></section>'''
 
 # 問い合わせフォーム。送信先の実アドレスはこのコードに書かない（リポジトリは公開）。
@@ -293,6 +293,36 @@ def inquiry_form(mode):
 
 PHOTO_NOTE = "写真はトリオランドの実際の園生活の記録です。"
 
+MASCOT_SVG = {
+    # まる（黄）: びっくり顔と「！」
+    "maru": '''<svg viewBox="-60 -60 120 120" aria-hidden="true" focusable="false">
+<g class="m-body"><circle cx="0" cy="4" r="46" fill="#f0c26a"/>
+<g class="m-eyes"><circle cx="-16" cy="-6" r="9" fill="#fff"/><circle cx="-13.5" cy="-3" r="5" fill="#f0c26a"/><circle cx="16" cy="-6" r="9" fill="#fff"/><circle cx="18.5" cy="-3" r="5" fill="#f0c26a"/></g>
+<ellipse cx="2" cy="20" rx="7.5" ry="10" fill="#fff"/></g>
+<g class="m-mark" fill="#f0c26a"><path d="M-56 -46 l-3 -16 a4 4 0 0 1 8 -1 l-1 17 a2 2 0 0 1 -4 0z" transform="translate(6 2) rotate(-12 -56 -46)"/><circle cx="-52" cy="-36" r="3.2"/></g></svg>''',
+    # しかく（青）: にっこり顔と頭の上のキラキラ
+    "shikaku": '''<svg viewBox="-60 -60 120 120" aria-hidden="true" focusable="false">
+<g class="m-body" transform="rotate(-6)"><rect x="-46" y="-44" width="92" height="90" rx="24" fill="#86c5d7"/>
+<g class="m-eyes"><circle cx="-17" cy="-8" r="9" fill="#fff"/><circle cx="-14.5" cy="-5" r="5" fill="#86c5d7"/><circle cx="17" cy="-8" r="9" fill="#fff"/><circle cx="19.5" cy="-5" r="5" fill="#86c5d7"/></g>
+<path d="M-14 16 q14 10 28 0 q2 9 -14 11 q-16 -2 -14 -11z" fill="#fff"/></g>
+<g class="m-mark" stroke="#86c5d7" stroke-width="5" stroke-linecap="round" fill="none"><path d="M-12 -58 l-2 -11"/><path d="M0 -60 l0 -12"/><path d="M12 -58 l2 -11"/></g></svg>''',
+    # さんかく（桃）: 大きな笑顔と「？」
+    "sankaku": '''<svg viewBox="-60 -60 120 120" aria-hidden="true" focusable="false">
+<g class="m-body"><path d="M8 -36 L44 30 L-42 34 Z" fill="#da7499" stroke="#da7499" stroke-width="26" stroke-linejoin="round"/>
+<g class="m-eyes"><circle cx="-9" cy="4" r="8.5" fill="#fff"/><circle cx="-6.8" cy="6.8" r="4.8" fill="#da7499"/><circle cx="21" cy="6" r="8.5" fill="#fff"/><circle cx="23.2" cy="8.8" r="4.8" fill="#da7499"/></g>
+<path d="M-14 20 Q6 36 26 22 Q22 34 6 34 Q-10 34 -14 20 Z" fill="#fff"/></g>
+<g class="m-mark"><path d="M44 -48 a9 9 0 1 1 12 8 q-4 2 -4 7" stroke="#da7499" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="52" cy="-22" r="3.2" fill="#da7499"/></g></svg>''',
+}
+
+
+def mascot(kind, cls=""):
+    return f'<span class="mc mc-{kind} {cls}">{MASCOT_SVG[kind]}</span>'
+
+
+def trio(cls="", anim="dance"):
+    return (f'<span class="trio {cls}" aria-hidden="true">'
+            f'{mascot("maru", anim + " d1")}{mascot("shikaku", anim + " d2")}{mascot("sankaku", anim + " d3")}</span>')
+
 # トップの自動スライド。写真の中にキャッチコピーを重ねる（放デイサイトと同じ仕組み）。
 # (写真, 幅, 高さ, alt, キャッチ, サブコピー, object-position)
 # 写真の原本は 880px 幅（life-water は 675x900）。スライドの枠は 680px までに抑えて引き伸ばさない。
@@ -329,9 +359,11 @@ def hero_slider():
     return f'''
 <section class="hs" aria-roledescription="carousel" aria-label="トリオランドの園生活">
   <div class="hs-deco" aria-hidden="true">
-    <span class="dc balloon b1"></span><span class="dc balloon b2"></span><span class="dc balloon b3"></span>
+    <span class="dc m-left">{mascot("maru", "bounce d1")}</span>
+    <span class="dc m-right">{mascot("sankaku", "bounce d3")}</span>
+    <span class="dc m-top">{mascot("shikaku", "peek-down d2")}</span>
     <span class="dc star s1">★</span><span class="dc star s2">★</span><span class="dc star s3">✦</span>
-    <span class="dc cloud c1"></span><span class="dc cloud c2"></span>
+    <span class="dc cloud cl1"></span><span class="dc cloud cl2"></span>
   </div>
   <div class="hs-stage">{slides}
   </div>
@@ -416,6 +448,7 @@ def page_index():
 
 <section class="hero single home-intro">
   <div>
+    {trio("trio-lg")}
     <span class="badge">東京都世田谷区／企業主導型保育園</span>
     <h1><span class="num n0">0</span><span class="dot">・</span><span class="num n1">1</span><span class="dot">・</span><span class="num n2">2</span>歳の「やってみたい」を、<br>いちばん近くで見守る保育園。</h1>
     <p class="lead">トリオランドは、世田谷区で<b>駒沢大学園</b>と<b>梅ヶ丘園</b>の2園を運営する企業主導型保育園です。生後57日目から2歳児クラスまで、少人数だからこそできる一人ひとりに合わせた保育で、子どもの毎日の「できた」を積み重ねます。</p>
@@ -432,6 +465,7 @@ def page_index():
   <p class="lead">どちらの園も生後57日目〜2歳児クラス、平日7:30〜20:30開園です。ご自宅・勤務先からの通いやすさでお選びいただけます。</p>
   <div class="branch-grid">
     <div class="branch">
+      {mascot("maru", "peek")}
       <img src="/assets/photos/komazawa-exterior.webp?v={V}" width="1080" height="720" alt="トリオランド駒沢大学園の園舎外観。通りに面した明るい入口と「トリオランド こまざわ保育園」の看板" fetchpriority="high" decoding="async">
       <div class="content">
       <h3>{KOMA["name"]}</h3>
@@ -450,6 +484,7 @@ def page_index():
       </div>
     </div></div>
     <div class="branch">
+      {mascot("sankaku", "peek")}
       <img src="/assets/photos/umegaoka-exterior.webp?v={V}" width="1080" height="720" alt="トリオランド梅ヶ丘園の園舎外観。梅ヶ丘駅すぐの通りに面した入口と「トリオランド 梅ヶ丘園」の看板" fetchpriority="high" decoding="async">
       <div class="content">
       <h3>{UME["name"]}</h3>
@@ -501,10 +536,10 @@ def page_index():
   <h2>毎日が、ちいさな発見でいっぱい。</h2>
   <p class="lead">お散歩、給食、水あそび、制作。0・1・2歳の毎日は、「はじめて」と「できた！」の連続です。保育士も一緒に笑いながら、子どもたちの毎日を見守っています。</p>
   <div class="fun-grid">
-    <div class="fun c1"><span class="fun-ico">🌳</span><b>お散歩・園庭あそび</b><p>天気の良い日は近くの公園へ。園庭でも思いきり体を動かします。</p></div>
-    <div class="fun c2"><span class="fun-ico">🍙</span><b>自園調理の給食</b><p>両園とも園内のキッチンで調理。食べる量やペースも一人ひとりに合わせます。</p></div>
-    <div class="fun c3"><span class="fun-ico">💦</span><b>季節のあそび</b><p>夏は水あそび。季節を感じるあそびを保育に取り入れています。</p></div>
-    <div class="fun c4"><span class="fun-ico">✂️</span><b>制作あそび</b><p>のり・はさみ・シール。指先をたくさん使って「つくる」を楽しみます。</p></div>
+    <div class="fun c1">{mascot("maru", "fun-m wobble d1")}<span class="fun-ico">🌳</span><b>お散歩・園庭あそび</b><p>天気の良い日は近くの公園へ。園庭でも思いきり体を動かします。</p></div>
+    <div class="fun c2">{mascot("shikaku", "fun-m wobble d2")}<span class="fun-ico">🍙</span><b>自園調理の給食</b><p>両園とも園内のキッチンで調理。食べる量やペースも一人ひとりに合わせます。</p></div>
+    <div class="fun c3">{mascot("sankaku", "fun-m wobble d3")}<span class="fun-ico">💦</span><b>季節のあそび</b><p>夏は水あそび。季節を感じるあそびを保育に取り入れています。</p></div>
+    <div class="fun c4">{mascot("maru", "fun-m wobble d2")}<span class="fun-ico">✂️</span><b>制作あそび</b><p>のり・はさみ・シール。指先をたくさん使って「つくる」を楽しみます。</p></div>
   </div>
 </section>
 
