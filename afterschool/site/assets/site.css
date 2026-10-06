@@ -145,7 +145,7 @@ p{color:var(--body);margin:0 0 15px}
 .branch .btnrow{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
 
 /* ---------- 求人（募集バナー・求人カード） ---------- */
-.recruit-banner{background:linear-gradient(135deg,#fff3e2,#ffe7cc);border:1px solid #f3d3ad;border-radius:var(--radius-lg);padding:26px 28px;display:grid;grid-template-columns:1.1fr 1.3fr auto;gap:18px;align-items:center}
+.recruit-banner{background:linear-gradient(135deg,#fff3e2,#ffe7cc);border:1px solid #f3d3ad;border-radius:var(--radius-lg);padding:26px 28px;display:grid;grid-template-columns:.9fr 1.6fr auto;gap:18px;align-items:center}
 .recruit-banner.small{grid-template-columns:1fr;gap:6px}
 .rb-head h2{margin:6px 0 0;font-size:clamp(18px,1.8vw,24px)}
 .rb-jobs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -430,13 +430,21 @@ main{overflow-x:clip}
 /* 募集バナー */
 .rb-wrap{overflow:hidden}
 .recruit-banner{position:relative;overflow:hidden}
+/* 図形の飾りは絶対配置のまま（グリッドの列を占有させない）。これを relative にするとボタンが次の行へ落ちる。 */
 .recruit-banner>*{position:relative;z-index:1}
+.recruit-banner>.shapes{position:absolute;z-index:0}
+.rb-jobs a{display:flex;align-items:center;gap:12px}
+.rb-logo{height:60px;width:auto;flex:none;animation-duration:3.4s}
+.rb-jobs a:nth-child(2) .rb-logo{animation-delay:-1.7s}
+.rb-txt{display:block;min-width:0}
+@media(max-width:600px){.rb-logo{height:44px}}
 .rb-shapes .sh{opacity:.55;width:26px;height:26px}
 .rb-lead{margin:8px 0 0;font-size:14px;color:var(--body)}
 .badge.pulse{animation:pulse 1.8s ease-in-out infinite}
 @keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(239,138,60,.5)}50%{transform:scale(1.06);box-shadow:0 0 0 10px rgba(239,138,60,0)}}
 .btn.wiggle{animation:wiggle 3.2s ease-in-out infinite;white-space:nowrap;align-self:center;justify-self:start}
 .recruit-banner .btn.navy{width:auto;min-width:160px}
+@media(max-width:600px){.recruit-banner .btn.navy{width:100%}}
 @keyframes wiggle{0%,86%,100%{transform:rotate(0)}89%{transform:rotate(-3deg) scale(1.04)}92%{transform:rotate(3deg) scale(1.04)}95%{transform:rotate(-2deg)}}
 .marquee-recruit{background:var(--navy);transform:rotate(1deg);margin-top:26px}
 .marquee-recruit span::after{content:"✦";color:var(--yellow)}

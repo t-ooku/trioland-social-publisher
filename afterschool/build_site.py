@@ -24,7 +24,7 @@ HOIKU = "https://hoiku.triocareer.jp"
 CORP = "https://www.triocareer.jp/"
 HERE = pathlib.Path(__file__).parent
 OUT = HERE / "site"
-V = "20261005-03"
+V = "20261006-01"
 
 SITE_NAME = "トリオキャリア 放課後等デイサービス"
 RECRUIT = json.loads((HERE / "content" / "recruit.json").read_text(encoding="utf-8"))
@@ -485,9 +485,11 @@ def job_card(p, job):
 
 def recruit_banner():
     items = "".join(
-        f'<a href="/recruit.html#job-{p["key"]}" data-job-card="{p["key"]}"><span class="fac">{p["name"]}</span>'
+        f'<a href="/recruit.html#job-{p["key"]}" data-job-card="{p["key"]}">'
+        f'<img class="rb-logo hop" src="/assets/photos/{p["logo"]}?v={V}" width="{p["logo_w"]}" height="{p["logo_h"]}" alt="{p["name"]} ロゴ" loading="lazy" decoding="async">'
+        f'<span class="rb-txt"><span class="fac">{p["name"]}</span>'
         f'<b data-job="{p["key"]}" data-field="title">{esc(RECRUIT["jobs"][p["key"]]["title"])}</b>'
-        f'<span class="job-open">募集中</span><span class="job-closed">募集停止中</span></a>'
+        f'<span class="job-open">募集中</span><span class="job-closed">募集停止中</span></span></a>'
         for p in FACILITIES)
     return f'''<section class="tight rb-wrap"><div class="wrap"><div class="recruit-banner">
   {shapes("rb-shapes")}
