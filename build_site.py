@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261005-06"
+V = "20261006-02"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -334,8 +334,8 @@ HERO_SLIDES = [
      "水しぶきも、笑い声も、<br>夏のたからもの。", "季節を感じるあそびを、毎日の保育に取り入れています。", "50% 40%"),
     ("life-nature.webp", 1200, 690, "机を囲んで保育士と一緒に生き物をやさしく観察する子どもたち",
      "小さな命に、<br>そっとふれる。", "力を加減しながら、生き物とふれあう時間。", "50% 50%"),
-    ("life-table.webp", 1110, 617, "机の上にのりやはさみ、紙の丸シールを広げて制作活動をしているところ",
-     "つくるって、<br>たのしい！", "のり、はさみ、シール。指先をたくさん使う制作あそび。", "50% 50%"),
+    ("life-table.webp", 860, 617, "机の上に紙の丸シールを広げて制作活動をしているところ",
+     "つくるって、<br>たのしい！", "のりとシール、クレヨン。指先をたくさん使う制作あそび。", "50% 50%"),
     ("life-room.webp", 1200, 770, "保育室で保育士が子どもたちにおもちゃの器を手渡しているところ",
      "雨の日だって、<br>からだを動かそう。", "お散歩に行けない日も、室内で体をたっぷり動かします。", "50% 45%"),
     ("life-summer.webp", 1080, 527, "水をはったタライでボールなどを使って水あそびをする子どもたち",
@@ -539,7 +539,7 @@ def page_index():
     <div class="fun c1">{mascot("maru", "fun-m wobble d1")}<span class="fun-ico">🌳</span><b>お散歩・外あそび</b><p>天気の良い日は近くの公園へ。思いきり体を動かします。</p></div>
     <div class="fun c2">{mascot("shikaku", "fun-m wobble d2")}<span class="fun-ico">🍙</span><b>自園調理の給食</b><p>両園とも園内のキッチンで調理。食べる量やペースも一人ひとりに合わせます。</p></div>
     <div class="fun c3">{mascot("sankaku", "fun-m wobble d3")}<span class="fun-ico">💦</span><b>季節のあそび</b><p>夏は水あそび。季節を感じるあそびを保育に取り入れています。</p></div>
-    <div class="fun c4">{mascot("maru", "fun-m wobble d2")}<span class="fun-ico">✂️</span><b>制作あそび</b><p>のり・はさみ・シール。指先をたくさん使って「つくる」を楽しみます。</p></div>
+    <div class="fun c4">{mascot("maru", "fun-m wobble d2")}<span class="fun-ico">🎨</span><b>制作あそび</b><p>のり・シール・クレヨン。指先をたくさん使って「つくる」を楽しみます。</p></div>
   </div>
 </section>
 
@@ -805,7 +805,7 @@ def page_recruit():
     </div>
   </div>
   <div class="hero-media"><figure>
-    <img src="/assets/photos/life-table.webp?v={V}" width="1110" height="617" alt="机の上にのりやはさみ、紙の丸シールを広げて制作活動をしているところ" fetchpriority="high" decoding="async">
+    <img src="/assets/photos/life-table.webp?v={V}" width="860" height="617" alt="机の上に紙の丸シールを広げて制作活動をしているところ" fetchpriority="high" decoding="async">
     <figcaption>0〜2歳の少人数保育です</figcaption>
   </figure></div>
 </section>
