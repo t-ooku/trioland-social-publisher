@@ -24,7 +24,7 @@ HOIKU = "https://hoiku.triocareer.jp"
 CORP = "https://www.triocareer.jp/"
 HERE = pathlib.Path(__file__).parent
 OUT = HERE / "site"
-V = "20261006-01"
+V = "20261006-02"
 
 SITE_NAME = "トリオキャリア 放課後等デイサービス"
 RECRUIT = json.loads((HERE / "content" / "recruit.json").read_text(encoding="utf-8"))
@@ -304,7 +304,7 @@ def head(title, desc, path, extra_ld=None, og_image="compass-room-a.webp",
 
 NAV_ITEMS = [("/", "ホーム"), ("/approach.html", "支援について"), ("/lopp.html", "ロップ"),
              ("/compass.html", "コンパスマイル"), ("/availability.html", "空き状況"),
-             ("/recruit.html", "採用情報")]
+             ("/recruit.html", "採用情報"), ("/column/", "コラム")]
 
 
 def nav(active=""):
@@ -342,6 +342,7 @@ def footer():
 <li><a href="/compass.html">コンパスマイル落合南長崎（豊島区）</a></li>
 <li><a href="/availability.html">空き状況</a></li>
 <li><a href="/recruit.html">採用情報（保育士・児童指導員）</a></li>
+<li><a href="/column/">コラム（放課後等デイサービスで働く）</a></li>
 <li><a href="/contact.html">見学・利用のご相談</a></li>
 </ul>
 </div>
@@ -781,6 +782,14 @@ def page_index():
   </div>
   <div class="imgcol"><img src="/assets/photos/compass-room-b.webp?v={V}" alt="コンパスマイル落合南長崎の活動室。天井の高い広い空間" loading="lazy" decoding="async"></div>
 </div></section>
+
+<section class="tight"><div class="wrap">
+  <div class="kicker">COLUMN</div>
+  <h2>放課後等デイサービスで働く人のためのコラム</h2>
+  <p class="lead">仕事の中身、資格の要件、保育士からの転職、未経験からの始め方。求職者の方に向けて書いています。</p>
+  <div class="col-grid">{"".join(article_card(a, i) for i, a in enumerate(ARTICLES[:3]))}</div>
+  <p><a class="btn outline" href="/column/">コラムをもっと読む</a></p>
+</div></section>
 </main>
 {cta("まずは見学から、お気軽に。", "受給者証の申請がこれからの方も、ご相談いただけます。空き状況や送迎の範囲もお問い合わせください。", second=("/availability.html", "空き状況を見る"))}
 {recruit_live()}
@@ -1017,11 +1026,170 @@ def page_contact():
 
 # =================================================================== 出力
 PAGES = ["/", "/approach.html", "/lopp.html", "/compass.html", "/availability.html",
-         "/recruit.html", "/contact.html"]
+         "/recruit.html", "/contact.html", "/column/"]
+
+
+# ── コラム（求職者向けの SEO 記事。オーナーの指示 2026-10-06：放デイ・福祉の求人で上位に出るよう、記事をどんどん書いて HP のコラムに反映する）──
+# 記事は content/column/*.md。先頭に「key: value」の見出し（title / desc / date / tags / keywords）、"---" の行のあとが本文。
+# 本文は見出し「## 」、箇条書き「- 」、番号「1. 」、強調「**」、リンク「[文](URL)」だけの簡単な書き方。
+# 給与・手当・待遇の数字は書かない（募集要項は採用情報ページへ誘導する）。制度の説明は「目安」「自治体で確認」を添える。
+COLUMN_DIR = HERE / "content" / "column"
+
+
+def _inline(t):
+    import re
+    t = esc(t)
+    t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+    t = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", r'<a href="\2">\1</a>', t)
+    return t
+
+
+def md_to_html(body):
+    """見出し・段落・箇条書きだけの簡単な変換。"""
+    out, para, ul, ol = [], [], [], []
+    def flush():
+        nonlocal para, ul, ol
+        if para:
+            out.append("<p>" + _inline(" ".join(para)) + "</p>"); para = []
+        if ul:
+            out.append("<ul>" + "".join(f"<li>{_inline(x)}</li>" for x in ul) + "</ul>"); ul = []
+        if ol:
+            out.append("<ol>" + "".join(f"<li>{_inline(x)}</li>" for x in ol) + "</ol>"); ol = []
+    for line in body.split("\n"):
+        st = line.strip()
+        if not st:
+            flush(); continue
+        if st.startswith("## "):
+            flush(); out.append(f"<h2>{_inline(st[3:])}</h2>"); continue
+        if st.startswith("### "):
+            flush(); out.append(f"<h3>{_inline(st[4:])}</h3>"); continue
+        if st.startswith("- "):
+            if para or ol: flush()
+            ul.append(st[2:]); continue
+        import re
+        m = re.match(r"^\d+\. (.*)$", st)
+        if m:
+            if para or ul: flush()
+            ol.append(m.group(1)); continue
+        if ul or ol: flush()
+        para.append(st)
+    flush()
+    return "\n".join(out)
+
+
+def load_articles():
+    arts = []
+    for f in sorted(COLUMN_DIR.glob("*.md")):
+        text = f.read_text(encoding="utf-8")
+        headpart, _, body = text.partition("\n---\n")
+        meta = {}
+        for line in headpart.splitlines():
+            if ":" in line:
+                k, v = line.split(":", 1); meta[k.strip()] = v.strip()
+        for k in ("title", "desc", "date"):
+            assert meta.get(k), f"{f.name}: {k} がありません"
+        a = dict(meta)
+        a["slug"] = f.stem
+        a["path"] = f"/column/{f.stem}.html"
+        a["tags"] = [t.strip() for t in meta.get("tags", "").split(",") if t.strip()]
+        a["body"] = body.strip()
+        a["html"] = md_to_html(a["body"])
+        a["updated"] = meta.get("updated", meta["date"])
+        # 読む目安（日本語はおよそ 500 文字／分）
+        a["minutes"] = max(1, round(len(a["body"]) / 500))
+        arts.append(a)
+    arts.sort(key=lambda a: (a["date"], a["slug"]), reverse=True)
+    return arts
+
+
+ARTICLES = load_articles()
+
+
+def article_ld(a):
+    return {"@context": "https://schema.org", "@type": "Article", "headline": a["title"],
+            "description": a["desc"], "datePublished": a["date"], "dateModified": a["updated"],
+            "mainEntityOfPage": BASE + a["path"], "inLanguage": "ja",
+            "image": f"{BASE}/assets/photos/lopp-act-park.webp",
+            "author": {"@type": "Organization", "name": "トリオキャリア株式会社", "url": CORP},
+            "publisher": {"@type": "Organization", "name": SITE_NAME, "url": BASE,
+                          "logo": {"@type": "ImageObject", "url": f"{BASE}/assets/photos/lopp-logo.webp"}}}
+
+
+def article_card(a, i=0):
+    tags = "".join(f'<span class="tag">{esc(t)}</span>' for t in a["tags"][:2])
+    return (f'<a class="col-card rv" style="--i:{i}" href="{a["path"]}"><div class="col-tags">{tags}</div>'
+            f'<h3>{esc(a["title"])}</h3><p>{esc(a["desc"])}</p>'
+            f'<div class="col-meta"><time datetime="{a["date"]}">{a["date"].replace("-", ".")}</time>・約{a["minutes"]}分</div></a>')
+
+
+def column_cta():
+    return f'''<div class="col-cta">
+  <div class="kicker">RECRUIT</div>
+  <h2>一緒に遊び、一緒に育つ仲間を募集しています</h2>
+  <p>ロップ（練馬区関町東・武蔵関駅徒歩約3分）とコンパスマイル落合南長崎（豊島区・落合南長崎駅徒歩約5分）で職員を募集中。募集要項は応募時点の最新の内容を採用情報ページでご確認ください。見学だけのお問い合わせも歓迎しています。</p>
+  <div class="actions"><a class="btn accent wiggle" href="/recruit.html">採用情報を見る</a><a class="btn outline" href="/contact.html?kind=recruit">見学・応募の問い合わせ</a></div>
+</div>'''
+
+
+def page_column_index():
+    ld = [crumbs([("ホーム", "/"), ("コラム", "/column/")]),
+          {"@context": "https://schema.org", "@type": "CollectionPage", "name": "コラム（放課後等デイサービスで働く）",
+           "url": BASE + "/column/", "hasPart": [{"@type": "Article", "headline": a["title"], "url": BASE + a["path"]} for a in ARTICLES]}]
+    cards = "".join(article_card(a, i) for i, a in enumerate(ARTICLES))
+    return head(
+        f"コラム｜放課後等デイサービスで働く・児童指導員や保育士の求人を探す方へ｜{SITE_NAME}",
+        "放課後等デイサービスの仕事内容、児童指導員・児童発達支援管理責任者の要件、保育士の転職、未経験からの始め方、練馬区・豊島区の求人の探し方を、練馬区関町東と豊島区南長崎で事業所を運営するトリオキャリアが解説します。",
+        "/column/", ld, og_image="lopp-act-park.webp") + nav("/column/") + f'''
+<main>
+<section class="hero-wrap"><div class="wrap hero one">
+  <div>
+    <div class="kicker">COLUMN</div>
+    <h1>{bouncy("放課後等デイサービスで")}<br>{bouncy("働く人のためのコラム")}</h1>
+    <p class="lead">仕事の中身、資格の要件、保育士からの転職、未経験からの始め方、練馬区・豊島区での求人の探し方。放課後等デイサービス ロップ・コンパスマイル落合南長崎を運営するトリオキャリアが、求職者の方に向けて書いています。</p>
+  </div>
+</div></section>
+<section class="tight"><div class="wrap">
+  <div class="col-grid">{cards}</div>
+  <p class="muted small">記事の内容は公開時点の一般的な情報です。資格・研修・制度の要件は自治体や年度で変わることがあるため、最新の案内でご確認ください。給与・休日などの募集要項は<a href="/recruit.html">採用情報</a>に掲載の最新の内容が優先します。</p>
+  {column_cta()}
+</div></section>
+</main>
+''' + footer()
+
+
+def page_article(a):
+    ld = [crumbs([("ホーム", "/"), ("コラム", "/column/"), (a["title"], a["path"])]), article_ld(a)]
+    others = [b for b in ARTICLES if b["slug"] != a["slug"]]
+    # 同じタグの記事を先に、足りなければ新しい順
+    same = [b for b in others if set(b["tags"]) & set(a["tags"])]
+    rel = (same + [b for b in others if b not in same])[:3]
+    related = "".join(article_card(b, i) for i, b in enumerate(rel))
+    tags = "".join(f'<span class="tag">{esc(t)}</span>' for t in a["tags"])
+    return head(f"{a['title']}｜{SITE_NAME}", a["desc"], a["path"], ld, og_image="lopp-act-park.webp") + nav("/column/") + f'''
+<main>
+<article class="article">
+  <div class="wrap narrow">
+    <nav class="crumbs" aria-label="現在地"><a href="/">ホーム</a> › <a href="/column/">コラム</a></nav>
+    <div class="col-tags">{tags}</div>
+    <h1>{esc(a["title"])}</h1>
+    <p class="col-meta">公開 <time datetime="{a["date"]}">{a["date"].replace("-", ".")}</time>{("・更新 " + a["updated"].replace("-", ".")) if a["updated"] != a["date"] else ""}・読む目安 約{a["minutes"]}分・<span>トリオキャリア株式会社（放課後等デイサービス ロップ・コンパスマイル落合南長崎）</span></p>
+    <div class="col-body">{a["html"]}</div>
+    <p class="muted small">この記事は公開時点の一般的な情報をもとに書いています。資格・研修・制度の要件は自治体や年度で変わることがあるため、最新の案内でご確認ください。募集要項（給与・休日・応募資格など）は<a href="/recruit.html">採用情報</a>に掲載の最新の内容が優先します。</p>
+    {column_cta()}
+  </div>
+  <section class="tight"><div class="wrap">
+    <div class="kicker">MORE</div>
+    <h2>ほかの記事</h2>
+    <div class="col-grid">{related}</div>
+    <p><a class="btn outline" href="/column/">コラム一覧へ</a></p>
+  </div></section>
+</article>
+</main>
+''' + footer()
 
 
 def write(path, html):
-    out = OUT / "index.html" if path == "/" else OUT / path.lstrip("/")
+    out = OUT / "index.html" if path == "/" else (OUT / path.lstrip("/") / "index.html" if path.endswith("/") else OUT / path.lstrip("/"))
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
     print(f"  wrote {out.relative_to(OUT.parent)}  {len(html.encode('utf-8')):,} bytes")
@@ -1064,9 +1232,18 @@ def main():
     write("/availability.html", page_availability())
     write("/recruit.html", page_recruit())
     write("/contact.html", page_contact())
+    write("/column/", page_column_index())
+    for a in ARTICLES:
+        write(a["path"], page_article(a))
+    # 前に作った記事の HTML が content から消えていたら出力からも消す（古い記事を配信し続けない）
+    keep = {a["slug"] + ".html" for a in ARTICLES} | {"index.html"}
+    for old in (OUT / "column").glob("*.html"):
+        if old.name not in keep:
+            old.unlink(); print(f"  removed {old.relative_to(OUT.parent)}")
 
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
     urls = "".join(f"<url><loc>{BASE}{p}</loc></url>" for p in PAGES)
+    urls += "".join(f"<url><loc>{BASE}{a['path']}</loc><lastmod>{a['updated']}</lastmod></url>" for a in ARTICLES)
     (OUT / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
         encoding="utf-8")
