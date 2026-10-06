@@ -493,3 +493,28 @@ main{overflow-x:clip}
   .hero-media.fan figure.fan-item{width:54%;padding:6px}
   .marquee-recruit{margin-top:18px}
 }
+/* コラム（求職者向けの記事。2026-10-06） */
+.hero.one{grid-template-columns:1fr;max-width:860px}
+.col-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:18px 0 26px}
+.col-card{display:block;background:var(--card);border:1px solid var(--line);border-top:5px solid var(--orange);border-radius:var(--radius);padding:20px 22px;text-decoration:none;color:var(--ink);transition:transform .25s ease,box-shadow .25s ease}
+.col-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(35,48,66,.1)}
+.col-card h3{font-size:17px;line-height:1.5;margin:8px 0 8px;color:var(--ink)}
+.col-card p{font-size:13.5px;color:var(--body);margin:0 0 10px;line-height:1.7}
+.col-tags{display:flex;flex-wrap:wrap;gap:6px}
+.col-tags .tag{display:inline-block;background:#fff4ea;color:var(--orange-d);border:1px solid #f3d6bf;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:900}
+.col-meta{font-size:12.5px;color:var(--muted)}
+.article .wrap.narrow{max-width:800px;padding-top:34px}
+.article .crumbs{font-size:13px;color:var(--muted);margin-bottom:10px}.article .crumbs a{color:var(--blue-d);text-decoration:none}
+.article h1{font-size:clamp(26px,4.2vw,38px);line-height:1.4;margin:10px 0 10px;font-family:"Zen Maru Gothic",sans-serif}
+.article p.col-meta{margin:0 0 22px}
+.col-body{font-size:16.5px;line-height:2}
+.col-body h2{font-size:22px;margin:40px 0 12px;padding:8px 0 8px 14px;border-left:6px solid var(--orange);background:linear-gradient(90deg,#fff6ee,transparent);border-radius:6px;font-family:"Zen Maru Gothic",sans-serif}
+.col-body h3{font-size:18px;margin:26px 0 8px}
+.col-body p{margin:0 0 18px}
+.col-body ul,.col-body ol{margin:0 0 18px;padding-left:1.4em}.col-body li{margin-bottom:6px}
+.col-body a{color:var(--blue-d);font-weight:700}
+.col-cta{background:linear-gradient(135deg,#fff7ea,#eef7fb);border:1px solid var(--line);border-radius:22px;padding:26px 26px 22px;margin:34px 0 10px}
+.col-cta h2{margin:4px 0 8px;font-size:22px}.col-cta p{margin:0 0 14px;color:var(--body)}
+.small{font-size:13px}
+@media(max-width:940px){.col-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.col-grid{grid-template-columns:1fr}.col-body{font-size:15.5px;line-height:1.95}.col-cta{padding:20px 18px}}
