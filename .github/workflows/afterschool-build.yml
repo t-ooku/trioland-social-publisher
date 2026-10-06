@@ -5,6 +5,7 @@
 #
 # 入力:
 #   afterschool/build_site.py                … 全ページの HTML / robots.txt / sitemap.xml / _headers
+#   afterschool/content/column/*.md          … 求職者向けコラムの記事（足すと /column/ に自動で出る）
 #   afterschool/tools/assets_manifest.json   … 写真と PDF の Drive ファイル ID と SHA-256
 #   afterschool/tools/fetch_assets.py        … Drive から取得して SHA-256 を照合
 #   afterschool/tools/process_assets.py      … WebP 化（引き伸ばしなし）と PDF 配置、完全デコード検証
@@ -18,6 +19,7 @@ on:
     paths:
       - 'afterschool/build_site.py'
       - 'afterschool/site/assets/site.css'
+      - 'afterschool/content/**'
       - 'afterschool/tools/**'
       - '.github/workflows/afterschool-build.yml'
   workflow_dispatch:
