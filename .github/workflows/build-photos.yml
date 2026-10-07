@@ -20,6 +20,7 @@ on:
     branches: [main]
     paths:
       - 'build_site.py'
+      - 'content/**'
       - 'site/assets/photo-src/**'
       - 'tools/decode_photos.py'
       - 'tools/verify_photos.py'
