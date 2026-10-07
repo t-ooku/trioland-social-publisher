@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261007-03"
+V = "20261008-01"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -385,8 +385,22 @@ def hero_slider():
   var count = root.querySelector(".hs-count b");
   var pauseBtn = root.querySelector(".hs-pause");
   var n = slides.length, cur = 0, timer = null;
-  var paused = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  // 2026-10-08 オーナーの指示：「最初から動かしておいて。停止もできるように。停止していても次にスライドしたら再生されている状態から」
+  // → 最初から再生する（動きを減らす設定でも自動で止めない）。一時停止ボタンで止められ、前後・点・スワイプで動かしたら再生に戻る。
+  var paused = false, shown = -1;
+  function setPaused(v) {{
+    paused = v;
+    pauseBtn.setAttribute("aria-pressed", paused ? "true" : "false");
+    pauseBtn.setAttribute("aria-label", paused ? "自動再生を再開" : "自動再生を一時停止");
+    root.classList.toggle("paused", paused);
+  }}
+  function playV(v) {{
+    // スマホ（iPhone など）で自動再生させるための決まり：音なし・画面の中で再生（playsinline）
+    v.muted = true; v.defaultMuted = true; v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.autoplay = true;
+    var p = v.play(); if (p && p.catch) p.catch(function () {{}});
+  }}
   function render() {{
+    var changed = shown !== cur; shown = cur;
     slides.forEach(function (el, i) {{
       var d = i - cur;
       if (d > n / 2) d -= n;
@@ -395,7 +409,7 @@ def hero_slider():
       el.classList.toggle("is-active", d === 0);
       el.classList.toggle("is-near", Math.abs(d) === 1);
       el.setAttribute("aria-hidden", d === 0 ? "false" : "true");
-      // 映像：今のスライドだけ再生し、となりは読み込みだけしておく（通信量を抑える）。動きを減らす設定・一時停止中は静止画のまま
+      // 映像：今のスライドだけ再生し、となりは読み込みだけしておく（通信量を抑える）。一時停止中は止める
       var v = el.querySelector("video");
       if (!v) return;
       if ((d === 0 || Math.abs(d) === 1) && !v.hasAttribute("data-loaded")) {{
@@ -404,8 +418,10 @@ def hero_slider():
         [].forEach.call(v.querySelectorAll("source"), function (s) {{ s.src = s.getAttribute("data-src"); }});
         v.load();
       }}
-      if (d === 0 && !paused && !document.hidden) {{ try {{ v.currentTime = 0; }} catch (e) {{}} var p = v.play(); if (p && p.catch) p.catch(function () {{}}); }}
-      else {{ v.pause(); }}
+      if (d === 0) {{
+        if (changed) {{ try {{ v.currentTime = 0; }} catch (e) {{}} }}
+        if (!paused && !document.hidden) playV(v); else v.pause();
+      }} else {{ v.autoplay = false; v.pause(); }}
     }});
     dots.forEach(function (b, i) {{ b.classList.toggle("on", i === cur); b.setAttribute("aria-current", i === cur ? "true" : "false"); }});
     count.textContent = (cur + 1 < 10 ? "0" : "") + (cur + 1);
@@ -414,18 +430,13 @@ def hero_slider():
     clearInterval(timer);
     if (!paused && !document.hidden) timer = setInterval(function () {{ cur = (cur + 1) % n; render(); }}, 5600);
   }}
-  function go(i) {{ cur = (i + n) % n; render(); restart(); }}
+  // 前後・点・スワイプで動かしたら、一時停止していても再生に戻す
+  function go(i) {{ cur = (i + n) % n; if (paused) setPaused(false); render(); restart(); }}
   root.querySelector(".hs-prev").addEventListener("click", function () {{ go(cur - 1); }});
   root.querySelector(".hs-next").addEventListener("click", function () {{ go(cur + 1); }});
   dots.forEach(function (b) {{ b.addEventListener("click", function () {{ go(+b.getAttribute("data-go")); }}); }});
   slides.forEach(function (el, i) {{ el.addEventListener("click", function () {{ if (i !== cur) go(i); }}); }});
-  pauseBtn.addEventListener("click", function () {{
-    paused = !paused;
-    pauseBtn.setAttribute("aria-pressed", paused ? "true" : "false");
-    pauseBtn.setAttribute("aria-label", paused ? "自動再生を再開" : "自動再生を一時停止");
-    root.classList.toggle("paused", paused);
-    render(); restart();
-  }});
+  pauseBtn.addEventListener("click", function () {{ setPaused(!paused); render(); restart(); }});
   var x0 = null;
   root.addEventListener("touchstart", function (e) {{ x0 = e.touches[0].clientX; }}, {{ passive: true }});
   root.addEventListener("touchend", function (e) {{
@@ -434,7 +445,17 @@ def hero_slider():
     if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
   }});
   document.addEventListener("visibilitychange", function () {{ render(); restart(); }});
-  if (paused) {{ root.classList.add("paused"); pauseBtn.setAttribute("aria-pressed", "true"); }}
+  // 読み込みが終わったら、今のスライドの映像を再生する（読み込み前の play が通らない端末向け）
+  slides.forEach(function (el, i) {{
+    var v = el.querySelector("video");
+    if (v) v.addEventListener("canplay", function () {{ if (i === cur && !paused && !document.hidden && v.paused) playV(v); }});
+  }});
+  // 省電力モードなどで自動再生が止められた端末：画面のどこかに最初にふれたときに再生する
+  function kick() {{
+    var v = slides[cur] && slides[cur].querySelector("video");
+    if (v && !paused && v.paused) playV(v);
+  }}
+  ["touchstart", "pointerdown", "scroll"].forEach(function (t) {{ window.addEventListener(t, kick, {{ passive: true, once: true }}); }});
   render(); restart();
 }})();
 </script>
