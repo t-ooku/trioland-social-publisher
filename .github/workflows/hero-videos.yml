@@ -1,0 +1,127 @@
+# 保育園トップの自動スライド用の動画を作ってコミットする（2026-10-07 オーナーの指示）。
+#   「Instagram に上げている動画を流したい。今のキャッチは映像の枠の中に残しつつ」
+#   「うまく編集しながら使ってね。画質粗いのは必ず AI 補正できれいにして」
+#
+# 元の動画：Drive「トリオランド／SNS／動画」の Instagram 投稿動画を、公開フォルダ
+#   「HP用写真（公開・CIが自動取込）」（ID 10qC5qLJVOrUbfLWoezOUPEVkUh8JlAtw）に vid-*.mp4 の名前でコピーしたもの。
+#   顔のぼかしは Instagram 投稿のときに園が入れたもの。ぼかしを外す・弱める加工はしない。
+#
+# 1 本ごと（matrix）に：場面を切り出す → 枠（3:2）に合わせて切り抜く → 720x480・24fps のコマに分ける
+#   → tools/ai_video.py（Real-ESRGAN realesr-general-x4v3。ノイズ除去 0.5）で 1 コマずつ AI 補正（4 倍）
+#   → 1200x800 に縮めて H.264（音なし・faststart）にする。最初のコマを静止画（poster）にする。
+# 最後に全部を site/assets/video/ に入れてコミットする。場面を変えたいときは matrix の ss（開始秒）・t（長さ）を直す。
+name: Build hero videos
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/hero-videos.yml', 'tools/ai_video.py']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hero-videos
+  cancel-in-progress: false
+
+jobs:
+  clip:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { name: v-dekita, id: 1AItimTbaaKUiiYJuyz2i2NgOoJ2c1G49, ss: 24.6, t: 5.5 }   # 積み木を高く積む（保育士と一緒に）
+          - { name: v-mizu,   id: 1rcveRJbWBoxe6e-a8xn0U9-BXEebsG5f, ss: 9.7,  t: 5.5 }   # タライの水あそび
+          - { name: v-inochi, id: 1oSJFqLXqDCGO0JYorvsEWHoaWC0aPwys, ss: 0.5,  t: 5.5 }   # 枝にとまったカブトムシにそっとふれる
+          - { name: v-karada, id: 1yFH0BGM9WYReMv57CLknvafUaNmJRhWP, ss: 13.5, t: 5.5 }   # 室内で体を動かす（保育士が支える）
+          - { name: v-gohan,  id: 1BLrfIh9Hyzuz0lTkfasBQRZsxddH7_HA, ss: 9.2,  t: 5.5 }   # 給食の時間
+          - { name: v-minna,  id: 1AItimTbaaKUiiYJuyz2i2NgOoJ2c1G49, ss: 31.3, t: 4.4 }   # みんなで積み木あそび
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg >/dev/null
+          python3 -m pip install --quiet pillow numpy
+          python3 -m pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
+          for f in realesr-general-x4v3 realesr-general-wdn-x4v3; do
+            curl -fsSL --retry 3 -o /tmp/$f.pth https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/$f.pth
+          done
+
+      - name: Cut
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 "https://drive.usercontent.google.com/download?id=${{ matrix.id }}&export=download&confirm=t" -o /tmp/src
+          s=$(stat -c%s /tmp/src); echo "src $s bytes"; [ "$s" -gt 500000 ] || { echo "Drive が動画を返していません"; head -c 300 /tmp/src; exit 1; }
+          mkdir -p /tmp/in /tmp/out
+          ffmpeg -v error -ss ${{ matrix.ss }} -t ${{ matrix.t }} -i /tmp/src \
+            -vf "crop='min(iw,ih*3/2)':'min(ih,iw*2/3)':'(iw-min(iw,ih*3/2))/2':'(ih-min(ih,iw*2/3))/2',scale=720:480:flags=lanczos,fps=24" \
+            -an /tmp/in/%04d.png
+          ls /tmp/in | wc -l
+
+      - name: AI correction
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import sys, os, time, glob
+          sys.path.insert(0, "tools")
+          import torch
+          torch.set_num_threads(os.cpu_count() or 2)
+          from PIL import Image
+          from ai_video import CompactUpscaler
+          up = CompactUpscaler("/tmp/realesr-general-x4v3.pth", "/tmp/realesr-general-wdn-x4v3.pth", denoise=0.5)
+          files = sorted(glob.glob("/tmp/in/*.png")); t = time.time()
+          for i, f in enumerate(files):
+              im = up(Image.open(f)).resize((1200, 800), Image.LANCZOS)
+              im.save(f.replace("/tmp/in/", "/tmp/out/"))
+              if i % 24 == 0:
+                  print(f"{i}/{len(files)} {time.time() - t:.0f}s", flush=True)
+          print("done", len(files), f"{time.time() - t:.0f}s")
+          PY
+
+      - name: Encode
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          ffmpeg -v error -y -framerate 24 -i /tmp/out/%04d.png -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p \
+            -movflags +faststart -an out/${{ matrix.name }}.mp4
+          python3 -c "from PIL import Image; Image.open('/tmp/out/0001.png').save('out/${{ matrix.name }}.webp', 'WEBP', quality=80, method=6)"
+          ffprobe -v error -show_entries stream=width,height,nb_frames:format=duration,size -of compact out/${{ matrix.name }}.mp4
+          ls -l out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: out/
+          retention-days: 3
+
+  commit:
+    needs: clip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: /tmp/art
+      - name: Commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site/assets/video
+          cp /tmp/art/*/* site/assets/video/
+          ls -l site/assets/video
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/video
+          if git diff --cached --quiet; then echo 'videos already current'; exit 0; fi
+          git commit -m 'Build hero videos (AI corrected, realesr-general-x4v3)'
+          for i in 1 2 3; do git pull --rebase -q origin main && git push && exit 0; sleep 5; done
+          exit 1
