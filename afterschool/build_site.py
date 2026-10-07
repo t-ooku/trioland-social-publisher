@@ -22,6 +22,8 @@ API = WORKER + "/api/inquiry"
 API_RECRUIT = WORKER + "/api/afterschool/recruit"
 HOIKU = "https://hoiku.triocareer.jp"
 CORP = "https://www.triocareer.jp/"
+# Search Console の所有権確認（URL プレフィックス https://afterschool.triocareer.jp/・HTML タグ方式・2026-10-07 オーナーから受領）。
+# 公開して問題ない値。消すと Search Console の確認が外れるので残すこと。
 HERE = pathlib.Path(__file__).parent
 OUT = HERE / "site"
 V = "20261006-02"
@@ -283,6 +285,7 @@ def head(title, desc, path, extra_ld=None, og_image="compass-room-a.webp",
 <title>{title}</title>
 <meta name="description" content="{desc}">
 <meta name="robots" content="{robots}">
+<meta name="google-site-verification" content="GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI">
 <link rel="canonical" href="{BASE}{path}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{SITE_NAME}">
