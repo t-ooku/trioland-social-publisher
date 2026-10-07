@@ -14,9 +14,12 @@
 #   壊れた JPEG」としてコミットされ、本番が broken-image になっていた。
 #   画像は必ずこのワークフローか git push で入れること。
 #
-# 画質の方針：
-#   元写真は 1200x900 〜 1666x982。表示枠（site.css で 400〜560px）の
-#   2倍前後に収まるよう 760〜1100px で書き出す。引き伸ばしは一切しない。
+# 画質の方針（2026-10-07 改定・オーナーの指示「子どもたちが写っている写真の画質が粗いから AI 補正で綺麗に。トップページは特に」）：
+#   元写真は SNS 用に書き出された 1080〜1200px の JPEG で、圧縮のブロックノイズが強い。
+#   引き伸ばし（Lanczos）だけでは粗さが残るので、tools/ai_upscale.py（Real-ESRGAN x4plus。実写向けの汎用モデル）で
+#   4 倍に復元してから、トップの自動スライドの枠（最大 680px）を 2x 画面で埋める大きさ（横 1400〜1600px）に縮めて書き出す。
+#   顔を描き直すモデル（GFPGAN など）は使わない（写っている子どもの顔・姿を AI が作り変えないため）。
+#   重みは公式リリースから取得し、SHA-256 を照合する。CPU で 1 枚数分かかる（全体で 20〜30 分）。
 #
 # 焼き込みテロップ：
 #   素材は Instagram 投稿用のフレームで、下部（一部は上部にも）に字幕が
@@ -26,7 +29,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['.github/workflows/sync-site-images.yml']
+    paths: ['.github/workflows/sync-site-images.yml', 'tools/ai_upscale.py']
 
 permissions:
   contents: write
@@ -39,6 +42,7 @@ jobs:
   sync:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
@@ -68,30 +72,47 @@ jobs:
           dl 1oDf9Yaa9_X0JXwyGKlrnMYB6zqgHkRcx life-summer
           dl 1MzM_URSdRNABCyGJ_3yVLwgttuw2VtPs life-water
 
+      - name: Install AI correction (CPU)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow numpy
+          python3 -m pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
+          python3 -m pip install --quiet spandrel
+          curl -fsSL --retry 3 -o /tmp/RealESRGAN_x4plus.pth \
+            https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth
+          ls -l /tmp/RealESRGAN_x4plus.pth
+
       - name: Build web images
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet pillow
           mkdir -p site/assets/photos
           python3 - <<'PY'
+          import sys, time
+          sys.path.insert(0, "tools")
+          import torch
+          torch.set_num_threads(max(1, __import__("os").cpu_count() or 1))
           from PIL import Image, ImageOps
           from pathlib import Path
+          from ai_upscale import Upscaler
 
           # name, expected source size, crop box (焼き込みテロップの除去), output width, quality
-          # 2026-10-05: 表示枠（トップの自動スライド）が 680px になったので、880px では 2x 画面で甘くなる。
-          # 原本の幅のまま（最大 1200px）で書き出す。引き伸ばしはしない。CROP は HANDOVER-2026-09-15.md の実測値。
+          # 2026-10-07: AI 補正（4 倍に復元）→ 横 1400〜1600px に縮めて書き出す。CROP は HANDOVER-2026-09-15.md の実測値（動かさない）。
+          # 出力の大きさを変えたら build_site.py の width/height も合わせること。
           PLAN = [
-              ("life-room",   (1200, 1200), (0, 150, 1200,  920), 1200, 84),
-              ("life-play",   (1200, 1200), (0, 150, 1200,  920), 1200, 84),
-              ("life-toys",   (1200, 1200), (0, 150, 1200,  920), 1200, 84),
-              ("life-nature", (1200,  900), (0,   0, 1200,  690), 1200, 84),
-              ("life-table",  None,         (250, 300, 1110, 917),  860, 84),   # 左端のはさみを外す（園児ははさみを使わない・2026-10-06 園責任者）
-              ("life-summer", (1080, 1920), (0, 960, 1080, 1487), 1080, 84),
-              ("life-water",  None,         (0,  60, 1170, 1620),  900, 84),
+              ("life-room",   (1200, 1200), (0, 150, 1200,  920), 1600, 82),
+              ("life-play",   (1200, 1200), (0, 150, 1200,  920), 1600, 82),
+              ("life-toys",   (1200, 1200), (0, 150, 1200,  920), 1600, 82),
+              ("life-nature", (1200,  900), (0,   0, 1200,  690), 1600, 82),
+              ("life-table",  None,         (250, 300, 1110, 917), 1400, 82),   # 左端のはさみを外す（園児ははさみを使わない・2026-10-06 園責任者）
+              ("life-summer", (1080, 1920), (0, 960, 1080, 1487), 1600, 82),
+              ("life-water",  None,         (0,  60, 1170, 1620), 1400, 82),
           ]
 
+          up = Upscaler("/tmp/RealESRGAN_x4plus.pth")
           for name, expect, box, width, q in PLAN:
+              t = time.time()
               im = Image.open(f"/tmp/src/{name}")
               im.load()
               im = ImageOps.exif_transpose(im).convert("RGB")
@@ -99,8 +120,9 @@ jobs:
                   raise SystemExit(f"{name}: expected {expect}, got {im.size} - wrong file?")
               if box:
                   im = im.crop(box)
-              if im.width > width:
-                  im = im.resize((width, round(width * im.height / im.width)), Image.LANCZOS)
+              im = up(im)                                   # AI 補正（4 倍）
+              im = im.resize((width, round(width * im.height / im.width)), Image.LANCZOS)
+              print(f"{name}: AI 補正 {time.time() - t:.0f}s", flush=True)
               out = Path(f"site/assets/photos/{name}.webp")
               im.save(out, "WEBP", quality=q, method=6)
               chk = Image.open(out); chk.load()          # full decode guard
@@ -117,5 +139,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add site/assets/photos/
           if git diff --cached --quiet; then echo 'photos already current'; exit 0; fi
-          git commit -m 'Rebuild Trioland life photos at full source resolution'
+          git commit -m 'Rebuild Trioland life photos with AI correction (Real-ESRGAN x4plus)'
           git push
