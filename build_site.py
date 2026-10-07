@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261007-02"
+V = "20261007-03"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -291,7 +291,7 @@ def inquiry_form(mode):
 }})();
 </script>'''
 
-PHOTO_NOTE = "写真はトリオランドの実際の園生活の記録です。"
+PHOTO_NOTE = "映像はトリオランドの実際の園生活の記録です（園の Instagram に投稿した動画から。お顔のぼかしは投稿時のものです）。"
 
 MASCOT_SVG = {
     # まる（黄）: びっくり顔と「！」
@@ -323,36 +323,35 @@ def trio(cls="", anim="dance"):
     return (f'<span class="trio {cls}" aria-hidden="true">'
             f'{mascot("maru", anim + " d1")}{mascot("shikaku", anim + " d2")}{mascot("sankaku", anim + " d3")}</span>')
 
-# トップの自動スライド。写真の中にキャッチコピーを重ねる（放デイサイトと同じ仕組み）。
-# (写真, 幅, 高さ, alt, キャッチ, サブコピー, object-position)
-# 写真は Drive の原本を AI 補正（Real-ESRGAN x4plus）してから横 1400〜1600px で生成（sync-site-images.yml・2026-10-07）。スライドの枠は最大 680px（2x 画面でも粗くならない）。
-# 外観写真は下の「2園」カードで使うので、ここには入れない（同じ写真を並べない）。
+# トップの自動スライド。映像の中にキャッチコピーを重ねる（2026-10-07 オーナーの指示：「Instagram に上げている動画を流したい。
+# 今のキャッチは映像の枠の中に残しつつ、静止画より動画の方がいい」）。
+# (動画の名前, aria-label, キャッチ, サブコピー)。動画は .github/workflows/hero-videos.yml が Drive の Instagram 動画から
+# 場面を切り出し、コマごとに AI 補正（Real-ESRGAN realesr-general-x4v3）して site/assets/video/<名前>.webm・.mp4（1200x800・音なし）と
+# 最初のコマの静止画 <名前>.webp を作る。静止画は読み込み中・動きを減らす設定の人・JavaScript が無いときに出る。
+# 顔のぼかしは園が Instagram 投稿のときに入れたもの（外さない）。外観写真は下の「2園」カードで使うので、ここには入れない。
 HERO_SLIDES = [
-    ("life-play.webp", 1600, 1027, "保育室でカラフルな器を手に取ってあそぶ子どもと保育士",
-     "はじめての「できた！」が、<br>毎日うまれる。", "0・1・2歳の小さな挑戦を、保育士がいちばん近くで見守ります。", "50% 45%"),
-    ("life-water.webp", 1400, 1867, "タライのそばに立って水あそびに夢中になっている子ども",
-     "水しぶきも、笑い声も、<br>夏のたからもの。", "季節を感じるあそびを、毎日の保育に取り入れています。", "50% 40%"),
-    ("life-nature.webp", 1600, 920, "机を囲んで保育士と一緒に生き物をやさしく観察する子どもたち",
-     "小さな命に、<br>そっとふれる。", "力を加減しながら、生き物とふれあう時間。", "50% 50%"),
-    ("life-table.webp", 1400, 1004, "机の上に紙の丸シールを広げて制作活動をしているところ",
-     "つくるって、<br>たのしい！", "のりとシール、クレヨン。指先をたくさん使う制作あそび。", "50% 50%"),
-    ("life-room.webp", 1600, 1027, "保育室で保育士が子どもたちにおもちゃの器を手渡しているところ",
-     "雨の日だって、<br>からだを動かそう。", "お散歩に行けない日も、室内で体をたっぷり動かします。", "50% 45%"),
-    ("life-summer.webp", 1600, 781, "水をはったタライでボールなどを使って水あそびをする子どもたち",
-     "みんなで遊ぶと、<br>もっと楽しい。", "お友だちと一緒に、ぱしゃぱしゃ水あそび。", "50% 50%"),
-    ("life-toys.webp", 1600, 1027, "保育室でベビーベッドのそばを歩く子どもと見守る保育士",
-     "安心できる場所だから、<br>のびのび育つ。", "少人数の保育室で、一人ひとりに目が届きます。", "50% 45%"),
+    ("v-dekita", "保育士と一緒にやわらかい積み木を高く積み上げる子どもたち",
+     "はじめての「できた！」が、<br>毎日うまれる。", "0・1・2歳の小さな挑戦を、保育士がいちばん近くで見守ります。"),
+    ("v-mizu", "タライの水あそびで、おもちゃをすくって遊ぶ子どもたちと保育士",
+     "水しぶきも、笑い声も、<br>夏のたからもの。", "季節を感じるあそびを、毎日の保育に取り入れています。"),
+    ("v-inochi", "枝にとまったカブトムシに、そっと手をのばす子ども",
+     "小さな命に、<br>そっとふれる。", "力を加減しながら、生き物とふれあう時間。"),
+    ("v-karada", "保育室で、保育士に支えられながら積み木の上に立つ子ども",
+     "雨の日だって、<br>からだを動かそう。", "お散歩に行けない日も、室内で体をたっぷり動かします。"),
+    ("v-gohan", "給食の時間、テーブルを囲んで食べる子どもたちと保育士",
+     "いただきます！<br>みんなで食べると、おいしいね。", "園内の調理室でつくる給食。食べるペースも一人ひとりに合わせます。"),
+    ("v-minna", "やわらかい積み木を運んで遊ぶ子どもたち",
+     "みんなで遊ぶと、<br>もっと楽しい。", "お友だちと一緒に、積み木で大きなものをつくります。"),
 ]
 
 
 def hero_slider():
     n = len(HERO_SLIDES)
     slides = ""
-    for i, (f, w, h, alt, catch, sub, pos) in enumerate(HERO_SLIDES):
-        lazy = "" if i < 3 else ' loading="lazy"'
+    for i, (f, alt, catch, sub) in enumerate(HERO_SLIDES):
         slides += f'''
     <div class="hs-slide" role="group" aria-roledescription="slide" aria-label="{i+1} / {n}">
-      <img src="/assets/photos/{f}?v={V}" width="{w}" height="{h}" alt="{alt}" style="object-position:{pos}"{lazy} decoding="async">
+      <video muted playsinline loop preload="none" width="1200" height="800" poster="/assets/video/{f}.webp?v={V}" aria-label="{alt}"><source data-src="/assets/video/{f}.webm?v={V}" type="video/webm"><source data-src="/assets/video/{f}.mp4?v={V}" type="video/mp4"></video>
       <div class="hs-cap"><div class="hs-bubble"><p class="hs-tag">0・1・2さいの まいにち</p><p class="hs-catch">{catch}</p><p class="hs-sub">{sub}</p></div></div>
     </div>'''
     dots = "".join(f'<button class="hs-dot" type="button" aria-label="{i+1}枚目へ" data-go="{i}"></button>' for i in range(n))
@@ -368,10 +367,10 @@ def hero_slider():
   <div class="hs-stage">{slides}
   </div>
   <div class="hs-bar">
-    <button class="hs-prev" type="button" aria-label="前の写真">‹</button>
+    <button class="hs-prev" type="button" aria-label="前の映像">‹</button>
     <div class="hs-dots">{dots}</div>
     <span class="hs-count"><b>01</b> / {n:02d}</span>
-    <button class="hs-next" type="button" aria-label="次の写真">›</button>
+    <button class="hs-next" type="button" aria-label="次の映像">›</button>
     <button class="hs-pause" type="button" aria-label="自動再生を一時停止" aria-pressed="false"><span></span></button>
   </div>
   <p class="hs-note">{PHOTO_NOTE}</p>
@@ -396,13 +395,24 @@ def hero_slider():
       el.classList.toggle("is-active", d === 0);
       el.classList.toggle("is-near", Math.abs(d) === 1);
       el.setAttribute("aria-hidden", d === 0 ? "false" : "true");
+      // 映像：今のスライドだけ再生し、となりは読み込みだけしておく（通信量を抑える）。動きを減らす設定・一時停止中は静止画のまま
+      var v = el.querySelector("video");
+      if (!v) return;
+      if ((d === 0 || Math.abs(d) === 1) && !v.hasAttribute("data-loaded")) {{
+        v.setAttribute("data-loaded", "");
+        v.preload = d === 0 ? "auto" : "metadata";
+        [].forEach.call(v.querySelectorAll("source"), function (s) {{ s.src = s.getAttribute("data-src"); }});
+        v.load();
+      }}
+      if (d === 0 && !paused && !document.hidden) {{ try {{ v.currentTime = 0; }} catch (e) {{}} var p = v.play(); if (p && p.catch) p.catch(function () {{}}); }}
+      else {{ v.pause(); }}
     }});
     dots.forEach(function (b, i) {{ b.classList.toggle("on", i === cur); b.setAttribute("aria-current", i === cur ? "true" : "false"); }});
     count.textContent = (cur + 1 < 10 ? "0" : "") + (cur + 1);
   }}
   function restart() {{
     clearInterval(timer);
-    if (!paused && !document.hidden) timer = setInterval(function () {{ cur = (cur + 1) % n; render(); }}, 5200);
+    if (!paused && !document.hidden) timer = setInterval(function () {{ cur = (cur + 1) % n; render(); }}, 5600);
   }}
   function go(i) {{ cur = (i + n) % n; render(); restart(); }}
   root.querySelector(".hs-prev").addEventListener("click", function () {{ go(cur - 1); }});
@@ -414,7 +424,7 @@ def hero_slider():
     pauseBtn.setAttribute("aria-pressed", paused ? "true" : "false");
     pauseBtn.setAttribute("aria-label", paused ? "自動再生を再開" : "自動再生を一時停止");
     root.classList.toggle("paused", paused);
-    restart();
+    render(); restart();
   }});
   var x0 = null;
   root.addEventListener("touchstart", function (e) {{ x0 = e.touches[0].clientX; }}, {{ passive: true }});
@@ -423,7 +433,7 @@ def hero_slider():
     var dx = e.changedTouches[0].clientX - x0; x0 = null;
     if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
   }});
-  document.addEventListener("visibilitychange", restart);
+  document.addEventListener("visibilitychange", function () {{ render(); restart(); }});
   if (paused) {{ root.classList.add("paused"); pauseBtn.setAttribute("aria-pressed", "true"); }}
   render(); restart();
 }})();
