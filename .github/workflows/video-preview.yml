@@ -1,0 +1,46 @@
+# 作業用（ブランチ video-work だけで動く）：Drive の動画の内容を見るための縮小コンタクトシートを作ってこのブランチに入れる。
+# 保育園トップを動画にする作業（2026-10-07）で、どの場面を使うか決めるためのもの。作業が終わったらブランチごと消す。
+name: Video preview (work branch)
+on:
+  push:
+    branches: [video-work]
+    paths: ['.github/workflows/video-preview.yml']
+permissions:
+  contents: write
+jobs:
+  preview:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and make sheets
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg >/dev/null
+          mkdir -p /tmp/v preview
+          dl() { curl -fsSL --retry 3 "https://drive.usercontent.google.com/download?id=$1&export=download&confirm=t" -o "/tmp/v/$2"; echo "$2 $(stat -c%s /tmp/v/$2)"; }
+          dl 1OXZA2psAGou_o9duSaFYLv7UfNLcZXEA kabukun
+          dl 1AItimTbaaKUiiYJuyz2i2NgOoJ2c1G49 a
+          dl 1rcveRJbWBoxe6e-a8xn0U9-BXEebsG5f b
+          dl 13AJ_Kpur54h_8TueyDJEuB99qUPEZf0N c
+          dl 1yFH0BGM9WYReMv57CLknvafUaNmJRhWP d
+          dl 1pOVsg9E5WZDGuBZb9d9rmF21unpcpaRr e
+          dl 1BLrfIh9Hyzuz0lTkfasBQRZsxddH7_HA f
+          : > preview/info.txt
+          for n in kabukun a b c d e f; do
+            f=/tmp/v/$n
+            info=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate:stream_side_data=rotation:format=duration -of csv=p=0 "$f" | tr '\n' ' ')
+            echo "$n $info" >> preview/info.txt
+            d=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f")
+            ffmpeg -v error -y -i "$f" -vf "fps=16/$d,scale=240:-2,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='%{pts\:hms}':x=4:y=4:fontsize=16:fontcolor=yellow:box=1:boxcolor=black@0.6,tile=8x2:padding=4" -frames:v 1 -q:v 4 "preview/$n.jpg"
+          done
+          cat preview/info.txt
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add preview
+          git commit -m 'video previews (work branch only)' || exit 0
+          git push
