@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261007-01"
+V = "20261007-02"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -1021,10 +1021,137 @@ COLUMNS = [
 ]
 
 
+# ── 求人コラム（読みものの記事。オーナーの指示 2026-10-07「保育園の求人コラムも運用していこう」）──
+# 記事は content/column/*.md。先頭に「key: value」の見出し（title / desc / date / 任意 updated・tags・keywords）、
+# "---" の行のあとが本文。本文は「## 見出し」「- 箇条書き」「1. 番号」「**強調**」「[文](URL)」だけ。
+# 出力は /column/<slug>.html（サイトと同じ見た目・ナビ・フッター）。一覧は /column.html の「新着コラム」。
+# 給与・手当・待遇の数字は書かない（募集要項へ誘導する）。制度の説明には「目安」「最新の案内で確認」を添える。
+# Codex が作る求人ガイド（site/recruit/*.html）とは別物。テーマが重ならないよう recruit/ の一覧を見てから書く。
+COLUMN_DIR = pathlib.Path(__file__).parent / "content" / "column"
+
+
+def _inline(t):
+    t = t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+    t = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", r'<a href="\2">\1</a>', t)
+    return t
+
+
+def md_to_html(body):
+    out, para, ul, ol = [], [], [], []
+
+    def flush():
+        nonlocal para, ul, ol
+        if para:
+            out.append("<p>" + _inline(" ".join(para)) + "</p>"); para = []
+        if ul:
+            out.append("<ul>" + "".join(f"<li>{_inline(x)}</li>" for x in ul) + "</ul>"); ul = []
+        if ol:
+            out.append("<ol>" + "".join(f"<li>{_inline(x)}</li>" for x in ol) + "</ol>"); ol = []
+    for line in body.split("\n"):
+        st = line.strip()
+        if not st:
+            flush(); continue
+        if st.startswith("## "):
+            flush(); out.append(f"<h2>{_inline(st[3:])}</h2>"); continue
+        if st.startswith("### "):
+            flush(); out.append(f"<h3>{_inline(st[4:])}</h3>"); continue
+        if st.startswith("- "):
+            if para or ol: flush()
+            ul.append(st[2:]); continue
+        m = re.match(r"^\d+\. (.*)$", st)
+        if m:
+            if para or ul: flush()
+            ol.append(m.group(1)); continue
+        if ul or ol: flush()
+        para.append(st)
+    flush()
+    return "\n".join(out)
+
+
+def load_articles():
+    arts = []
+    for f in sorted(COLUMN_DIR.glob("*.md")):
+        head_, _, body = f.read_text(encoding="utf-8").partition("\n---\n")
+        meta = {}
+        for line in head_.splitlines():
+            if ":" in line:
+                k, v = line.split(":", 1); meta[k.strip()] = v.strip()
+        for k in ("title", "desc", "date"):
+            assert meta.get(k), f"{f.name}: {k} がありません"
+        a = dict(meta, slug=f.stem, path=f"/column/{f.stem}.html", body=body.strip())
+        a["tags"] = [t.strip() for t in meta.get("tags", "").split(",") if t.strip()]
+        a["html"] = md_to_html(a["body"])
+        a["updated"] = meta.get("updated", meta["date"])
+        a["minutes"] = max(1, round(len(a["body"]) / 500))
+        arts.append(a)
+    arts.sort(key=lambda a: (a["date"], a["slug"]), reverse=True)
+    return arts
+
+
+ARTICLES = load_articles()
+
+
+def esc_(s):
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+
+
+def article_card(a):
+    tags = "".join(f'<span class="col-tag">{esc_(t)}</span>' for t in a["tags"][:2])
+    return (f'<a class="card col-card" href="{a["path"]}"><div class="col-tags">{tags}</div>'
+            f'<h3>{esc_(a["title"])}</h3><p>{esc_(a["desc"])}</p>'
+            f'<div class="col-meta"><time datetime="{a["date"]}">{a["date"].replace("-", ".")}</time>・約{a["minutes"]}分</div></a>')
+
+
+def column_cta():
+    return '''<div class="col-cta">
+  <div class="kicker">RECRUIT</div>
+  <h2>0〜2歳の少人数保育で、一緒に働きませんか。</h2>
+  <p>トリオランドは世田谷区の駒沢大学園（駒沢大学駅 徒歩約6分）と梅ヶ丘園（梅ヶ丘駅 徒歩約1分）で職員を募集しています。募集職種・給与・勤務時間などは、応募時点の最新の募集要項でご確認ください。応募の前の園見学も歓迎しています。</p>
+  <div class="actions"><a class="btn pink" href="/recruit.html">採用情報を見る</a><a class="btn outline" href="/contact.html">園見学を申し込む</a></div>
+</div>'''
+
+
+def page_article(a):
+    ld = [crumbs([("トリオランド", "/"), ("保育士求人コラム", "/column.html"), (a["title"], a["path"])]),
+          {"@context": "https://schema.org", "@type": "Article", "headline": a["title"], "description": a["desc"],
+           "datePublished": a["date"], "dateModified": a["updated"], "mainEntityOfPage": BASE + a["path"],
+           "inLanguage": "ja", "image": f"{BASE}/assets/photos/life-play.webp",
+           "author": {"@type": "Organization", "name": "トリオランド（トリオキャリア株式会社）", "url": BASE + "/"},
+           "publisher": {"@type": "Organization", "name": "トリオランド", "url": BASE + "/",
+                         "logo": {"@type": "ImageObject", "url": f"{BASE}/assets/photos/trioland-logo.webp"}}}]
+    others = [b for b in ARTICLES if b["slug"] != a["slug"]]
+    same = [b for b in others if set(b["tags"]) & set(a["tags"])]
+    rel = (same + [b for b in others if b not in same])[:3]
+    tags = "".join(f'<span class="col-tag">{esc_(t)}</span>' for t in a["tags"])
+    upd = ("・更新 " + a["updated"].replace("-", ".")) if a["updated"] != a["date"] else ""
+    return head(f"{a['title']}｜トリオランド", a["desc"], a["path"], ld, og_image="life-play.webp") + nav("/column.html") + f'''
+<main>
+<div class="wrap col-article">
+  <nav class="col-crumbs" aria-label="現在地"><a href="/">トリオランド</a> › <a href="/column.html">保育士求人コラム</a></nav>
+  <div class="col-tags">{tags}</div>
+  <h1>{esc_(a["title"])}</h1>
+  <p class="col-meta">公開 <time datetime="{a["date"]}">{a["date"].replace("-", ".")}</time>{upd}・読む目安 約{a["minutes"]}分・トリオランド（世田谷区の企業主導型保育園）</p>
+  <div class="col-body">{a["html"]}</div>
+  <p class="col-note">この記事は公開時点の一般的な情報をもとに書いています。制度や基準は自治体・年度で変わることがあるため、最新の案内でご確認ください。募集職種・給与・休日などは<a href="/recruit.html">採用情報</a>と公式の募集要項が優先します。</p>
+  {column_cta()}
+  <section class="tight">
+    <div class="kicker">MORE</div>
+    <h2>ほかのコラム</h2>
+    <div class="cards">{"".join(article_card(b) for b in rel)}</div>
+    <div class="actions"><a class="btn outline" href="/column.html">コラム一覧へ</a><a class="btn outline" href="/recruit/">求人ガイド一覧</a></div>
+  </section>
+</div>
+</main>
+''' + footer()
+
+
 def page_column():
     ld = [crumbs([("トリオランド", "/"), ("保育士求人コラム", "/column.html")])]
     cards = "".join(
         f'<a class="card" href="{u}"><h3>{t}</h3><p>{d}</p></a>' for t, d, u in COLUMNS)
+    newest = "".join(article_card(a) for a in ARTICLES)
+    new_sec = ('<section>\n  <div class="kicker">NEW</div>\n  <h2>新着コラム</h2>\n  <div class="cards">' + newest + '</div>\n</section>') if ARTICLES else ""
     return head(
         "保育士求人コラム｜世田谷区で保育の仕事を探す方へ｜トリオランド",
         "世田谷区で保育士・保育補助の仕事を探す方に向けた求人コラム。乳児保育、無資格からの保育補助、企業主導型保育園、園規模、土日祝開園など、応募前に確認したいポイントを解説します。",
@@ -1048,9 +1175,11 @@ def page_column():
   </figure></div>
 </section>
 
+{new_sec}
+
 <section>
-  <div class="kicker">ARTICLES</div>
-  <h2>テーマ別に読む</h2>
+  <div class="kicker">GUIDES</div>
+  <h2>テーマ別の求人ガイド</h2>
   <div class="cards">{cards}</div>
 </section>
 
@@ -1114,6 +1243,12 @@ def main():
     write("/recruit.html", page_recruit())
     write("/faq.html", page_faq())
     write("/column.html", page_column())
+    for a in ARTICLES:
+        write(a["path"], page_article(a))
+    keep = {a["slug"] + ".html" for a in ARTICLES}
+    for old in (OUT / "column").glob("*.html") if (OUT / "column").is_dir() else []:
+        if old.name not in keep:
+            old.unlink(); print(f"  removed {old}")
 
     # robots.txt
     write("/robots.txt", f"User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: {BASE}/sitemap.xml\n")
@@ -1127,6 +1262,9 @@ def main():
     body = "".join(
         f"<url><loc>{BASE}{u}</loc><changefreq>{c}</changefreq><priority>{p}</priority></url>"
         for u, p, c in urls)
+    body += "".join(
+        f"<url><loc>{BASE}{a['path']}</loc><lastmod>{a['updated']}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>"
+        for a in ARTICLES)
     write("/sitemap.xml",
           f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>\n')
     print("done.")
