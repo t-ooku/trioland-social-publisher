@@ -8,7 +8,7 @@
 #
 # 1 本ごと（matrix）に：場面を切り出す → 枠（3:2）に合わせて切り抜く → 720x480・24fps のコマに分ける
 #   → tools/ai_video.py（Real-ESRGAN realesr-general-x4v3。ノイズ除去 0.5）で 1 コマずつ AI 補正（4 倍）
-#   → 1200x800 に縮めて H.264（音なし・faststart）にする。最初のコマを静止画（poster）にする。
+#   → 1200x800 に縮めて H.264（音なし・faststart）と WebM（VP9）にする。最初のコマを静止画（poster）にする。
 # 最後に全部を site/assets/video/ に入れてコミットする。場面を変えたいときは matrix の ss（開始秒）・t（長さ）を直す。
 name: Build hero videos
 on:
@@ -93,6 +93,9 @@ jobs:
           mkdir -p out
           ffmpeg -v error -y -framerate 24 -i /tmp/out/%04d.png -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p \
             -movflags +faststart -an out/${{ matrix.name }}.mp4
+          # WebM（VP9）も作る：H.264 を再生できないブラウザ（一部の Chromium など）向け。<source> で webm → mp4 の順に並べる
+          ffmpeg -v error -y -framerate 24 -i /tmp/out/%04d.png -c:v libvpx-vp9 -crf 38 -b:v 0 -row-mt 1 -deadline good -cpu-used 2 \
+            -pix_fmt yuv420p -an out/${{ matrix.name }}.webm
           python3 -c "from PIL import Image; Image.open('/tmp/out/0001.png').save('out/${{ matrix.name }}.webp', 'WEBP', quality=80, method=6)"
           ffprobe -v error -show_entries stream=width,height,nb_frames:format=duration,size -of compact out/${{ matrix.name }}.mp4
           ls -l out
