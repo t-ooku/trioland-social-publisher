@@ -26,7 +26,7 @@ CORP = "https://www.triocareer.jp/"
 # 公開して問題ない値。消すと Search Console の確認が外れるので残すこと。
 HERE = pathlib.Path(__file__).parent
 OUT = HERE / "site"
-V = "20261006-02"
+V = "20261008-01"
 
 SITE_NAME = "トリオキャリア 放課後等デイサービス"
 RECRUIT = json.loads((HERE / "content" / "recruit.json").read_text(encoding="utf-8"))
@@ -148,7 +148,7 @@ def photo_wall():
 REVEAL_JS = r'''
 <script>
 (function () {
-  var sel = ".card,.fun,.branch,.gallery figure,.job,.quick>div,.steps>div,.recruit-banner,.band,.docs,.spec,.intro-in,.split>*,.hero>*";
+  var sel = ".card,.col-card,.fun,.branch,.gallery figure,.job,.quick>div,.steps>div,.recruit-banner,.band,.docs,.spec,.intro-in,.split>*,.hero>*";
   var els = [].slice.call(document.querySelectorAll(sel));
   if (!("IntersectionObserver" in window) || (matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
   els.forEach(function (el) {
@@ -1120,7 +1120,8 @@ def article_ld(a):
 
 def article_card(a, i=0):
     tags = "".join(f'<span class="tag">{esc(t)}</span>' for t in a["tags"][:2])
-    return (f'<a class="col-card rv" style="--i:{i}" href="{a["path"]}"><div class="col-tags">{tags}</div>'
+    # 現れる動き（rv）は REVEAL_JS が付ける。HTML に rv を直接書くと、監視の対象外のまま透明で残ってしまう（2026-10-08 の不具合）
+    return (f'<a class="col-card" href="{a["path"]}"><div class="col-tags">{tags}</div>'
             f'<h3>{esc(a["title"])}</h3><p>{esc(a["desc"])}</p>'
             f'<div class="col-meta"><time datetime="{a["date"]}">{a["date"].replace("-", ".")}</time>・約{a["minutes"]}分</div></a>')
 
