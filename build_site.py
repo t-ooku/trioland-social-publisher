@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261008-01"
+V = "20261009-01"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -49,7 +49,8 @@ UME = dict(
     photo_alt="トリオランド梅ヶ丘園の園舎外観。梅ヶ丘駅前の通りに面した入口と「トリオランド 梅ヶ丘園」の看板",
 )
 
-RECRUIT_URL = "https://www.triocareer.jp/company/recruit/"
+# トリオキャリア HP の採用ページ（https://www.triocareer.jp/company/recruit/）にはリンクしない（2026-10-09 オーナーの指示：パート・アルバイトの賃金が最低賃金を下回ったまま）。
+# Codex の求人ガイド（site/recruit/*.html）のリンクは build-photos.yml の手順で /recruit.html#jobs に付け替える。
 CONTACT_URL = "https://www.triocareer.jp/contact/"
 
 # ------------------------------------------------------------------- 部品
@@ -815,36 +816,94 @@ def page_contact():
 ''' + footer()
 
 
+# 動画の小窓（採用ページなど）。見えている間だけ再生する。動画は hero-videos.yml が作ったもの（AI 補正済み）
+def clip(name, alt, cls=""):
+    return (f'<video class="clip {cls}" muted playsinline loop autoplay preload="metadata" width="1200" height="800" '
+            f'poster="/assets/video/{name}.webp?v={V}" aria-label="{alt}">'
+            f'<source src="/assets/video/{name}.webm?v={V}" type="video/webm">'
+            f'<source src="/assets/video/{name}.mp4?v={V}" type="video/mp4"></video>')
+
+
+CLIP_JS = """
+<script>
+(function () {
+  var vs = [].slice.call(document.querySelectorAll("video.clip"));
+  function play(v) { v.muted = true; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  if (!("IntersectionObserver" in window)) { vs.forEach(play); return; }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) play(e.target); else e.target.pause(); });
+  }, { threshold: 0.25 });
+  vs.forEach(function (v) { io.observe(v); });
+  ["touchstart", "pointerdown", "scroll"].forEach(function (t) {
+    window.addEventListener(t, function () { vs.forEach(function (v) { var r = v.getBoundingClientRect(); if (v.paused && r.bottom > 0 && r.top < innerHeight) play(v); }); }, { passive: true, once: true });
+  });
+})();
+</script>"""
+
+
+# 採用ページ（2026-10-09 オーナーの指示：「トリオキャリアの HP の PA 賃金が最低賃金を下回ったままだから、採用ページはリンクしないで良い。
+# 現在の正しい賃金を採用ページに掲載して。楽しい雰囲気などは全面に出してね」）。
+# → トリオキャリア HP の採用ページ（RECRUIT_URL）へのリンクはすべて外した。応募はこのページのフォームと園見学で受ける。
+# 賃金はオーナーから受け取った数字だけを JOBS に書く（推測で書かない）。
 def page_recruit():
     ld = [crumbs([("トリオランド", "/"), ("採用情報", "/recruit.html")])]
     return head(
         "採用情報｜世田谷区の保育士・保育補助求人｜トリオランド（駒沢大学・梅ヶ丘）",
         "世田谷区の企業主導型保育園トリオランドの保育士・保育補助の採用情報。駒沢大学園・梅ヶ丘園で0〜2歳児の少人数保育。無資格・未経験から始める保育補助、ブランクのある保育士の方もご相談ください。応募前の園見学も受付中。",
-        "/recruit.html", ld) + nav("/recruit.html") + f'''
-<main>
+        "/recruit.html", ld, og_image="life-play.webp") + nav("/recruit.html") + f'''
+<main class="rc">
 <div class="wrap">
 
-<section class="hero">
+<section class="hero rc-hero">
   <div>
-    <span class="badge">保育士・保育補助 募集中</span>
-    <h1>子どもの「やってみたい」を、<br>一緒に楽しめる人へ。</h1>
-    <p class="lead">トリオランドは世田谷区で2園を運営する企業主導型保育園です。0〜2歳児の少人数保育だからこそ、一人ひとりの育ちにじっくり関わることができます。求人票の条件だけでは分からない園の空気を、応募前の見学で確かめてください。</p>
+    <span class="badge rc-badge">🎉 保育士・保育補助 募集中</span>
+    <h1>子どもの「やってみたい」を、<br><span class="rc-hl">一緒に楽しめる人</span>へ。</h1>
+    <p class="lead">トリオランドは世田谷区で2園を運営する、0〜2歳児の少人数の保育園です。積み木を高く積んで、水あそびで笑って、カブトムシにそっとふれて。子どもたちの「はじめて」と「できた！」に、毎日いちばん近くで立ち会える仕事です。</p>
     <div class="actions">
-      <a class="btn pink" href="{RECRUIT_URL}" target="_blank" rel="noopener">最新の募集要項を見る</a>
-      <a class="btn outline" href="#form">応募・相談フォームへ</a>
+      <a class="btn pink" href="#form">応募・相談フォームへ</a>
       <a class="btn outline" href="/contact.html">まずは園見学から相談する</a>
     </div>
   </div>
-  <div class="hero-media"><figure>
-    <img src="/assets/photos/life-table.webp?v={V}" width="1400" height="1004" alt="机の上に紙の丸シールを広げて制作活動をしているところ" fetchpriority="high" decoding="async">
-    <figcaption>0〜2歳の少人数保育です</figcaption>
-  </figure></div>
+  <div class="rc-stage">
+    {trio("rc-trio")}
+    <div class="rc-video">{clip("v-karada", "保育室で、保育士に支えられながら積み木の上に立つ子ども")}</div>
+    <span class="rc-sticker">一緒に<br>あそぼう！</span>
+  </div>
+</section>
+</div>
+
+<div class="marquee rc-marquee" aria-hidden="true"><div class="marquee-in">
+  <span>🧸 一緒にあそぶ</span><span>🍙 一緒に食べる</span><span>😊 一緒にわらう</span><span>🎉 「できた！」を喜ぶ</span><span>🌱 0・1・2歳の育ちを見守る</span>
+  <span>🧸 一緒にあそぶ</span><span>🍙 一緒に食べる</span><span>😊 一緒にわらう</span><span>🎉 「できた！」を喜ぶ</span><span>🌱 0・1・2歳の育ちを見守る</span>
+</div></div>
+
+<div class="wrap">
+<section>
+  <div class="kicker">OUR DAYS</div>
+  <h2>トリオランドの毎日を、映像で。</h2>
+  <p class="lead">園の Instagram に投稿している、実際の園生活の一場面です（お顔のぼかしは投稿時のものです）。</p>
+  <div class="vid-strip">
+    <figure class="pola p1">{clip("v-mizu", "タライの水あそびで、おもちゃをすくって遊ぶ子どもたちと保育士")}<figcaption>💦 夏は水あそび</figcaption></figure>
+    <figure class="pola p2">{clip("v-inochi", "枝にとまったカブトムシに、そっと手をのばす子ども")}<figcaption>🪲 生き物とふれあう</figcaption></figure>
+    <figure class="pola p3">{clip("v-gohan", "給食の時間、テーブルを囲んで食べる子どもたちと保育士")}<figcaption>🍙 みんなで給食</figcaption></figure>
+  </div>
 </section>
 
-<section>
+<section class="soft">
+  <div class="kicker">WHY TRIOLAND</div>
+  <h2>ここが楽しい！トリオランドで働く4つのこと</h2>
+  <div class="fun-grid">
+    <div class="fun c1">{mascot("maru", "fun-m wobble d1")}<span class="fun-ico">👶</span><b>0〜2歳に、じっくり</b><p>定員19名・20名の少人数。担任だけで抱え込まず、園全体で一人ひとりの育ちを共有します。</p></div>
+    <div class="fun c2">{mascot("shikaku", "fun-m wobble d2")}<span class="fun-ico">🧠</span><b>専門職から学べる</b><p>理学療法士による勉強会を定期的に実施。からだの発達の視点を、毎日の保育に生かせます。</p></div>
+    <div class="fun c3">{mascot("sankaku", "fun-m wobble d3")}<span class="fun-ico">🧸</span><b>子どもと本気であそぶ</b><p>決められた活動をこなすのではなく、子どもの「やってみたい」から保育をつくります。</p></div>
+    <div class="fun c4">{mascot("maru", "fun-m wobble d2")}<span class="fun-ico">🚃</span><b>通いやすい2園</b><p>駒沢大学駅 徒歩約6分・梅ヶ丘駅 徒歩約1分。通いやすい園を選べます。</p></div>
+  </div>
+</section>
+
+<section id="jobs">
   <div class="kicker">OPEN ROLES</div>
   <h2>募集職種</h2>
-  <p class="lead">公式の採用案内で確認できている募集職種です。募集状況・条件は時期により変わるため、応募前に最新の募集要項をご確認ください。</p>
+  <p class="lead">応募の前の園見学も歓迎しています。条件のご相談は、下のフォームからお気軽にどうぞ。</p>
   <div class="branch-grid">
     <div class="branch"><div class="content">
       <h3>保育士</h3>
@@ -857,19 +916,19 @@ def page_recruit():
         <li>研修制度あり。安心して始められます</li>
         <li>勤務地：駒沢大学園（世田谷区野沢）／梅ヶ丘園（世田谷区梅丘）</li>
       </ul>
-      <div class="btnrow"><a class="btn pink sm" href="{RECRUIT_URL}" target="_blank" rel="noopener">募集要項を確認</a><a class="btn outline sm" href="/contact.html">園見学を申し込む</a></div>
+      <div class="btnrow"><a class="btn pink sm" href="#form">応募・相談する</a><a class="btn outline sm" href="/contact.html">園見学を申し込む</a></div>
     </div></div>
     <div class="branch"><div class="content">
       <h3>保育補助</h3>
       <div class="meta">無資格・未経験の方も対象</div>
       <p>保育士と一緒に、子どもたちの生活とあそびをサポートしていただくお仕事です。保育の現場がはじめての方も、少人数の環境から始められます。</p>
       <ul>
-        <li>無資格・未経験の方も応募可能と案内されています</li>
+        <li>無資格・未経験の方も応募できます</li>
         <li>幼稚園教諭／子育て支援員／ベビーシッター経験者を歓迎</li>
-        <li>子育て経験のある方も歓迎と案内されています</li>
+        <li>子育て経験のある方も歓迎</li>
         <li>勤務地：駒沢大学園（世田谷区野沢）／梅ヶ丘園（世田谷区梅丘）</li>
       </ul>
-      <div class="btnrow"><a class="btn pink sm" href="{RECRUIT_URL}" target="_blank" rel="noopener">募集要項を確認</a><a class="btn outline sm" href="/contact.html">園見学を申し込む</a></div>
+      <div class="btnrow"><a class="btn pink sm" href="#form">応募・相談する</a><a class="btn outline sm" href="/contact.html">園見学を申し込む</a></div>
     </div></div>
   </div>
 </section>
@@ -886,27 +945,14 @@ def page_recruit():
     </td></tr>
     <tr><th>園の規模</th><td>駒沢大学園 定員{KOMA["capacity"]}／梅ヶ丘園 定員{UME["capacity"]}</td></tr>
     <tr><th>対象年齢</th><td>生後57日目〜2歳児クラス（乳児保育に特化した園です）</td></tr>
-    <tr><th>給与（保育士）</th><td>月給 310,500円 〜<br>※駒沢大学園の公式Instagram採用投稿（2026年7月）で案内されていた金額です。応募時点の条件は募集要項でご確認ください。</td></tr>
-    <tr><th>シフト・休日</th><td>月1シフト制（月公休10日）と案内されています。</td></tr>
-    <tr><th>歓迎する方</th><td>『未経験』『ブランク有り』でも意欲があれば歓迎と案内されています。研修制度があり、安心して始められる体制です。</td></tr>
-    <tr><th>開園時間</th><td>平日 7:30〜20:30／土・日・祝 8:00〜17:00<br>※実際のシフト・勤務時間は募集要項をご確認ください</td></tr>
+    <tr><th>給与（保育士）</th><td>月給 310,500円 〜<br>※駒沢大学園の公式Instagram採用投稿（2026年7月）で案内されていた金額です。</td></tr>
+    <tr><th>シフト・休日</th><td>月1シフト制（月公休10日）</td></tr>
+    <tr><th>歓迎する方</th><td>『未経験』『ブランク有り』でも意欲があれば歓迎です。研修制度があり、安心して始められる体制です。</td></tr>
+    <tr><th>開園時間</th><td>平日 7:30〜20:30／土・日・祝 8:00〜17:00<br>※実際のシフト・勤務時間は面接・見学の際にご説明します</td></tr>
     <tr><th>園の設備</th><td>自園調理／連絡アプリ導入（園庭なし）</td></tr>
     <tr><th>学びの機会</th><td>理学療法士による勉強会を定期的に実施しています</td></tr>
-    <tr><th>雇用形態・その他の待遇</th><td>公式の募集要項をご確認ください。<a href="{RECRUIT_URL}" target="_blank" rel="noopener">最新の募集要項はこちら</a></td></tr>
+    <tr><th>雇用形態・その他の待遇</th><td>面接・見学の際にご説明します。ご質問は<a href="#form">応募・相談フォーム</a>からどうぞ。</td></tr>
   </table></div>
-</section>
-
-<section>
-  <div class="kicker">WHY TRIOLAND</div>
-  <h2>トリオランドで働く4つの特徴</h2>
-  <div class="cards">
-    <div class="card"><span class="num">1</span><h3>0〜2歳に特化</h3><p>乳児保育に集中できる環境です。発達の差が大きい時期だからこそ、一人ひとりに合わせた関わりを学べます。</p></div>
-    <div class="card"><span class="num">2</span><h3>定員19名・20名の少人数</h3><p>大規模園とは違い、園全体で子どもの様子を共有できます。相談しやすい距離感です。</p></div>
-    <div class="card"><span class="num">3</span><h3>専門職から学べる</h3><p>理学療法士による勉強会を定期的に実施。発達運動学的な視点を保育に取り入れています。</p></div>
-    <div class="card"><span class="num">4</span><h3>子ども主体の保育</h3><p>決められた活動をこなすのではなく、子どもの興味から保育を組み立てる園です。</p></div>
-    <div class="card"><span class="num">5</span><h3>通いやすい2園</h3><p>駒沢大学駅 徒歩約6分、梅ヶ丘駅 徒歩約1分。ご自宅から通いやすい園を選べます。</p></div>
-    <div class="card"><span class="num">6</span><h3>応募前に見学できます</h3><p>職場の雰囲気は文字では伝わりません。見学してから判断していただけます。</p></div>
-  </div>
 </section>
 
 <section>
@@ -925,18 +971,18 @@ def page_recruit():
 
 <section class="tight">
   <div class="notice"><strong>掲載内容についてのご注意</strong><br>
-  給与・シフトは<b>園の公式Instagram採用投稿（2026年7月）で案内されていた条件</b>です。募集職種・雇用形態・勤務時間・待遇などは時期により変わり、このページでは<b>確認できていない条件を推測して掲載していません</b>。応募の際は必ず
-  <a href="{RECRUIT_URL}" target="_blank" rel="noopener">公式の募集要項</a>で最新の条件をご確認ください。</div>
+  募集職種・勤務時間・待遇などは時期により変わることがあります。このページでは、確認できていない条件を推測して掲載していません。くわしい条件は、面接・見学の際にご説明します。</div>
 </section>
 
 {inquiry_form("recruit")}
 
 {cta("応募の前に、園の雰囲気を見てみませんか。",
      "実際の保育の様子、子どもたちとの距離感、職員同士の関わり方。見学してから判断していただいて大丈夫です。",
-     ("/contact.html","園見学・採用相談を申し込む"), (RECRUIT_URL,"募集要項を見る"))}
+     ("/contact.html","園見学・採用相談を申し込む"), ("#form","応募・相談フォームへ"))}
 
 </div>
 </main>
+{CLIP_JS}
 ''' + footer()
 
 
