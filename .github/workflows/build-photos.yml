@@ -115,6 +115,16 @@ jobs:
           ! grep -rhoP 'mygate-jp\.workers\.dev(?!/api/)' site/*.html site/recruit/*.html site/sitemap.xml site/robots.txt | grep .
           echo 'canonical base normalized'
 
+      # 2026-10-09 オーナーの指示：トリオキャリア HP の採用ページ（パート・アルバイトの賃金が最低賃金を下回ったまま）にはリンクしない。
+      # Codex の求人ガイドが書いたリンクを、このサイトの採用情報（/recruit.html#jobs）に付け替える。
+      - name: Point recruit links to this site's recruit page
+        run: |
+          set -euo pipefail
+          perl -0pi -e 's{<a href="https://www\.triocareer\.jp/company/recruit/?"[^>]*>[^<]*</a>}{<a href="/recruit.html#jobs">トリオランドの採用情報</a>}g' site/*.html site/recruit/*.html
+          perl -pi -e 's{https://www\.triocareer\.jp/company/recruit/?}{/recruit.html#jobs}g' site/*.html site/recruit/*.html
+          ! grep -rl 'triocareer\.jp/company/recruit' site/*.html site/recruit/*.html
+          echo 'recruit links point to /recruit.html'
+
       - name: Verify every photo decodes end to end
         run: python3 tools/verify_photos.py
 
