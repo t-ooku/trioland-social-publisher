@@ -1,0 +1,184 @@
+# トリオキャリア HP（www.triocareer.jp）の試作版づくりのための素材取り（2026-10-16 オーナーの指示）。
+#   「トリオキャリア社のロゴとか変えないで。トンマナも元の HP に合わせて」
+#   「各事業部の欄が充実してない。もっと WEB から情報や写真画像を引っ張ってきて」
+# 作業環境からは triocareer.jp・digilumi.jp に直接つなげないので、CI で取得してこのブランチ（corp-mirror）にコミットする。
+# main には入れない。公開中のページ・画像だけを取る（ログインはしない）。
+name: Corporate site mirror
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/corp-mirror.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: |
+          python3 -m pip install --quiet requests beautifulsoup4 playwright pillow
+          python3 -m playwright install --with-deps chromium >/dev/null
+      - name: Fetch pages and assets
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, re, json, time, hashlib
+          from urllib.parse import urljoin, urlparse
+          import requests
+          from bs4 import BeautifulSoup
+          OUT = "corp-mirror"
+          S = requests.Session()
+          S.headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
+          T = "https://www.triocareer.jp"
+          pages = [T + p for p in [
+              "/", "/service/", "/service/callcenter/", "/service/childcare/",
+              "/service/childcare/trioland-komazawa/", "/service/childcare/trioland-umegaoka/",
+              "/service/after-school/", "/service/digilumi/",
+              "/service/digilumi/tokyooota/", "/service/digilumi/chibaabiko/", "/service/digilumi/chibaichikawa/",
+              "/service/digilumi/tochigiutsunomiya/", "/service/digilumi/chibacyuo/", "/service/digilumi/tochigioyama/",
+              "/thought/", "/company/", "/company/companyoutline/", "/company/recruit/", "/contact/"]]
+          # でじるみ（ブランドの公式サイト）：トリオキャリアの 6 拠点の事業所ページを探す
+          D = "https://digilumi.jp"
+          keys = ["oyama", "utsunomiya", "abiko", "ichikawa", "chiba-chuo", "chiba-chuou", "chibachuo", "ota", "oota"]
+          found = set()
+          for src in [D + "/", D + "/office/", D + "/wp-sitemap.xml", D + "/sitemap.xml", D + "/wp-sitemap-posts-office-1.xml", D + "/wp-sitemap-posts-page-1.xml"]:
+              try:
+                  r = S.get(src, timeout=30)
+                  for m in re.findall(r'https?://digilumi\.jp/office/[a-z0-9\-_/]+', r.text):
+                      slug = m.rstrip("/").split("/")[-1]
+                      if any(k == slug.split("-")[-1] or k in slug for k in keys) and ("tochigi" in slug or "chiba" in slug or "tokyo" in slug):
+                          found.add(m.rstrip("/") + "/")
+              except Exception as e:
+                  print("skip", src, e)
+          for g in ["tochigi-oyama", "tochigi-utsunomiya", "chiba-chuo", "chiba-abiko", "chiba-ichikawa", "tokyo-ota"]:
+              found.add(f"{D}/office/{g}/")
+          pages += [D + "/"] + sorted(found)
+          print("pages:", len(pages))
+
+          def local(u):
+              p = urlparse(u)
+              path = p.path
+              if path.endswith("/") or path == "":
+                  path += "index.html"
+              if p.query and not re.search(r"\.(css|js)$", path):
+                  path += "_" + hashlib.md5(p.query.encode()).hexdigest()[:6]
+              return os.path.join(OUT, p.netloc, path.lstrip("/"))
+
+          assets = set(); report = {}
+          for u in pages:
+              try:
+                  r = S.get(u, timeout=30)
+              except Exception as e:
+                  report[u] = str(e); continue
+              report[u] = r.status_code
+              if r.status_code != 200:
+                  continue
+              f = local(u); os.makedirs(os.path.dirname(f), exist_ok=True)
+              open(f, "wb").write(r.content)
+              soup = BeautifulSoup(r.content, "html.parser")
+              for t in soup.find_all(["img", "source", "link", "script", "video"]):
+                  for a in ["src", "href", "data-src", "data-lazy-src", "poster", "data-bg"]:
+                      v = t.get(a)
+                      if v: assets.add(urljoin(u, v))
+                  for a in ["srcset", "data-srcset"]:
+                      v = t.get(a)
+                      if v:
+                          for part in v.split(","):
+                              s = part.strip().split(" ")[0]
+                              if s: assets.add(urljoin(u, s))
+              for m in re.findall(r'url\((["\']?)([^)"\']+)\1\)', r.text):
+                  assets.add(urljoin(u, m[1]))
+          ok_host = ("www.triocareer.jp", "triocareer.jp", "digilumi.jp", "fonts.googleapis.com", "fonts.gstatic.com")
+          want = re.compile(r"\.(css|png|jpe?g|webp|gif|svg|woff2?|ttf|otf|ico|mp4|webm)(\?|$)", re.I)
+          css_more = set()
+          def grab(a):
+              p = urlparse(a)
+              if p.netloc not in ok_host or not (want.search(p.path) or p.netloc == "fonts.googleapis.com"):
+                  return None
+              if p.netloc == "digilumi.jp" and "/plugins/" in p.path:
+                  return None
+              f = local(a)
+              if p.netloc == "fonts.googleapis.com" and not f.endswith(".css"): f += ".css"
+              if os.path.exists(f): return f
+              try:
+                  r = S.get(a, timeout=40)
+              except Exception as e:
+                  print("fail", a, e); return None
+              if r.status_code != 200: return None
+              os.makedirs(os.path.dirname(f), exist_ok=True); open(f, "wb").write(r.content)
+              if f.endswith(".css") or p.netloc == "fonts.googleapis.com":
+                  txt = r.text
+                  for m in re.findall(r'url\((["\']?)([^)"\']+)\1\)', txt):
+                      css_more.add(urljoin(a, m[1]))
+                  for m in re.findall(r'@import\s+(?:url\()?["\']([^"\']+)', txt):
+                      css_more.add(urljoin(a, m))
+              return f
+          n = 0
+          for a in sorted(assets):
+              if grab(a): n += 1
+          for _ in range(2):
+              more = sorted(css_more); css_more.clear()
+              for a in more:
+                  if grab(a): n += 1
+          print("assets saved:", n)
+          json.dump(report, open(os.path.join(OUT, "pages.json"), "w"), ensure_ascii=False, indent=1)
+          PY
+      - name: Screenshots and computed styles
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from playwright.sync_api import sync_playwright
+          OUT = "corp-mirror/shots"; os.makedirs(OUT, exist_ok=True)
+          urls = {
+            "home": "https://www.triocareer.jp/",
+            "childcare": "https://www.triocareer.jp/service/childcare/",
+            "komazawa": "https://www.triocareer.jp/service/childcare/trioland-komazawa/",
+            "afterschool": "https://www.triocareer.jp/service/after-school/",
+            "digilumi": "https://www.triocareer.jp/service/digilumi/",
+            "callcenter": "https://www.triocareer.jp/service/callcenter/",
+            "recruit": "https://www.triocareer.jp/company/recruit/",
+            "digi-oyama": "https://digilumi.jp/office/tochigi-oyama/",
+          }
+          styles = {}
+          js = """() => {
+            const pick = s => { const e = document.querySelector(s); if (!e) return null; const c = getComputedStyle(e);
+              return {sel: s, font: c.fontFamily, size: c.fontSize, weight: c.fontWeight, color: c.color, bg: c.backgroundColor, bgimg: c.backgroundImage.slice(0,200), radius: c.borderRadius, border: c.borderColor}; };
+            return ["body","header","#header","header a","nav a",".logo img","h1","h2","h3","h2 span","p","a","footer","#footer",".btn","a.btn",".button","main","#top__fullcarousel",".more","table th","table td"].map(pick).filter(Boolean);
+          }"""
+          with sync_playwright() as p:
+              b = p.chromium.launch()
+              for name, u in urls.items():
+                  for dev, vp in [("pc", {"width": 1366, "height": 900}), ("sp", {"width": 390, "height": 844})]:
+                      pg = b.new_page(viewport=vp)
+                      try:
+                          pg.goto(u, wait_until="networkidle", timeout=60000)
+                          pg.wait_for_timeout(1500)
+                          h = pg.evaluate("document.body.scrollHeight")
+                          for y in range(0, h, 600):
+                              pg.evaluate(f"window.scrollTo(0,{y})"); pg.wait_for_timeout(80)
+                          pg.evaluate("window.scrollTo(0,0)"); pg.wait_for_timeout(600)
+                          pg.screenshot(path=f"{OUT}/{name}-{dev}.jpg", full_page=True, type="jpeg", quality=70)
+                          if dev == "pc":
+                              styles[name] = pg.evaluate(js)
+                      except Exception as e:
+                          print("shot fail", name, dev, e)
+                      pg.close()
+              b.close()
+          json.dump(styles, open("corp-mirror/styles.json", "w"), ensure_ascii=False, indent=1)
+          PY
+          du -sh corp-mirror; find corp-mirror -type f | wc -l
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'Mirror triocareer.jp / digilumi.jp public pages for the corporate site prototype'
+          git push
