@@ -1,5 +1,5 @@
 # トリオキャリア HP 試作版の採用バナー用に、フリー素材（Unsplash ライセンス・無料）の候補写真を取ってくる（2026-10-16 オーナー「フリー素材で」）。
-# corp-mirror ブランチだけで動く。main には入れない。（v2：取得できないときの記録を残す）
+# corp-mirror ブランチだけで動く。main には入れない。（v3：unsplash.com はボット対策で 401 になるため、画像 CDN から直接取る）
 name: Stock photo candidates
 on:
   push:
@@ -24,27 +24,20 @@ jobs:
           import os, re, json, io, html
           import requests
           from PIL import Image, ImageDraw
-          IDS = ["GtWJvhttYmg", "wnpf3Q5pkXA", "UCU1qi1cXjE", "ZYJX7UjOZyo", "APjRQ59peUg", "GNj902mGGH4", "N0Zky-bQBYY",
-                 "sQcFcFImSg8", "9Fi8p2qOPNo", "gAfLQ3YIlUA", "PlcVlbzEgOc", "zFKOZ2Udk6I", "3MUAxuT6qhI", "r-_71cqvTUo",
-                 "kQnpXFo7_aE", "hGWKGile6bs"]
+          IDS = {"wnpf3Q5pkXA": "photo-1766066014237-00645c74e9c6", "GtWJvhttYmg": "photo-1790597035491-1d310389a733",
+                 "UCU1qi1cXjE": "photo-1790597035469-ddca48ece28f", "ZYJX7UjOZyo": "photo-1790597035527-a5137a3e20f2",
+                 "APjRQ59peUg": "photo-1758691737605-69a0e78bd193", "GNj902mGGH4": "photo-1758873268223-f61976493498",
+                 "sQcFcFImSg8": "photo-1772419130717-e0630e3e4f28", "gAfLQ3YIlUA": "photo-1786292949404-084cbd10c7b1",
+                 "PlcVlbzEgOc": "photo-1786293424429-c181dea1d5f3", "zFKOZ2Udk6I": "photo-1544772711-57da9c7368fa",
+                 "9Fi8p2qOPNo": "photo-1770096679844-57ca92c2b64b"}
           OUT = "corp-mirror/stock"; os.makedirs(OUT, exist_ok=True)
           S = requests.Session(); S.headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) Chrome/124 Safari/537.36"
           meta = {}; thumbs = []
           def get_img(i):
-              log = []
-              r = S.get(f"https://unsplash.com/photos/{i}/download?force=true&w=1600", timeout=60)
-              log.append(f"download {r.status_code} {r.headers.get('content-type','')} {r.url[:90]}")
-              if r.status_code == 200 and r.headers.get("content-type", "").startswith("image"):
-                  return r.content, log, ""
-              pg = S.get(f"https://unsplash.com/photos/{i}", timeout=30)
-              log.append(f"page {pg.status_code}")
-              m = re.search(r'<meta property="og:image" content="([^"]+)"', pg.text)
-              t = re.search(r'<meta property="og:title" content="([^"]*)"', pg.text)
-              if m:
-                  u = html.unescape(m.group(1)).split("?")[0] + "?w=1600&q=85&fm=jpg"
-                  r2 = S.get(u, timeout=60); log.append(f"og {r2.status_code} {u[:90]}")
-                  if r2.status_code == 200: return r2.content, log, html.unescape(t.group(1)) if t else ""
-              return None, log, ""
+              u = f"https://images.unsplash.com/{IDS[i]}?w=1600&q=85&fm=jpg"
+              r = S.get(u, timeout=60)
+              log = [f"cdn {r.status_code} {r.headers.get('content-type','')}"]
+              return (r.content if r.status_code == 200 and r.headers.get("content-type", "").startswith("image") else None), log, IDS[i]
           for i in IDS:
               try:
                   data, log, title = get_img(i)
