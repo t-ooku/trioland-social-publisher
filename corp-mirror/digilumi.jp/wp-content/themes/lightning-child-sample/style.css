@@ -1,0 +1,194 @@
+/*
+Theme Name: でじるみテーマ
+Theme URI:
+Template: lightning
+Description:
+Author:
+Tags:
+Version: 0.6.1
+*/
+
+body  {
+	background-attachment: fixed;
+	background-size: 1600px;
+	background-repeat: repeat;
+	background-position: left top;
+	background-image: url(https://digilumi.jp/wp-content/uploads/2025/03/back_anime.webp);
+	animation: bg_anime 180s infinite linear;
+}
+@keyframes bg_anime {
+	0% { background-position: left top; }
+	100% { background-position: left 3200px top -3200px; }
+}
+
+.orange_down::before {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_orange_down.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+.green_up::after {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_green_up.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+.green_down::before {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_green_down.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+.beige_up::after {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_beige_up.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+.beige_down::before {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_beige_down.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+.blue_up::after {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_blue_up.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+.blue_down::before {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_blue_down.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+.pink_up::after {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_pink_up.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+.pink_down::before {
+	content: '';
+	display: inline-block;
+	height: 20px;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: url(https://digilumi.jp/wp-content/uploads/2025/03/waveline_pink_down.png);
+	background-repeat: repeat-x;
+	opacity: 0.5;
+}
+
+.page_top_btn {
+	right: 20px;
+	bottom: 20px;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background-color: var(--vk-color-primary);
+	box-shadow: none;
+}
+
+.next-prev-prev.card-horizontal .card-body {
+	display: flex;
+	padding: 0;
+	align-items: center;
+	justify-content: flex-start;
+}
+.next-prev-prev.card-horizontal .card-body:before {
+	font-family: "Font Awesome 5 Free";
+	content: "\f053";
+	font-weight: bold;
+	position: absolute;
+	font-size: 3rem;
+	color: rgba(0,0,0,0.1);
+	top: calc(50% - 1.5rem);
+	left: 1rem;
+}
+.next-prev-prev.card-horizontal.vk_post .card-body .vk_post_title a {
+	display: block;
+	padding: 1.5rem 1.0rem 1.5rem 3.5rem;
+}
+.next-prev-next.card-horizontal .card-body {
+	display: flex;
+	padding: 0;
+	align-items: center;
+	justify-content: flex-end;
+}
+.next-prev-next.card-horizontal .card-body:before {
+	font-family: "Font Awesome 5 Free";
+	content: "\f054";
+	font-weight: bold;
+	position: absolute;
+	font-size: 3rem;
+	color: rgba(0,0,0,0.1);
+	top: calc(50% - 1.5rem);
+	right: 1rem;
+}
+.next-prev-next.card-horizontal.vk_post .card-body .vk_post_title a {
+	display: block;
+	padding: 1.5rem 3.5rem 1.5rem 1.0rem;
+}
+#breadcrumb {
+	display:none;
+}
+header.entry-header {
+	display:none;
+}
+.entry-meta-data-list {
+	display:none;
+}
+.grecaptcha-badge {
+  z-index: 999999;
+}
