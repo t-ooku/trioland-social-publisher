@@ -1,5 +1,5 @@
 # トリオキャリア HP 試作版の採用バナー用に、フリー素材（Unsplash ライセンス・無料）の候補写真を取ってくる（2026-10-16 オーナー「フリー素材で」）。
-# corp-mirror ブランチだけで動く。main には入れない。
+# corp-mirror ブランチだけで動く。main には入れない。（v2：取得できないときの記録を残す）
 name: Stock photo candidates
 on:
   push:
@@ -30,24 +30,36 @@ jobs:
           OUT = "corp-mirror/stock"; os.makedirs(OUT, exist_ok=True)
           S = requests.Session(); S.headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) Chrome/124 Safari/537.36"
           meta = {}; thumbs = []
+          def get_img(i):
+              log = []
+              r = S.get(f"https://unsplash.com/photos/{i}/download?force=true&w=1600", timeout=60)
+              log.append(f"download {r.status_code} {r.headers.get('content-type','')} {r.url[:90]}")
+              if r.status_code == 200 and r.headers.get("content-type", "").startswith("image"):
+                  return r.content, log, ""
+              pg = S.get(f"https://unsplash.com/photos/{i}", timeout=30)
+              log.append(f"page {pg.status_code}")
+              m = re.search(r'<meta property="og:image" content="([^"]+)"', pg.text)
+              t = re.search(r'<meta property="og:title" content="([^"]*)"', pg.text)
+              if m:
+                  u = html.unescape(m.group(1)).split("?")[0] + "?w=1600&q=85&fm=jpg"
+                  r2 = S.get(u, timeout=60); log.append(f"og {r2.status_code} {u[:90]}")
+                  if r2.status_code == 200: return r2.content, log, html.unescape(t.group(1)) if t else ""
+              return None, log, ""
           for i in IDS:
               try:
-                  pg = S.get(f"https://unsplash.com/photos/{i}", timeout=30).text
-                  t = re.search(r'<meta property="og:title" content="([^"]*)"', pg)
-                  d = re.search(r'<meta property="og:description" content="([^"]*)"', pg)
-                  plus = "plus.unsplash.com" in pg[:200000] and "Unsplash+" in pg[:200000]
-                  r = S.get(f"https://unsplash.com/photos/{i}/download?force=true&w=1600", timeout=60)
-                  im = Image.open(io.BytesIO(r.content)).convert("RGB")
+                  data, log, title = get_img(i)
+                  print(i, log)
+                  if not data:
+                      meta[i] = {"error": log}; continue
+                  im = Image.open(io.BytesIO(data)).convert("RGB")
                   im.thumbnail((1600, 1600))
                   im.save(f"{OUT}/{i}.jpg", "JPEG", quality=86)
-                  meta[i] = {"title": html.unescape(t.group(1)) if t else "", "desc": html.unescape(d.group(1)) if d else "",
-                             "size": im.size, "final_url": r.url.split("?")[0], "maybe_plus": plus}
+                  meta[i] = {"title": title, "size": im.size, "log": log}
                   th = im.copy(); th.thumbnail((380, 300)); thumbs.append((i, th))
-                  print("ok", i, im.size, meta[i]["title"][:80])
               except Exception as e:
                   print("fail", i, e); meta[i] = {"error": str(e)}
           json.dump(meta, open(f"{OUT}/meta.json", "w"), ensure_ascii=False, indent=1)
-          cols = 4; W = cols * 390; H = ((len(thumbs) + cols - 1) // cols) * 330
+          cols = 4; W = cols * 390; H = max(1, (len(thumbs) + cols - 1) // cols) * 330
           sheet = Image.new("RGB", (W, H), "white"); dr = ImageDraw.Draw(sheet)
           for k, (i, th) in enumerate(thumbs):
               x, y = (k % cols) * 390, (k // cols) * 330
