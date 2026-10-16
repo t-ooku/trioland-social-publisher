@@ -78,12 +78,20 @@ jobs:
           else:
               print('recruit index already complete')
           PY
+      - name: Point recruit links to this site's recruit page
+        # トリオキャリア HP の採用ページは時給が東京都の最低賃金を下回ったままなので、リンクしない（2026-10-09 オーナーの指示）。
+        # 求人ガイドを直接 site/recruit/ に足したときも、ここで園の採用ページ（/recruit.html#jobs）へ付け替える。
+        shell: bash
+        run: |
+          perl -0pi -e 's{<a href="https://www\.triocareer\.jp/company/recruit/?"[^>]*>[^<]*</a>}{<a href="/recruit.html#jobs">トリオランドの採用情報</a>}g' site/*.html site/recruit/*.html
+          perl -pi -e 's{https://www\.triocareer\.jp/company/recruit/?}{/recruit.html#jobs}g' site/*.html site/recruit/*.html
+          ! grep -rl 'triocareer\.jp/company/recruit' site/*.html site/recruit/*.html
       - name: Commit discovery files if changed
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add site/sitemap.xml site/recruit/index.html
+          git add site/sitemap.xml site/*.html site/recruit/*.html
           git diff --cached --quiet && exit 0
           git commit -m 'Preserve recruitment SEO discovery links'
           git push
