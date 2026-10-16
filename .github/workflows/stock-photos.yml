@@ -1,0 +1,65 @@
+# トリオキャリア HP 試作版の採用バナー用に、フリー素材（Unsplash ライセンス・無料）の候補写真を取ってくる（2026-10-16 オーナー「フリー素材で」）。
+# corp-mirror ブランチだけで動く。main には入れない。
+name: Stock photo candidates
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/stock-photos.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch candidates
+        shell: bash
+        run: |
+          python3 -m pip install --quiet requests pillow
+          python3 - <<'PY'
+          import os, re, json, io, html
+          import requests
+          from PIL import Image, ImageDraw
+          IDS = ["GtWJvhttYmg", "wnpf3Q5pkXA", "UCU1qi1cXjE", "ZYJX7UjOZyo", "APjRQ59peUg", "GNj902mGGH4", "N0Zky-bQBYY",
+                 "sQcFcFImSg8", "9Fi8p2qOPNo", "gAfLQ3YIlUA", "PlcVlbzEgOc", "zFKOZ2Udk6I", "3MUAxuT6qhI", "r-_71cqvTUo",
+                 "kQnpXFo7_aE", "hGWKGile6bs"]
+          OUT = "corp-mirror/stock"; os.makedirs(OUT, exist_ok=True)
+          S = requests.Session(); S.headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) Chrome/124 Safari/537.36"
+          meta = {}; thumbs = []
+          for i in IDS:
+              try:
+                  pg = S.get(f"https://unsplash.com/photos/{i}", timeout=30).text
+                  t = re.search(r'<meta property="og:title" content="([^"]*)"', pg)
+                  d = re.search(r'<meta property="og:description" content="([^"]*)"', pg)
+                  plus = "plus.unsplash.com" in pg[:200000] and "Unsplash+" in pg[:200000]
+                  r = S.get(f"https://unsplash.com/photos/{i}/download?force=true&w=1600", timeout=60)
+                  im = Image.open(io.BytesIO(r.content)).convert("RGB")
+                  im.thumbnail((1600, 1600))
+                  im.save(f"{OUT}/{i}.jpg", "JPEG", quality=86)
+                  meta[i] = {"title": html.unescape(t.group(1)) if t else "", "desc": html.unescape(d.group(1)) if d else "",
+                             "size": im.size, "final_url": r.url.split("?")[0], "maybe_plus": plus}
+                  th = im.copy(); th.thumbnail((380, 300)); thumbs.append((i, th))
+                  print("ok", i, im.size, meta[i]["title"][:80])
+              except Exception as e:
+                  print("fail", i, e); meta[i] = {"error": str(e)}
+          json.dump(meta, open(f"{OUT}/meta.json", "w"), ensure_ascii=False, indent=1)
+          cols = 4; W = cols * 390; H = ((len(thumbs) + cols - 1) // cols) * 330
+          sheet = Image.new("RGB", (W, H), "white"); dr = ImageDraw.Draw(sheet)
+          for k, (i, th) in enumerate(thumbs):
+              x, y = (k % cols) * 390, (k // cols) * 330
+              sheet.paste(th, (x + 5, y + 5)); dr.text((x + 8, y + 310), f"{k+1}. {i}", fill="black")
+          sheet.save(f"{OUT}/sheet.jpg", quality=85)
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror/stock
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'Stock photo candidates (Unsplash) for the corporate recruit banner'
+          git push
