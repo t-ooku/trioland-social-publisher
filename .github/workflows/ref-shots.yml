@@ -1,0 +1,79 @@
+# トリオキャリア HP 試作版：オーナーが「このくらいのレベルに」と挙げた参考サイト（https://mc-2.jp/）の見た目を確かめるための画面写し（2026-10-17）。
+# corp-mirror ブランチだけで動く。main には入れない。参考にするのはレイアウトや動きの考え方だけで、文章・画像・ロゴは使わない。
+name: Reference site screenshots
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/ref-shots.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: |
+          python3 -m pip install --quiet playwright
+          python3 -m playwright install --with-deps chromium >/dev/null
+      - name: Screenshots
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, re
+          from playwright.sync_api import sync_playwright
+          OUT = "corp-mirror/ref"; os.makedirs(OUT, exist_ok=True)
+          base = "https://mc-2.jp/"
+          info = {}
+          with sync_playwright() as p:
+              b = p.chromium.launch()
+              pg = b.new_page(viewport={"width": 1440, "height": 900})
+              pg.goto(base, wait_until="networkidle", timeout=60000)
+              links = sorted(set(a for a in pg.eval_on_selector_all("a[href]", "els => els.map(e => e.href)") if a.startswith(base) and "#" not in a))[:8]
+              info["links"] = links
+              # 最初の画面の動き（読み込み直後から 0.6 秒ごと）
+              pg.goto(base, wait_until="domcontentloaded", timeout=60000)
+              for k in range(8):
+                  pg.wait_for_timeout(600)
+                  pg.screenshot(path=f"{OUT}/top-anim-{k}.jpg", type="jpeg", quality=70)
+              pg.close()
+              js = """() => { const out = {}; const pick = s => { const e = document.querySelector(s); if (!e) return null; const c = getComputedStyle(e);
+                 return {font: c.fontFamily, size: c.fontSize, weight: c.fontWeight, color: c.color, bg: c.backgroundColor, ls: c.letterSpacing, lh: c.lineHeight}; };
+                 for (const s of ["body","header","h1","h2","h3","p","a","footer","nav a","section"]) out[s] = pick(s); return out; }"""
+              for u in [base] + [l for l in links if l != base][:5]:
+                  name = re.sub(r"[^a-z0-9]+", "-", u.replace(base, "") or "home").strip("-") or "home"
+                  for dev, vp in [("pc", {"width": 1440, "height": 900}), ("sp", {"width": 390, "height": 844})]:
+                      pg = b.new_page(viewport=vp)
+                      try:
+                          pg.goto(u, wait_until="networkidle", timeout=60000)
+                          h = pg.evaluate("document.body.scrollHeight")
+                          for y in range(0, h, 400):
+                              pg.evaluate(f"window.scrollTo(0,{y})"); pg.wait_for_timeout(150)
+                          pg.evaluate("window.scrollTo(0,0)"); pg.wait_for_timeout(1200)
+                          pg.screenshot(path=f"{OUT}/{name}-{dev}.jpg", full_page=True, type="jpeg", quality=70)
+                          if dev == "pc":
+                              info[name] = pg.evaluate(js)
+                              # 途中までスクロールした状態（スクロールで出る動きの確認）
+                              for k, frac in enumerate([0.15, 0.35, 0.6]):
+                                  pg.evaluate(f"window.scrollTo(0, document.body.scrollHeight*{frac})"); pg.wait_for_timeout(900)
+                                  pg.screenshot(path=f"{OUT}/{name}-scroll{k}.jpg", type="jpeg", quality=70)
+                      except Exception as e:
+                          info[name + "-" + dev + "-error"] = str(e)
+                      pg.close()
+              b.close()
+          json.dump(info, open(f"{OUT}/info.json", "w"), ensure_ascii=False, indent=1)
+          PY
+          ls -la corp-mirror/ref
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror/ref
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'Reference site screenshots (mc-2.jp) for the corporate prototype'
+          git push
