@@ -1,0 +1,58 @@
+# トリオキャリア HP 試作版：施設マップ用に、各施設の住所から緯度経度を求める（国土地理院 住所検索 API）（2026-10-17）。
+# corp-mirror ブランチだけで動く。main には入れない。
+name: Geocode facilities
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/geo.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  geo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Geocode
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, time, urllib.parse, urllib.request
+          A = {
+            "hq": "東京都千代田区富士見2-14-38",
+            "komazawa": "東京都世田谷区野沢2-33-5",
+            "umegaoka": "東京都世田谷区梅丘1-21-9",
+            "lopp": "東京都練馬区関町東2-14-4",
+            "compass": "東京都豊島区南長崎3-6-14",
+            "dg-ota": "東京都大田区千鳥2-3-20",
+            "dg-abiko": "千葉県我孫子市柴崎台1-10-3",
+            "dg-ichikawa": "千葉県市川市新井3-15-12",
+            "dg-utsunomiya": "栃木県宇都宮市大通り5-1-15",
+            "dg-chuo": "千葉県千葉市中央区新宿1-8-11",
+            "dg-oyama": "栃木県小山市駅東通1-6-3",
+          }
+          out = {}
+          for k, a in A.items():
+              u = "https://msearch.gsi.go.jp/address-search/AddressSearch?q=" + urllib.parse.quote(a)
+              try:
+                  r = json.load(urllib.request.urlopen(u, timeout=30))
+                  out[k] = [{"lng": x["geometry"]["coordinates"][0], "lat": x["geometry"]["coordinates"][1], "title": x["properties"]["title"]} for x in r[:3]]
+              except Exception as e:
+                  out[k] = {"error": str(e)}
+              print(k, out[k])
+              time.sleep(1)
+          os.makedirs("corp-mirror/geo", exist_ok=True)
+          json.dump(out, open("corp-mirror/geo/geo.json", "w"), ensure_ascii=False, indent=1)
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror/geo
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'Geocode facilities (GSI) for the corporate prototype map'
+          git push
