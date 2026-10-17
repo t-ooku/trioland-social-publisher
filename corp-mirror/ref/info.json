@@ -1,0 +1,498 @@
+{
+ "links": [
+  "https://mc-2.jp/",
+  "https://mc-2.jp/about",
+  "https://mc-2.jp/contact",
+  "https://mc-2.jp/legal",
+  "https://mc-2.jp/recruitment",
+  "https://mc-2.jp/services"
+ ],
+ "home": {
+  "body": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "header": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "h1": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "700",
+   "color": "rgb(26, 26, 26)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "22.4px"
+  },
+  "h2": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "36px",
+   "weight": "700",
+   "color": "rgba(0, 0, 0, 0)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "1.8px",
+   "lh": "54px"
+  },
+  "h3": null,
+  "p": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "20px",
+   "weight": "500",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "40px"
+  },
+  "a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "footer": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(255, 255, 255)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "nav a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "14px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.7px",
+   "lh": "20px"
+  },
+  "section": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  }
+ },
+ "about": {
+  "body": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "header": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "h1": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "40px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "-0.8px",
+   "lh": "56px"
+  },
+  "h2": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "36px",
+   "weight": "700",
+   "color": "rgba(0, 0, 0, 0)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "1.8px",
+   "lh": "54px"
+  },
+  "h3": null,
+  "p": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "20px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "1px",
+   "lh": "34px"
+  },
+  "a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "footer": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(255, 255, 255)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "nav a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "14px",
+   "weight": "700",
+   "color": "rgb(26, 26, 26)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.7px",
+   "lh": "20px"
+  },
+  "section": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  }
+ },
+ "contact": {
+  "body": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "header": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "h1": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "40px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "-0.8px",
+   "lh": "56px"
+  },
+  "h2": null,
+  "h3": null,
+  "p": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "20px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "1px",
+   "lh": "34px"
+  },
+  "a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "footer": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(255, 255, 255)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "nav a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "14px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.7px",
+   "lh": "20px"
+  },
+  "section": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  }
+ },
+ "legal": {
+  "body": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "header": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "h1": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "24px",
+   "weight": "700",
+   "color": "rgb(26, 26, 26)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "1.2px",
+   "lh": "32px"
+  },
+  "h2": null,
+  "h3": null,
+  "p": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "32px"
+  },
+  "a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "footer": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(255, 255, 255)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "nav a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "14px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.7px",
+   "lh": "20px"
+  },
+  "section": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  }
+ },
+ "recruitment": {
+  "body": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "header": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "h1": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "24px",
+   "weight": "700",
+   "color": "rgb(26, 26, 26)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "1.2px",
+   "lh": "32px"
+  },
+  "h2": null,
+  "h3": null,
+  "p": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "32px"
+  },
+  "a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "footer": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(255, 255, 255)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "nav a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "14px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.7px",
+   "lh": "20px"
+  },
+  "section": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  }
+ },
+ "services": {
+  "body": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "header": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "h1": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "40px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "-0.8px",
+   "lh": "56px"
+  },
+  "h2": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "30px",
+   "weight": "700",
+   "color": "rgb(26, 26, 26)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "1.5px",
+   "lh": "36px"
+  },
+  "h3": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "20px",
+   "weight": "500",
+   "color": "rgb(255, 255, 255)",
+   "bg": "rgb(202, 170, 196)",
+   "ls": "1px",
+   "lh": "28px"
+  },
+  "p": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "20px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "1px",
+   "lh": "34px"
+  },
+  "a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "footer": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(255, 255, 255)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  },
+  "nav a": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "14px",
+   "weight": "700",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "ls": "0.7px",
+   "lh": "20px"
+  },
+  "section": {
+   "font": "\"Zen Old Mincho\", \"Hiragino Mincho ProN\", \"Yu Mincho\", serif",
+   "size": "16px",
+   "weight": "400",
+   "color": "rgb(85, 85, 85)",
+   "bg": "rgb(239, 239, 239)",
+   "ls": "0.32px",
+   "lh": "27.2px"
+  }
+ }
+}
