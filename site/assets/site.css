@@ -539,3 +539,21 @@ body{background-image:radial-gradient(rgba(228,84,127,.07) 2px,transparent 2.5px
 .pola:hover{transform:rotate(0) translateY(-6px)}
 @media(max-width:820px){.vid-strip{grid-template-columns:1fr;gap:26px}.pola.p2{transform:rotate(1.5deg)}.rc-sticker{width:84px;height:84px;font-size:14px}.rc-trio .mc{width:42px;height:42px}}
 @media (prefers-reduced-motion: reduce){.rc-badge,.rc-sticker{animation:none}}
+
+/* ---------- 採用ページ：30秒でわかる募集（2026-10-18）・スマホの応募ボタン ---------- */
+.rc-sum{padding-top:8px}
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0 0}
+.sum-grid>div{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.sum-grid dt{font-weight:800;color:var(--ink);font-size:15px;display:flex;align-items:center;gap:8px}
+.sum-grid dt span{font-size:20px}
+.sum-grid dd{margin:6px 0 0;font-size:14.5px;line-height:1.75;color:var(--body)}
+.sum-grid dd b{color:var(--ink)}
+@media (max-width:860px){.sum-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.sum-grid{grid-template-columns:1fr;gap:8px}.sum-grid>div{padding:12px 14px}}
+.rc-sticky{display:none}
+@media (max-width:760px){
+  .rc-sticky{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(255,253,249,.96);border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(34,48,63,.08);transition:transform .3s}
+  .rc-sticky .btn{flex:1;padding:12px 8px;font-size:15px}
+  .rc-sticky.hide{transform:translateY(110%)}
+  body:has(.rc-sticky) footer{padding-bottom:84px}
+}

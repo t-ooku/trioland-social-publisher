@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261009-01"
+V = "20261018-01"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -856,7 +856,7 @@ def page_recruit():
 
 <section class="hero rc-hero">
   <div>
-    <span class="badge rc-badge">🎉 保育士・保育補助 募集中</span>
+    <span class="badge rc-badge">🎉 世田谷区の0〜2歳児保育園｜保育士・保育補助 募集中</span>
     <h1>子どもの「やってみたい」を、<br><span class="rc-hl">一緒に楽しめる人</span>へ。</h1>
     <p class="lead">トリオランドは世田谷区で2園を運営する、0〜2歳児の少人数の保育園です。積み木を高く積んで、水あそびで笑って、カブトムシにそっとふれて。子どもたちの「はじめて」と「できた！」に、毎日いちばん近くで立ち会える仕事です。</p>
     <div class="actions">
@@ -872,34 +872,20 @@ def page_recruit():
 </section>
 </div>
 
-<div class="marquee rc-marquee" aria-hidden="true"><div class="marquee-in">
-  <span>🧸 一緒にあそぶ</span><span>🍙 一緒に食べる</span><span>😊 一緒にわらう</span><span>🎉 「できた！」を喜ぶ</span><span>🌱 0・1・2歳の育ちを見守る</span>
-  <span>🧸 一緒にあそぶ</span><span>🍙 一緒に食べる</span><span>😊 一緒にわらう</span><span>🎉 「できた！」を喜ぶ</span><span>🌱 0・1・2歳の育ちを見守る</span>
-</div></div>
-
 <div class="wrap">
-<section>
-  <div class="kicker">OUR DAYS</div>
-  <h2>トリオランドの毎日を、映像で。</h2>
-  <p class="lead">園の Instagram に投稿している、実際の園生活の一場面です（お顔のぼかしは投稿時のものです）。</p>
-  <div class="vid-strip">
-    <figure class="pola p1">{clip("v-mizu", "タライの水あそびで、おもちゃをすくって遊ぶ子どもたちと保育士")}<figcaption>💦 夏は水あそび</figcaption></figure>
-    <figure class="pola p2">{clip("v-inochi", "枝にとまったカブトムシに、そっと手をのばす子ども")}<figcaption>🪲 生き物とふれあう</figcaption></figure>
-    <figure class="pola p3">{clip("v-gohan", "給食の時間、テーブルを囲んで食べる子どもたちと保育士")}<figcaption>🍙 みんなで給食</figcaption></figure>
-  </div>
+<section class="rc-sum" id="summary" aria-labelledby="sum-h">
+  <div class="kicker">30 SECONDS</div>
+  <h2 id="sum-h">30秒でわかる、トリオランドの募集</h2>
+  <dl class="sum-grid">
+    <div><dt><span>🏠</span>どんな園？</dt><dd>世田谷区の企業主導型保育園（2園）。0〜2歳児・定員19名／20名の少人数の園です。</dd></div>
+    <div><dt><span>🧸</span>どんな仕事？</dt><dd><b>保育士</b>…0〜2歳児クラスの保育<br><b>保育補助</b>…保育士と一緒に、生活とあそびのサポート</dd></div>
+    <div><dt><span>📄</span>応募資格</dt><dd><b>保育士</b>…保育士・看護師・准看護師の資格<br><b>保育補助</b>…資格・経験は不要です</dd></div>
+    <div><dt><span>📍</span>勤務地</dt><dd>駒沢大学園（駒沢大学駅 徒歩約6分）<br>梅ヶ丘園（梅ヶ丘駅 徒歩約1分）</dd></div>
+    <div><dt><span>💴</span>勤務条件</dt><dd><b>保育士</b>…月給 310,500円〜・月1シフト制・月公休10日<br>そのほかの条件は、面接・見学の際にご説明します。</dd></div>
+    <div><dt><span>✉️</span>応募方法</dt><dd>このページのフォームから送るだけ。応募の前の<b>園見学だけ</b>のご相談もできます。</dd></div>
+  </dl>
+  <div class="actions"><a class="btn pink" href="#form">応募・相談フォームへ</a><a class="btn outline" href="#jobs">募集職種を見る</a></div>
 </section>
-
-<section class="soft">
-  <div class="kicker">WHY TRIOLAND</div>
-  <h2>ここが楽しい！トリオランドで働く4つのこと</h2>
-  <div class="fun-grid">
-    <div class="fun c1">{mascot("maru", "fun-m wobble d1")}<span class="fun-ico">👶</span><b>0〜2歳に、じっくり</b><p>定員19名・20名の少人数。担任だけで抱え込まず、園全体で一人ひとりの育ちを共有します。</p></div>
-    <div class="fun c2">{mascot("shikaku", "fun-m wobble d2")}<span class="fun-ico">🧠</span><b>専門職から学べる</b><p>理学療法士による勉強会を定期的に実施。からだの発達の視点を、毎日の保育に生かせます。</p></div>
-    <div class="fun c3">{mascot("sankaku", "fun-m wobble d3")}<span class="fun-ico">🧸</span><b>子どもと本気であそぶ</b><p>決められた活動をこなすのではなく、子どもの「やってみたい」から保育をつくります。</p></div>
-    <div class="fun c4">{mascot("maru", "fun-m wobble d2")}<span class="fun-ico">🚃</span><b>通いやすい2園</b><p>駒沢大学駅 徒歩約6分・梅ヶ丘駅 徒歩約1分。通いやすい園を選べます。</p></div>
-  </div>
-</section>
-
 <section id="jobs">
   <div class="kicker">OPEN ROLES</div>
   <h2>募集職種</h2>
@@ -932,6 +918,37 @@ def page_recruit():
     </div></div>
   </div>
 </section>
+</div>
+
+<div class="marquee rc-marquee" aria-hidden="true"><div class="marquee-in">
+  <span>🧸 一緒にあそぶ</span><span>🍙 一緒に食べる</span><span>😊 一緒にわらう</span><span>🎉 「できた！」を喜ぶ</span><span>🌱 0・1・2歳の育ちを見守る</span>
+  <span>🧸 一緒にあそぶ</span><span>🍙 一緒に食べる</span><span>😊 一緒にわらう</span><span>🎉 「できた！」を喜ぶ</span><span>🌱 0・1・2歳の育ちを見守る</span>
+</div></div>
+
+<div class="wrap">
+<section>
+  <div class="kicker">OUR DAYS</div>
+  <h2>トリオランドの毎日を、映像で。</h2>
+  <p class="lead">園の Instagram に投稿している、実際の園生活の一場面です（お顔のぼかしは投稿時のものです）。</p>
+  <div class="vid-strip">
+    <figure class="pola p1">{clip("v-mizu", "タライの水あそびで、おもちゃをすくって遊ぶ子どもたちと保育士")}<figcaption>💦 夏は水あそび</figcaption></figure>
+    <figure class="pola p2">{clip("v-inochi", "枝にとまったカブトムシに、そっと手をのばす子ども")}<figcaption>🪲 生き物とふれあう</figcaption></figure>
+    <figure class="pola p3">{clip("v-gohan", "給食の時間、テーブルを囲んで食べる子どもたちと保育士")}<figcaption>🍙 みんなで給食</figcaption></figure>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="kicker">WHY TRIOLAND</div>
+  <h2>ここが楽しい！トリオランドで働く4つのこと</h2>
+  <div class="fun-grid">
+    <div class="fun c1">{mascot("maru", "fun-m wobble d1")}<span class="fun-ico">👶</span><b>0〜2歳に、じっくり</b><p>定員19名・20名の少人数。担任だけで抱え込まず、園全体で一人ひとりの育ちを共有します。</p></div>
+    <div class="fun c2">{mascot("shikaku", "fun-m wobble d2")}<span class="fun-ico">🧠</span><b>専門職から学べる</b><p>理学療法士による勉強会を定期的に実施。からだの発達の視点を、毎日の保育に生かせます。</p></div>
+    <div class="fun c3">{mascot("sankaku", "fun-m wobble d3")}<span class="fun-ico">🧸</span><b>子どもと本気であそぶ</b><p>決められた活動をこなすのではなく、子どもの「やってみたい」から保育をつくります。</p></div>
+    <div class="fun c4">{mascot("maru", "fun-m wobble d2")}<span class="fun-ico">🚃</span><b>通いやすい2園</b><p>駒沢大学駅 徒歩約6分・梅ヶ丘駅 徒歩約1分。通いやすい園を選べます。</p></div>
+  </div>
+</section>
+
+
 
 <section class="soft">
   <div class="kicker">WORKPLACE</div>
@@ -982,6 +999,14 @@ def page_recruit():
 
 </div>
 </main>
+<div class="rc-sticky" id="rcSticky"><a class="btn pink" href="#form">応募・相談する</a><a class="btn outline" href="/contact.html">見学を申し込む</a></div>
+<script>
+(function () {{
+  var bar = document.getElementById("rcSticky"), form = document.getElementById("form");
+  if (!bar || !form || !("IntersectionObserver" in window)) return;
+  new IntersectionObserver(function (es) {{ bar.classList.toggle("hide", es[0].isIntersecting); }}, {{ threshold: 0.05 }}).observe(form);
+}})();
+</script>
 {CLIP_JS}
 ''' + footer()
 
