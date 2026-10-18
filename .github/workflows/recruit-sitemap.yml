@@ -5,6 +5,7 @@ on:
     paths:
       - 'site/recruit/**'
       - '.github/workflows/recruit-sitemap.yml'
+      - 'tools/recruit_quality.py'
   workflow_run:
     workflows: ['Build site']
     types: [completed]
@@ -86,6 +87,11 @@ jobs:
           perl -0pi -e 's{<a href="https://www\.triocareer\.jp/company/recruit/?"[^>]*>[^<]*</a>}{<a href="/recruit.html#jobs">トリオランドの採用情報</a>}g' site/*.html site/recruit/*.html
           perl -pi -e 's{https://www\.triocareer\.jp/company/recruit/?}{/recruit.html#jobs}g' site/*.html site/recruit/*.html
           ! grep -rl 'triocareer\.jp/company/recruit' site/*.html site/recruit/*.html
+      - name: Recruit guide quality (apply links, workplace facts)
+        # 全記事に応募フォーム・園見学への直接リンクを置き、勤務地の書き方を採用ページ（2園）にそろえる（2026-10-18 Cowork）。
+        # 中身は tools/recruit_quality.py。何度走らせても同じ結果になる。
+        shell: bash
+        run: python3 tools/recruit_quality.py site/recruit
       - name: Commit discovery files if changed
         shell: bash
         run: |
