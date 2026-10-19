@@ -861,7 +861,7 @@ def page_recruit():
     <p class="lead">トリオランドは世田谷区で2園を運営する、0〜2歳児の少人数の保育園です。積み木を高く積んで、水あそびで笑って、カブトムシにそっとふれて。子どもたちの「はじめて」と「できた！」に、毎日いちばん近くで立ち会える仕事です。</p>
     <div class="actions">
       <a class="btn pink" href="#form">応募・相談フォームへ</a>
-      <a class="btn outline" href="/contact.html">まずは園見学から相談する</a>
+      <a class="btn outline" href="#form">まずは採用前の園見学を相談する</a>
     </div>
   </div>
   <div class="rc-stage">
@@ -902,7 +902,7 @@ def page_recruit():
         <li>研修制度あり。安心して始められます</li>
         <li>勤務地：駒沢大学園（世田谷区野沢）／梅ヶ丘園（世田谷区梅丘）</li>
       </ul>
-      <div class="btnrow"><a class="btn pink sm" href="#form">応募・相談する</a><a class="btn outline sm" href="/contact.html">園見学を申し込む</a></div>
+      <div class="btnrow"><a class="btn pink sm" href="#form">応募・相談する</a><a class="btn outline sm" href="#form">採用前の園見学を相談する</a></div>
     </div></div>
     <div class="branch"><div class="content">
       <h3>保育補助</h3>
@@ -914,7 +914,7 @@ def page_recruit():
         <li>子育て経験のある方も歓迎</li>
         <li>勤務地：駒沢大学園（世田谷区野沢）／梅ヶ丘園（世田谷区梅丘）</li>
       </ul>
-      <div class="btnrow"><a class="btn pink sm" href="#form">応募・相談する</a><a class="btn outline sm" href="/contact.html">園見学を申し込む</a></div>
+      <div class="btnrow"><a class="btn pink sm" href="#form">応募・相談する</a><a class="btn outline sm" href="#form">採用前の園見学を相談する</a></div>
     </div></div>
   </div>
 </section>
@@ -995,11 +995,11 @@ def page_recruit():
 
 {cta("応募の前に、園の雰囲気を見てみませんか。",
      "実際の保育の様子、子どもたちとの距離感、職員同士の関わり方。見学してから判断していただいて大丈夫です。",
-     ("/contact.html","園見学・採用相談を申し込む"), ("#form","応募・相談フォームへ"))}
+     ("#form","園見学・採用相談を申し込む"), ("#form","応募・相談フォームへ"))}
 
 </div>
 </main>
-<div class="rc-sticky" id="rcSticky"><a class="btn pink" href="#form">応募・相談する</a><a class="btn outline" href="/contact.html">見学を申し込む</a></div>
+<div class="rc-sticky" id="rcSticky"><a class="btn pink" href="#form">応募・相談する</a><a class="btn outline" href="#form">採用前の見学を相談する</a></div>
 <script>
 (function () {{
   var bar = document.getElementById("rcSticky"), form = document.getElementById("form");
@@ -1210,7 +1210,7 @@ def column_cta():
   <div class="kicker">RECRUIT</div>
   <h2>0〜2歳の少人数保育で、一緒に働きませんか。</h2>
   <p>トリオランドは世田谷区の駒沢大学園（駒沢大学駅 徒歩約6分）と梅ヶ丘園（梅ヶ丘駅 徒歩約1分）で職員を募集しています。募集職種・給与・勤務時間などは、応募時点の最新の募集要項でご確認ください。応募の前の園見学も歓迎しています。</p>
-  <div class="actions"><a class="btn pink" href="/recruit.html">採用情報を見る</a><a class="btn outline" href="/contact.html">園見学を申し込む</a></div>
+  <div class="actions"><a class="btn pink" href="/recruit.html">採用情報を見る</a><a class="btn outline" href="#form">採用前の園見学を相談する</a></div>
 </div>'''
 
 
