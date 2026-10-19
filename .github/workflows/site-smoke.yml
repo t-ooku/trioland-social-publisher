@@ -104,8 +104,11 @@ jobs:
           last = datetime.datetime.fromisoformat(sys.argv[1])
           age = (datetime.datetime.now(datetime.timezone.utc) - last).total_seconds()
           print("Recruit last commit age hours:", round(age / 3600, 1))
+          # 2026-10-18: SEO quality-first policy. A quiet publishing cadence is
+          # intentional; do not fail the daily site smoke when no article was
+          # published in 48 hours. Report age for review only.
           if age > 48 * 3600:
-              raise SystemExit("Recruit articles have no commit in over 48h")
+              print("NOTICE: no recruitment content commit in over 48h (not a failure)")
           PY
       - name: Record failure without duplicate issues
         if: failure()
