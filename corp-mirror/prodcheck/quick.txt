@@ -1,9 +1,18 @@
-checked 2026-10-20T04:20:29Z run 39369046071
-/ 200  theme=13 site.css?ver=1.0.1 <title>トリオキャリア株式会社｜保育・放課後等デイサービス・就労継続支援B型・コールセンター
-/service/ 200  theme=5 site.css?ver=1.0.1 <title>事業紹介｜トリオキャリア株式会社
-/facilities/ 200  theme=9 site.css?ver=1.0.1 <title>施設マップ・施設一覧｜トリオキャリア株式会社（東京・千葉・栃木の10施設）
-/contact/ 200  theme=5 site.css?ver=1.0.1 <title>お問い合わせ｜トリオキャリア株式会社
-/company/ 200  theme=6 site.css?ver=1.0.1 <title>トリオキャリアについて｜理念・あゆみ・会社概要｜トリオキャリア株式会社
-/information/ 200  theme=5 site.css?ver=1.0.1 <title>お知らせ・コラム｜トリオキャリア株式会社
+checked 2026-10-20T05:19:56Z run 39374304789
+/ 200  theme=13 site.css?ver=1.0.2 <title>トリオキャリア株式会社｜保育・放課後等デイサービス・就労継続支援B型・コールセンター
+/service/ 200  theme=5 site.css?ver=1.0.2 <title>事業紹介｜トリオキャリア株式会社
+/facilities/ 200  theme=9 site.css?ver=1.0.2 <title>施設マップ・施設一覧｜トリオキャリア株式会社（東京・千葉・栃木の10施設）
+/contact/ 200  theme=5 site.css?ver=1.0.2 <title>お問い合わせ｜トリオキャリア株式会社
+/company/ 200  theme=6 site.css?ver=1.0.2 <title>トリオキャリアについて｜理念・あゆみ・会社概要｜トリオキャリア株式会社
+/information/ 200  theme=5 site.css?ver=1.0.2 <title>お知らせ・コラム｜トリオキャリア株式会社
+/service/after-school/lopp/ 200  theme=11 site.css?ver=1.0.2 <title>放課後等デイサービス ロップ｜武蔵関駅の放課後等デイサービス（練馬区）｜トリオキャリア
+  営業時間  平日 10:00〜19:00／土日祝 9:00〜18:00
+  サービス提供時間  平日 13:30〜17:00／土日祝 10:00〜16:00
+  定員  10名
+/service/after-school/compasmile/ 200  theme=11 site.css?ver=1.0.2 <title>放課後等デイサービス コンパスマイル落合南長崎｜落合南長崎駅の放課後等デイサービス（豊島区）｜トリオキャリア
+  営業時間  平日 10:00〜19:00／土日祝 9:00〜18:00
+  サービス提供時間  平日 13:30〜17:30／土日祝 10:00〜16:00
+  定員  10名
+  休業日  年末年始（日程は年によって異なります）
 /company/companyoutline/ 301 https://www.triocareer.jp/company/#company theme=0  
 /thought/ 301 https://www.triocareer.jp/company/#philosophy theme=0  
