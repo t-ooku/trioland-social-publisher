@@ -4,6 +4,9 @@ import json, math, html, pathlib, datetime, os
 MODE = os.environ.get("TRIO_MODE", "proto")   # proto＝試作版（Artifact）／wp＝本番の WordPress テーマ
 # でじるみ本部サイトの写真は掲載許可が要確認（中村さん経由）。許可が出るまで本番では使わない（2026-10-20 オーナー回答）
 DG_OK = os.environ.get("TRIO_DG_PHOTOS", "1" if MODE == "proto" else "0") == "1"
+# 各事業所の施設写真：オーナーは掲載可としたが、でじるみ本部から「公開前にクリエイティブチェック（公開前の HP リンクを提出）」が必要と回答（2026-10-20）。
+# 本部のチェックが通るまで本番には出さない（TRIO_DG_FAC=1 で出す）。試作版（チェック用リンク）には出す
+DG_FAC_OK = os.environ.get("TRIO_DG_FAC", "1" if MODE == "proto" else "0") == "1"
 
 S = pathlib.Path("/tmp/claude-0/-home-claude/79e7618f-a508-5a14-b194-2bf7b5ffae0d/scratchpad")
 OUT = S / "corp4"
@@ -58,13 +61,13 @@ F = [
       zip="177-0052", pref="東京都", city="練馬区", street="関町東2-14-4 橋本ビル1階", tel="03-6904-7469",
       lat=35.728046, lng=139.578354, station="武蔵関",
       access=["西武新宿線 武蔵関駅 徒歩約3分（約185m）", "西武新宿線 上石神井駅 徒歩約16分"],
-      hours="平日 10:00〜19:00／土日祝・学校休業日 9:00〜18:00",
+      hours="平日 10:00〜19:00／土日祝 9:00〜18:00", service="平日 13:30〜17:00／土日祝 10:00〜16:00",
       hours_ld=[("Mo,Tu,We,Th,Fr", "10:00", "19:00"), ("Sa,Su", "09:00", "18:00")],
-      target="小学生〜高校生（6〜18歳）", capacity="お問い合わせください", opened="2019-12-01",
+      target="小学生〜高校生（6〜18歳）", capacity="10名", opened="2019-12-01",
       photo="lopp-room.webp", photo_wh=(700, 700), photo_alt="ロップの室内。トランポリンやバランスボール、ハンモック",
       gallery=[("lopp-act-park.webp", 800, 600, "公園の芝生で職員と子どもたちが遊ぶ様子（お顔はスタンプで隠しています）"), ("lopp-act-craft.webp", 450, 600, "職員と一緒に工作をする様子")],
       site="https://afterschool.triocareer.jp/lopp.html", insta=None, vacancy=None,
-      points=["西武新宿線「武蔵関」駅から徒歩約3分", "「遊び」を中心に、感覚統合の考え方で発達の土台を育てる", "平日10:00〜19:00、土日祝・学校休業日も9:00〜18:00で開所",
+      points=["西武新宿線「武蔵関」駅から徒歩約3分", "「遊び」を中心に、感覚統合の考え方で発達の土台を育てる", "サービス提供時間は平日13:30〜17:00、土日祝10:00〜16:00",
               "送迎あり（練馬区・武蔵野市・西東京市）", "理学療法士・社会福祉士・保育士などが在籍"],
       extra=[("送迎", "あり（練馬区・武蔵野市・西東京市）"), ("支援", "感覚統合療法、遊戯療法・運動療法、集団療育、預かり支援"), ("職員", "保育士・幼稚園教諭、児童指導員、理学療法士、社会福祉士")],
       faq=[("ロップはどこにありますか？", "東京都練馬区関町東2-14-4 橋本ビル1階です。西武新宿線の武蔵関駅から徒歩約3分です。"),
@@ -75,19 +78,19 @@ F = [
       zip="171-0052", pref="東京都", city="豊島区", street="南長崎3-6-14 栄正印刷ビル", tel="03-3565-6929",
       lat=35.724274, lng=139.687164, station="落合南長崎",
       access=["都営大江戸線 落合南長崎駅 徒歩約5分（約354m）", "西武池袋線 椎名町駅 徒歩約9分"],
-      hours="平日（放課後）13:30〜17:30／土曜・学校休業日 10:00〜16:00（日曜・年末年始休み）",
-      hours_ld=[("Mo,Tu,We,Th,Fr", "13:30", "17:30"), ("Sa", "10:00", "16:00")],
-      target="小学生〜高校生（6〜18歳）", capacity="お問い合わせください", opened="2020-06-01",
+      hours="平日 10:00〜19:00／土日祝 9:00〜18:00", service="平日 13:30〜17:30／土日祝 10:00〜16:00",
+      hours_ld=[("Mo,Tu,We,Th,Fr", "10:00", "19:00"), ("Sa,Su", "09:00", "18:00")],
+      target="小学生〜高校生（6〜18歳）", capacity="10名", opened="2020-06-01",
       photo="compass-room-b.webp", photo_wh=(1200, 900), photo_alt="コンパスマイル落合南長崎の室内",
       gallery=[("compass-playroom.webp", 700, 700, "トランポリンとボールプールのあるプレイルーム"), ("compass-consult.webp", 1200, 900, "相談スペース")],
       site="https://afterschool.triocareer.jp/compass.html", insta=None, vacancy=None,
-      points=["都営大江戸線「落合南長崎」駅から徒歩約5分", "「遊び」を中心に、運動・感覚遊びで発達の土台を育てる", "平日は放課後13:30〜17:30、土曜・学校休業日は10:00〜16:00",
+      points=["都営大江戸線「落合南長崎」駅から徒歩約5分", "「遊び」を中心に、運動・感覚遊びで発達の土台を育てる", "サービス提供時間は平日13:30〜17:30、土日祝10:00〜16:00",
               "送迎あり（営業日は全日実施）", "理学療法士・保育士などが在籍"],
-      extra=[("休業日", "日曜日、年末年始（12月29日〜1月3日）"), ("送迎", "あり（営業日は全日実施。範囲はお問い合わせください）"), ("利用料", "世帯所得に応じた月額上限（0円／4,600円／37,200円）。おやつ代1回50円")],
+      extra=[("休業日", "年末年始（日程は年によって異なります）"), ("送迎", "あり（営業日は全日実施。範囲はお問い合わせください）"), ("利用料", "世帯所得に応じた月額上限（0円／4,600円／37,200円）。おやつ代1回50円")],
       faq=[("コンパスマイル落合南長崎はどこにありますか？", "東京都豊島区南長崎3-6-14 栄正印刷ビルです。都営大江戸線の落合南長崎駅から徒歩約5分です。"),
            ("何歳のお子さんが通えますか？", "小学生から高校生まで（6〜18歳）のお子さんが対象です。"),
            ("利用料はいくらですか？", "世帯所得に応じた月額上限（0円・4,600円・37,200円）があります。おやつ代は1回50円です。"),
-           ("お休みの日はいつですか？", "日曜日と年末年始（12月29日〜1月3日）がお休みです。")]),
+           ("お休みの日はいつですか？", "年末年始がお休みです。日程は年によって異なりますので、事業所にお問い合わせください。")]),
 ]
 DG = [("ota", "東京大田", "146-0083", "東京都", "大田区", "千鳥2丁目3-20", "03-6715-4307", 35.571266, 139.693375, "千鳥町", ["東急池上線 千鳥町駅 徒歩3分", "東急多摩川線 武蔵新田駅 徒歩6分"], "2025-04-01", "tokyo-ota"),
       ("abiko", "千葉我孫子", "270-1176", "千葉県", "我孫子市", "柴崎台1丁目10-3 磯源第三ビル1F", "04-7197-6820", 35.873024, 140.040909, "天王台", ["JR常磐線 天王台駅 北口出てすぐ"], "2025-07-01", "chiba-abiko"),
@@ -307,7 +310,7 @@ def dgart(label, sub="", cls=""):
 
 def fac_card(f):
     b = BIZ[f["biz"]]
-    ph = dgart(f["name"], f["short"].replace("でじるみ", "")) if (f["biz"] == "digilumi" and not DG_OK) else f'<img src="a/{f["photo"]}" width="{f["photo_wh"][0]}" height="{f["photo_wh"][1]}" alt="{E(f["photo_alt"])}" loading="lazy">'
+    ph = dgart(f["name"], f["short"].replace("でじるみ", "")) if (f["biz"] == "digilumi" and not DG_FAC_OK) else f'<img src="a/{f["photo"]}" width="{f["photo_wh"][0]}" height="{f["photo_wh"][1]}" alt="{E(f["photo_alt"])}" loading="lazy">'
     return f'''<a class="fcard rv" href="{f["page"]}" data-biz="{f["biz"]}"><div class="ph">{ph}<span class="bz" style="--c:{b["color"]}">{b["label"]}</span></div>
 <div class="in"><b>{E(f["name"])}</b><span>{E(f["pref"] + f["city"])}／{E(f["access"][0])}</span><em>詳しく見る →</em></div></a>'''
 
@@ -321,7 +324,7 @@ SLIDES = [("v", "v-minna", "保育園で保育士と子どもたちが積み木�
           ("i", "h-compass.webp", "コンパスマイル落合南長崎の室内", "No.02", "放課後等デイサービス コンパスマイル"),
           ("v", "v-karada", "保育士が子どもの体を支えて一緒に体を動かす様子", "No.01", "企業主導型保育 トリオランド"),
           ("i", "h-dg-ota.webp", "でじるみ東京大田の制作スペース", "No.03", "就労継続支援B型 でじるみ東京大田")]
-if not DG_OK: SLIDES = [s for s in SLIDES if "h-dg-" not in s[1]]
+if not DG_FAC_OK: SLIDES = [s for s in SLIDES if "h-dg-" not in s[1]]
 def hero_slides():
     out = []
     for i, (t, src, alt, n, cap) in enumerate(SLIDES):
@@ -344,7 +347,7 @@ hero_html = f'''<div class="hero" id="hero">
 '''
 
 def p_index():
-    panels = "".join(f'''<a class="panel" href="{v["page"]}">{dgart("でじるみの制作スペース", "", "abs") if (img.startswith("dg-") and not DG_OK) else f'<img src="a/{img}" width="{w}" height="{h}" alt="{E(alt)}" loading="lazy"{st}>'}<div class="t"><span class="n">No.{v["no"]}</span><h3>{v["label"]}</h3><small>{v["sub"]}</small></div></a>'''
+    panels = "".join(f'''<a class="panel" href="{v["page"]}">{dgart("でじるみの制作スペース", "", "abs") if (img.startswith("dg-") and not DG_FAC_OK) else f'<img src="a/{img}" width="{w}" height="{h}" alt="{E(alt)}" loading="lazy"{st}>'}<div class="t"><span class="n">No.{v["no"]}</span><h3>{v["label"]}</h3><small>{v["sub"]}</small></div></a>'''
         for (k, v), (img, w, h, alt, st) in zip(BIZ.items(), [("life-water.webp", 1400, 1867, "タライのそばで水あそびに夢中になっている子ども", ""), ("t-lopp-kart.webp", 1600, 1200, "ゴーカートに挑戦する子どもたちと職員", ""), ("dg-oyama.webp", 960, 720, "でじるみの制作スペース", ""), ("t-call-2.webp", 1200, 800, "電話で対応するスタッフ", "")]))
     body = f'''{hero_html}
 <section class="mapsec" id="map"><div class="wrap">
@@ -495,7 +498,7 @@ def ld_place(f):
     t = {"hoiku": ["ChildCare", "LocalBusiness"], "houkago": ["LocalBusiness"], "digilumi": ["LocalBusiness"]}[f["biz"]]
     x = {"@context": "https://schema.org", "@type": t, "@id": f"{BASE}/facilities/{f['k']}/#place", "name": f["name"],
          "description": "。".join(f["points"][:3]) + "。", "url": f"{BASE}/facilities/{f['k']}/", "telephone": "+81-" + f["tel"].lstrip("0"),
-         **({"image": f"{ASSET_BASE}/a/{f['photo']}"} if (f["biz"] != "digilumi" or DG_OK) else {}),
+         **({"image": f"{ASSET_BASE}/a/{f['photo']}"} if (f["biz"] != "digilumi" or DG_FAC_OK) else {}),
          "address": {"@type": "PostalAddress", "postalCode": f["zip"], "addressRegion": f["pref"], "addressLocality": f["city"], "streetAddress": f["street"], "addressCountry": "JP"},
          "geo": {"@type": "GeoCoordinates", "latitude": f["lat"], "longitude": f["lng"]}, "hasMap": f["gmap"],
          "parentOrganization": {"@id": f"{BASE}/#org"}, "foundingDate": f["opened"],
@@ -510,6 +513,7 @@ def p_facility(f):
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in f["faq"]]}
     rows = [("施設名", f["name"]), ("種別", f["kind"]), ("所在地", f"〒{f['zip']} {f['addr']}"), ("電話番号", f["tel"])]
     if f["hours"]: rows.append(("営業時間", f["hours"]))
+    if f.get("service"): rows.append(("サービス提供時間", f["service"]))  # 放デイは営業時間とサービス提供時間を分けて書く（2026-10-20 中村さん）
     rows += [("対象", f["target"]), ("定員", f["capacity"]), ("開所", fdate(f["opened"]))] + f["extra"] + [("運営", "トリオキャリア株式会社")]
     table = "".join(f"<tr><th>{E(a)}</th><td>{E(c)}</td></tr>" for a, c in rows)
     mini = map_svg((f["lng"] - .05, f["lng"] + .05, f["lat"] - .035, f["lat"] + .035), 480, [f], tol=.4, wards=(f["pref"] == "東京都"), cls="kmap mini", labels=False, show_lines=False)
@@ -525,7 +529,7 @@ def p_facility(f):
     body = f'''<section class="fhero"><div class="wrap fh-grid">
   <div class="rv"><span class="bz" style="--c:{b["color"]}">{b["label"]}</span><h1>{E(f["name"])}</h1><p class="addr">{E(f["addr"])}</p><p class="acc">{E(f["access"][0])}</p>
     <div class="fh-btn"><a class="btn" href="tel:{f["tel"].replace("-", "")}">TEL {f["tel"]}</a><a class="btn" href="{E(f["gmap"])}" target="_blank" rel="noopener">地図アプリで開く</a></div></div>
-  <div class="ph rv">{dgart(f["name"], f["short"].replace("でじるみ", ""), "abs") if (f["biz"] == "digilumi" and not DG_OK) else f'<img src="a/{f["photo"]}" width="{f["photo_wh"][0]}" height="{f["photo_wh"][1]}" alt="{E(f["photo_alt"])}">'}</div>
+  <div class="ph rv">{dgart(f["name"], f["short"].replace("でじるみ", ""), "abs") if (f["biz"] == "digilumi" and not DG_FAC_OK) else f'<img src="a/{f["photo"]}" width="{f["photo_wh"][0]}" height="{f["photo_wh"][1]}" alt="{E(f["photo_alt"])}">'}</div>
 </div></section>{cr}
 <section class="wrap fbody">
   <div class="summary rv"><h2>{E(f["short"])}の要点</h2><ul>{"".join(f"<li>{E(p)}</li>" for p in f["points"])}</ul><p class="upd">最終更新：{fdate(TODAY)}</p></div>
