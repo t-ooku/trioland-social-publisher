@@ -33,6 +33,11 @@ jobs:
             code=$(curl -sL -o /tmp/p.html -w '%{http_code}' "$H$u?nc=$RANDOM")
             echo "== hoiku $u $code contact.html=$(grep -o 'href=\"/contact.html\"' /tmp/p.html | wc -l) 採用前の園見学=$(grep -o '採用前の園見学を相談する' /tmp/p.html | wc -l) 看護資格を生かす=$(grep -o '関連する求人ガイド：看護資格' /tmp/p.html | wc -l) slug表示=$(grep -o '>hoiku assistant [a-z ]*<' /tmp/p.html | wc -l) テーマ別=$(grep -o 'テーマ別の求人ガイド' /tmp/p.html | wc -l)" >> $o
           done
+          # 会社 HP に古い時給（1,000円・1,100円）が残っていないか
+          for u in / /company/recruit/ /service/ /service/childcare/ /service/callcenter/ /contact/ /information/ /privacy/ /sitemap-page/ /product-news/1074/; do
+            code=$(curl -sL -o /tmp/p.html -w '%{http_code}' "https://www.triocareer.jp$u?nc=$RANDOM")
+            echo "== corp $u $code 1000円=$(grep -o '1,000円\|1000円\|1,100円\|1100円' /tmp/p.html | wc -l) 時給=$(grep -o '時給[^<]\{0,20\}' /tmp/p.html | head -3 | tr '\n' ' ')" >> $o
+          done
           cat $o
           true
       - name: Commit
