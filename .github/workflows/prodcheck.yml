@@ -85,7 +85,7 @@ jobs:
             await b.close();
           })();
           JS
-          node /tmp/c.js 2>&1 | tee corp-mirror/prodcheck/log.txt || true
+          NODE_PATH="$GITHUB_WORKSPACE/node_modules" node /tmp/c.js 2>&1 | tee corp-mirror/prodcheck/log.txt || true
       - name: Commit
         if: always()
         shell: bash
