@@ -33,6 +33,11 @@ jobs:
           get simple-lightbox.zip https://downloads.wordpress.org/plugin/simple-lightbox.zip
           get lightning.zip https://downloads.wordpress.org/theme/lightning.7.4.0.zip https://downloads.wordpress.org/theme/lightning.zip
           get wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          # 管理画面の日本語（手順書の画面写し用）
+          u=$(curl -fsSL 'https://api.wordpress.org/translations/core/1.0/?version=6.0.17' | python3 -c "import sys,json;print([x['package'] for x in json.load(sys.stdin)['translations'] if x['language']=='ja'][0])") && get core-ja.zip "$u"
+          for pl in contact-form-7 vk-all-in-one-expansion-unit; do
+            u=$(curl -fsSL "https://api.wordpress.org/translations/plugins/1.0/?slug=$pl" | python3 -c "import sys,json;print([x['package'] for x in json.load(sys.stdin)['translations'] if x['language']=='ja'][0])") && get "$pl-ja.zip" "$u"
+          done
           ls -la; sha256sum * > SHA256SUMS
       - name: Commit
         shell: bash
