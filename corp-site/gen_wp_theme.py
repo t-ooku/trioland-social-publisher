@@ -83,7 +83,8 @@ def main():
     (T / "a").mkdir()
     missing = []
     for n in sorted(used):
-        if not G.DG_OK and (n.startswith("dg") or n.startswith("h-dg")):
+        fac_photo = n.startswith("h-dg-") or re.fullmatch(r"dg-(ota|abiko|ichikawa|utsunomiya|chuo|oyama)\.webp", n)
+        if not G.DG_OK and n.startswith(("dg", "h-dg")) and not (G.DG_FAC_OK and fac_photo):
             raise SystemExit(f"でじるみ本部の写真がテーマに入りそう：{n}")
         src = SRC / "a" / n
         if src.exists(): shutil.copy(src, T / "a" / n)
@@ -163,7 +164,8 @@ function trio_current_route() {
 	$path   = trio_path();
 	$routes = trio_routes();
 	if (!isset($routes[$path])) { return $page; }
-	if ($path === '' && (get_query_var('p') || get_query_var('page_id') || get_query_var('cat') || get_query_var('m'))) { return $page; }
+	// トップ（/）は、固定ページをトップに設定していても pages/index を出す。?p=123 など URL で記事を指定されたときだけ WordPress に任せる
+	if ($path === '') { foreach (array('p', 'page_id', 'cat', 'm', 'preview', 'attachment_id') as $k) { if (isset($_GET[$k])) { return $page; } } }
 	$page = $routes[$path];
 	return $page;
 }
