@@ -18,12 +18,15 @@ jobs:
       - name: Quick check (curl)
         shell: bash
         run: |
+          set +e +o pipefail
           mkdir -p corp-mirror/prodcheck
+          echo "checked $(date -u +%FT%TZ) run ${GITHUB_RUN_ID}" > corp-mirror/prodcheck/quick.txt
           for u in / /service/ /facilities/ /contact/ /company/ /information/ /company/companyoutline/ /thought/; do
             code=$(curl -s -o /tmp/p.html -w '%{http_code} %{redirect_url}' "https://www.triocareer.jp$u")
-            theme=$(grep -c 'themes/trio-career/' /tmp/p.html || true); title=$(grep -o '<title>[^<]*' /tmp/p.html | head -1)
-            echo "$u $code theme=$theme $title"
-          done | tee corp-mirror/prodcheck/quick.txt
+            theme=$(grep -c 'themes/trio-career/' /tmp/p.html); title=$(grep -o '<title>[^<]*' /tmp/p.html | head -1); ver=$(grep -o 'site.css?ver=[0-9.]*' /tmp/p.html | head -1)
+            echo "$u $code theme=$theme $ver $title"
+          done | tee -a corp-mirror/prodcheck/quick.txt
+          true
       - name: Install
         continue-on-error: true
         run: |
