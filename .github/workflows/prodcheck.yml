@@ -1,4 +1,4 @@
-# トリオキャリア HP：新テーマ（trio-career）有効化後の本番確認（2026-10-20、v2：失敗しても記録を残す）。corp-mirror ブランチだけで動く。
+# トリオキャリア HP：新テーマ（trio-career）有効化後の本番確認（2026-10-20、v3：1.0.2 の確認）。corp-mirror ブランチだけで動く。
 name: Corporate site production check
 on:
   push:
@@ -21,10 +21,11 @@ jobs:
           set +e +o pipefail
           mkdir -p corp-mirror/prodcheck
           echo "checked $(date -u +%FT%TZ) run ${GITHUB_RUN_ID}" > corp-mirror/prodcheck/quick.txt
-          for u in / /service/ /facilities/ /contact/ /company/ /information/ /company/companyoutline/ /thought/; do
+          for u in / /service/ /facilities/ /contact/ /company/ /information/ /service/after-school/lopp/ /service/after-school/compasmile/ /company/companyoutline/ /thought/; do
             code=$(curl -s -o /tmp/p.html -w '%{http_code} %{redirect_url}' "https://www.triocareer.jp$u")
             theme=$(grep -c 'themes/trio-career/' /tmp/p.html); title=$(grep -o '<title>[^<]*' /tmp/p.html | head -1); ver=$(grep -o 'site.css?ver=[0-9.]*' /tmp/p.html | head -1)
             echo "$u $code theme=$theme $ver $title"
+            grep -o '<tr><th>\(営業時間\|サービス提供時間\|定員\|休業日\)</th><td>[^<]*' /tmp/p.html | sed 's/<[^>]*>/ /g' 
           done | tee -a corp-mirror/prodcheck/quick.txt
           true
       - name: Install
