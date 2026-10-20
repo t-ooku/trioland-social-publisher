@@ -1,0 +1,83 @@
+# トリオキャリア HP：新テーマ（trio-career）有効化後の本番確認（2026-10-20）。corp-mirror ブランチだけで動く。
+name: Corporate site production check
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/prodcheck.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: |
+          npm i --no-save playwright@1.47.2 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          sudo apt-get -qq install -y fonts-noto-cjk >/dev/null 2>&1 || true
+      - name: Check
+        shell: bash
+        run: |
+          mkdir -p corp-mirror/prodcheck
+          cat > /tmp/c.js <<'JS'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+          const B = 'https://www.triocareer.jp';
+          const urls = ['/','/facilities/','/service/','/service/childcare/','/service/after-school/','/service/digilumi/','/service/callcenter/','/company/','/company/recruit/','/information/','/contact/','/privacy/','/sitemap-page/',
+            '/service/childcare/trioland-komazawa/','/service/childcare/trioland-umegaoka/','/service/after-school/lopp/','/service/after-school/compasmile/',
+            '/service/digilumi/tokyooota/','/service/digilumi/chibaabiko/','/service/digilumi/chibaichikawa/','/service/digilumi/tochigiutsunomiya/','/service/digilumi/chibacyuo/','/service/digilumi/tochigioyama/',
+            '/digilumi/1136/','/bussiness-information/1092/','/update/978/','/category/digilumi/','/zzz-not-found/'];
+          const redirects = ['/company/companyoutline/','/thought/','/author/infotriocareer-jp/'];
+          (async () => {
+            const b = await chromium.launch(); const rep = { pages: [], redirects: [], errors: [], dead: [], sitemap: null };
+            const links = new Set();
+            for (const [n, w, h] of [['pc', 1366, 900], ['sp', 390, 844]]) {
+              const p = await b.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: n === 'sp' ? 2 : 1 });
+              p.on('pageerror', e => rep.errors.push(n + ' ' + p.url() + ' ' + e.message));
+              p.on('response', r => { if (r.status() >= 400 && !r.url().includes('zzz-not-found')) rep.errors.push(n + ' ' + r.status() + ' ' + r.url()); });
+              for (const u of urls) {
+                let st = 0;
+                try { const res = await p.goto(B + u, { waitUntil: 'load', timeout: 60000 }); st = res ? res.status() : 0; } catch (e) { rep.errors.push(n + ' goto ' + u + ' ' + e.message); }
+                const H = await p.evaluate(() => document.body ? document.body.scrollHeight : 0);
+                for (let y = 0; y < H; y += 800) { await p.evaluate(y => scrollTo(0, y), y); await p.waitForTimeout(60); }
+                await p.waitForTimeout(500);
+                const r = await p.evaluate(() => ({
+                  title: document.title, theme: !!document.querySelector('link[href*="/themes/trio-career/"],script[src*="/themes/trio-career/"]'),
+                  sw: document.documentElement.scrollWidth, h1: [...document.querySelectorAll('h1')].map(x => x.innerText.trim()).slice(0, 3),
+                  canon: (document.querySelector('link[rel=canonical]') || {}).href || null,
+                  desc: document.querySelectorAll('meta[name=description]').length, headTitles: document.head.querySelectorAll('title').length,
+                  brokenImg: [...document.images].filter(i => i.complete && i.naturalWidth === 0).map(i => i.src),
+                  form: !!document.querySelector('form.wpcf7-form'),
+                  links: [...document.querySelectorAll('a[href]')].map(a => { try { return new URL(a.getAttribute('href'), location.href).href } catch (e) { return '' } }).filter(h => h.startsWith('https://www.triocareer.jp'))
+                }));
+                r.links.forEach(l => links.add(l.split('#')[0])); delete r.links;
+                rep.pages.push({ view: n, url: u, status: st, ...r });
+                if (['/', '/contact/', '/service/digilumi/', '/information/', '/digilumi/1136/', '/service/childcare/trioland-komazawa/', '/company/'].includes(u))
+                  await p.screenshot({ path: `corp-mirror/prodcheck/${n}${u.replace(/\//g, '_')}.png`, fullPage: n === 'sp' ? false : true });
+              }
+              await p.close();
+            }
+            const ctx = await b.newContext();
+            for (const u of redirects) { const r = await ctx.request.get(B + u, { maxRedirects: 0 }); rep.redirects.push({ url: u, status: r.status(), location: r.headers()['location'] }); }
+            for (const l of links) { const r = await ctx.request.get(l, { maxRedirects: 0 }).catch(() => null); if (!r || r.status() >= 400) rep.dead.push((r && r.status()) + ' ' + l); }
+            const sm = await ctx.request.get(B + '/wp-sitemap.xml'); rep.sitemap = { status: sm.status(), body: (await sm.text()).slice(0, 2000) };
+            fs.writeFileSync('corp-mirror/prodcheck/report.json', JSON.stringify(rep, null, 1));
+            console.log(JSON.stringify({ n: rep.pages.length, errors: rep.errors.slice(0, 30), dead: rep.dead, redirects: rep.redirects }, null, 1));
+            await b.close();
+          })();
+          JS
+          node /tmp/c.js
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror/prodcheck
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'Production check of the corporate site after switching to the trio-career theme'
+          git push
