@@ -1,4 +1,4 @@
-# トリオキャリア HP：新テーマ（trio-career）有効化後の本番確認（2026-10-20）。corp-mirror ブランチだけで動く。
+# トリオキャリア HP：新テーマ（trio-career）有効化後の本番確認（2026-10-20、v2：失敗しても記録を残す）。corp-mirror ブランチだけで動く。
 name: Corporate site production check
 on:
   push:
@@ -15,12 +15,23 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - name: Install
+      - name: Quick check (curl)
+        shell: bash
         run: |
-          npm i --no-save playwright@1.47.2 >/dev/null 2>&1
-          npx playwright install --with-deps chromium >/dev/null 2>&1
+          mkdir -p corp-mirror/prodcheck
+          for u in / /service/ /facilities/ /contact/ /company/ /information/ /company/companyoutline/ /thought/; do
+            code=$(curl -s -o /tmp/p.html -w '%{http_code} %{redirect_url}' "https://www.triocareer.jp$u")
+            theme=$(grep -c 'themes/trio-career/' /tmp/p.html || true); title=$(grep -o '<title>[^<]*' /tmp/p.html | head -1)
+            echo "$u $code theme=$theme $title"
+          done | tee corp-mirror/prodcheck/quick.txt
+      - name: Install
+        continue-on-error: true
+        run: |
+          npm i --no-save playwright@1.47.2 2>&1 | tail -3
+          npx playwright install --with-deps chromium 2>&1 | tail -3
           sudo apt-get -qq install -y fonts-noto-cjk >/dev/null 2>&1 || true
       - name: Check
+        continue-on-error: true
         shell: bash
         run: |
           mkdir -p corp-mirror/prodcheck
@@ -71,8 +82,9 @@ jobs:
             await b.close();
           })();
           JS
-          node /tmp/c.js
+          node /tmp/c.js 2>&1 | tee corp-mirror/prodcheck/log.txt || true
       - name: Commit
+        if: always()
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
