@@ -64,11 +64,48 @@ BLOCK = ('<div class="rc-apply" style="margin:36px 0 0;padding:18px 18px 14px;bo
  '<strong style="display:block;margin-bottom:4px">応募・見学の相談はこちら</strong>'
  '<span style="display:block;font-size:14px;color:#5b6475;margin-bottom:8px">トリオランドの募集内容は<a href="/recruit.html#summary">30秒でわかるまとめ</a>で確認できます。</span>'
  '<a href="/recruit.html#form" style="display:inline-block;background:#e0577f;color:#fff;font-weight:800;text-decoration:none;border-radius:999px;padding:11px 20px;margin:4px 8px 4px 0">応募・相談フォームへ</a>'
- '<a href="/contact.html" style="display:inline-block;border:2px solid #e0577f;color:#c23f68;font-weight:800;text-decoration:none;border-radius:999px;padding:9px 18px;margin:4px 0">園見学を申し込む</a></div>')
+ '<a href="/recruit.html#form" style="display:inline-block;border:2px solid #e0577f;color:#c23f68;font-weight:800;text-decoration:none;border-radius:999px;padding:9px 18px;margin:4px 0">採用前の園見学を相談する</a></div>')
+# 2026-10-20：園見学ボタンの行き先を、保護者向けの /contact.html から採用の相談フォームへ（Codex の点検で判明）
+OLD_BLOCK = re.compile(r'<div class="rc-apply"[^>]*>.*?園見学を申し込む</a></div>', re.S)
+
+# 求人ガイド一覧（index.html）の文言：求職者に見せる言葉にする
+INDEX_FIX = {
+ '現在の募集有無や条件は各記事から公式採用情報をご確認ください。</p></section>':
+ '募集中の職種・条件・応募方法は<a href="/recruit.html#summary">採用ページの「30秒でわかるまとめ」</a>にまとめています。応募や採用前の園見学のご相談は<a href="/recruit.html#form">採用の相談フォーム</a>からどうぞ。</p></section>',
+ '<h2>求人SEOガイド</h2>': '<h2>テーマ別の求人ガイド</h2>',
+}
+
 
 
 def is_cook(name):
     return 'cook' in name or 'nutritionist' in name
+
+
+H1 = {}
+def h1_of(slug):
+    """記事の見出し（「？」か「｜」まで）。関連リンクの表示名に使う"""
+    if slug not in H1:
+        f = ROOT / (slug + '.html')
+        m = re.search(r'<h1[^>]*>(.*?)</h1>', f.read_text(encoding='utf-8'), re.S) if f.exists() else None
+        s = re.sub(r'<[^>]+>', '', m.group(1)).strip() if m else ''
+        cut = min([i + (1 if s[i] == '？' else 0) for i in (s.find('？'), s.find('｜')) if i >= 0] or [len(s)])
+        H1[slug] = s[:cut]
+    return H1[slug]
+
+
+def fix_related_labels(t):
+    """「関連する求人ガイド：〇〇」の表示名を、リンク先の記事の見出しにそろえる（調理の記事で「看護資格を生かす」と出ていた）"""
+    def r(m):
+        lab = h1_of(m.group(1))
+        return f'<a href="/recruit/{m.group(1)}.html">関連する求人ガイド：{lab}</a>' if lab else m.group(0)
+    t = re.sub(r'<a href="/recruit/([a-z0-9-]+)\.html">関連する求人ガイド：[^<]*</a>', r, t)
+    # リンクの文字がファイル名のまま（例：hoiku assistant resume career guide）のものも見出しにする
+    def s(m):
+        slug, txt = m.group(1), m.group(2).strip().lower()
+        if txt in (slug, slug.replace('-', ' ')) and h1_of(slug):
+            return f'<a href="/recruit/{slug}.html">{h1_of(slug)}</a>'
+        return m.group(0)
+    return re.sub(r'<a href="/recruit/([a-z0-9-]+)\.html">([^<]*)</a>', s, t)
 
 
 def fix(name, t):
@@ -80,6 +117,8 @@ def fix(name, t):
     for a, b in LINKFIX.items():
         t = t.replace(a, b)
     t = t.replace('/recruit.html#jobs', '/recruit.html#summary')
+    t = OLD_BLOCK.sub(BLOCK, t)
+    t = fix_related_labels(t)
     if 'class="rc-apply"' not in t:
         m = re.search(r'<(div|section) class="cta"', t) or re.search(r'</main>|</article>|<footer|</body>', t)
         if m:
@@ -94,6 +133,11 @@ def fix(name, t):
 
 def main():
     n = 0
+    idx = ROOT / 'index.html'
+    if idx.exists():
+        o = idx.read_text(encoding='utf-8'); t = o
+        for a, b in INDEX_FIX.items(): t = t.replace(a, b)
+        if t != o: idx.write_text(t, encoding='utf-8'); n += 1
     for f in sorted(ROOT.glob('*.html')):
         if f.name == 'index.html':
             continue

@@ -100,4 +100,11 @@ jobs:
           git add site/sitemap.xml site/*.html site/recruit/*.html
           git diff --cached --quiet && exit 0
           git commit -m 'Preserve recruitment SEO discovery links'
-          git push
+          # 生成中にほかの変更が main に入ると push が拒否される（2026-10-19 の Build site の失敗）。取り込み直して最大5回やり直す。
+          # 生成物どうしがぶつかったときは、今回生成したほうを採る（-X theirs＝取り込み直す側のコミット）。
+          for i in 1 2 3 4 5; do
+            git push && exit 0
+            git pull --rebase -X theirs -q origin main || { git rebase --abort; echo 'rebase failed'; exit 1; }
+            sleep $((i * 5))
+          done
+          echo 'push failed 5 times'; exit 1
