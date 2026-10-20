@@ -1,0 +1,118 @@
+# トリオキャリア HP の載せ替え準備：今の WordPress の公開情報を棚卸し（2026-10-20）。
+# 社長 OK を受けて、試作版を WordPress のテーマとして載せる。旧 URL の転送・フォーム・計測タグを引き継ぐため、
+# 公開されている情報だけを取る（ログインはしない）。corp-mirror ブランチだけで動く。main には入れない。
+name: Corporate site inventory
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/inventory.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inventory
+        shell: bash
+        run: |
+          python3 -m pip install --quiet requests beautifulsoup4
+          python3 - <<'PY'
+          import os, re, json, time
+          from urllib.parse import urljoin, urlparse
+          import requests
+          from bs4 import BeautifulSoup
+          OUT = "corp-mirror/inventory"; os.makedirs(OUT + "/pages", exist_ok=True)
+          S = requests.Session()
+          S.headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
+          T = "https://www.triocareer.jp"
+          rep = {}
+          def get(u, **k):
+              try:
+                  r = S.get(u, timeout=30, allow_redirects=k.get("redirect", True)); return r
+              except Exception as e:
+                  print("ERR", u, e); return None
+          # 1) 応答・サーバー情報、ログイン画面と REST API が国外（GitHub の US）から開けるか
+          for p in ["/", "/wp-login.php", "/wp-admin/", "/wp-json/", "/xmlrpc.php", "/robots.txt", "/wp-sitemap.xml", "/sitemap.xml", "/sitemap_index.xml", "/feed/"]:
+              r = get(T + p, redirect=False)
+              rep.setdefault("status", {})[p] = None if r is None else {"code": r.status_code, "location": r.headers.get("location"), "server": r.headers.get("server"), "x-powered-by": r.headers.get("x-powered-by"), "len": len(r.content)}
+              if r is not None and r.status_code == 200 and p in ("/robots.txt", "/wp-sitemap.xml", "/sitemap.xml", "/sitemap_index.xml"):
+                  open(OUT + "/" + p.strip("/").replace("/", "_"), "w").write(r.text)
+          # 2) サイトマップから全 URL
+          urls = set()
+          def walk(u, depth=0):
+              r = get(u)
+              if r is None or r.status_code != 200 or depth > 3: return
+              locs = re.findall(r"<loc>([^<]+)</loc>", r.text)
+              for l in locs:
+                  if l.endswith(".xml") or "sitemap" in l.split("/")[-1]: walk(l, depth + 1)
+                  else: urls.add(l.strip())
+          for sm in ["/wp-sitemap.xml", "/sitemap.xml", "/sitemap_index.xml"]:
+              walk(T + sm)
+          # 3) REST API：ページ・投稿・カテゴリ・プラグインの名前空間
+          def api(path):
+              r = get(T + "/wp-json" + path)
+              if r is None: return None
+              try: return {"code": r.status_code, "total": r.headers.get("x-wp-total"), "data": r.json()}
+              except Exception: return {"code": r.status_code, "text": r.text[:300]}
+          root = api("/")
+          rep["namespaces"] = root and isinstance(root.get("data"), dict) and root["data"].get("namespaces")
+          for kind in ["pages", "posts", "categories", "tags", "media"]:
+              items, page = [], 1
+              while page < 20:
+                  a = api(f"/wp/v2/{kind}?per_page=100&page={page}")
+                  if not a or a.get("code") != 200 or not isinstance(a.get("data"), list) or not a["data"]: 
+                      rep.setdefault("api_status", {})[kind] = a and a.get("code"); break
+                  rep.setdefault("api_status", {})[kind] = 200
+                  for x in a["data"]:
+                      d = {k: x.get(k) for k in ["id", "slug", "link", "parent", "date", "modified", "status", "template", "count", "name", "categories", "source_url", "media_type"]}
+                      for k in ["title", "excerpt"]:
+                          if isinstance(x.get(k), dict): d[k] = x[k].get("rendered")
+                      if kind == "posts" and isinstance(x.get("content"), dict): d["content"] = x["content"]["rendered"]
+                      if isinstance(x.get("media_details"), dict): d["wh"] = [x["media_details"].get("width"), x["media_details"].get("height")]
+                      items.append(d)
+                      if x.get("link"): urls.add(x["link"])
+                  page += 1
+              json.dump(items, open(f"{OUT}/{kind}.json", "w"), ensure_ascii=False, indent=1)
+              rep.setdefault("counts", {})[kind] = len(items)
+          # 4) 各ページの HTML：プラグイン・計測タグ・フォーム・タイトル
+          plugins, tags, forms, pages = set(), set(), {}, []
+          for u in sorted(urls):
+              if urlparse(u).netloc not in ("www.triocareer.jp", "triocareer.jp"): continue
+              r = get(u)
+              if r is None: continue
+              h = r.text; name = (urlparse(u).path.strip("/") or "index").replace("/", "__")
+              open(f"{OUT}/pages/{name}.html", "w").write(h)
+              plugins |= set(re.findall(r"/wp-content/plugins/([a-z0-9_\-]+)/", h))
+              tags |= set(re.findall(r"\b(G-[A-Z0-9]{6,12}|UA-\d{4,10}-\d+|GTM-[A-Z0-9]{5,8}|AW-\d{6,12})\b", h))
+              s = BeautifulSoup(h, "html.parser")
+              f = [str(x)[:3000] for x in s.select("form") if "search" not in (x.get("class") or []) and x.get("role") != "search"]
+              if f: forms[u] = f
+              t = s.title.string if s.title else ""
+              md = s.find("meta", attrs={"name": "description"})
+              cn = s.find("link", rel="canonical")
+              pages.append({"url": u, "code": r.status_code, "title": t, "desc": md and md.get("content"), "canonical": cn and cn.get("href"), "h1": [x.get_text(" ", strip=True) for x in s.find_all("h1")][:3]})
+              time.sleep(0.5)
+          rep["plugins"] = sorted(plugins); rep["tracking"] = sorted(tags); rep["n_urls"] = len(pages)
+          json.dump(pages, open(OUT + "/urls.json", "w"), ensure_ascii=False, indent=1)
+          json.dump(forms, open(OUT + "/forms.json", "w"), ensure_ascii=False, indent=1)
+          # トップの <head>（計測・検証タグの引き継ぎ用）
+          r = get(T + "/")
+          if r is not None:
+              m = re.search(r"<head.*?</head>", r.text, re.S); open(OUT + "/head.html", "w").write(m.group(0) if m else "")
+          json.dump(rep, open(OUT + "/report.json", "w"), ensure_ascii=False, indent=1)
+          print(json.dumps(rep, ensure_ascii=False, indent=1)[:4000])
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror/inventory
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'Inventory of the current corporate WordPress site (public data only)'
+          git push
