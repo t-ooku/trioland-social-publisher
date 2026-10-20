@@ -1,4 +1,4 @@
-# 放課後デイのサイト（afterschool.triocareer.jp）の本番確認：中村さんの修正（2026-10-20）が出ているか。corp-mirror ブランチだけで動く。
+# 放課後デイ・保育園の求人ガイドの本番確認（2026-10-20）。corp-mirror ブランチだけで動く。
 name: Afterschool production check
 on:
   push:
@@ -26,6 +26,12 @@ jobs:
             echo "== $u $code v=$(grep -o 'v=2026[0-9-]*' /tmp/p.html | head -1) 固有覚=$(grep -o '固有覚' /tmp/p.html | wc -l) 固有受容覚=$(grep -o '固有受容覚' /tmp/p.html | wc -l) 12月29日=$(grep -o '12月29日' /tmp/p.html | wc -l) 日曜=$(grep -o '日曜' /tmp/p.html | wc -l) 9:00〜18:00=$(grep -o '9:00〜18:00' /tmp/p.html | wc -l)" >> $o
             grep -o '<tr><th>\(営業時間\|サービス提供時間\|休業日\|定員・空き\)</th><td>[^<]*' /tmp/p.html | sed 's/<[^>]*>/ /g' >> $o
             grep -o '[^。>]*サービス提供時間[^。<]*。' /tmp/p.html | head -3 >> $o
+          done
+          # 保育園サイトの求人ガイド（2026-10-20：園見学ボタンの行き先・リンクの表示名）
+          H=https://hoiku.triocareer.jp
+          for u in /recruit/ /recruit/hoiku-assistant-nap-watch-duty-guide.html /recruit/nursery-cook-plating-serving-cleanup-role-guide.html /recruit/hoiku-assistant-from-sales-office-work-guide.html /recruit/hoikushi-tokyo23-salary-condition-guide.html; do
+            code=$(curl -sL -o /tmp/p.html -w '%{http_code}' "$H$u?nc=$RANDOM")
+            echo "== hoiku $u $code contact.html=$(grep -o 'href=\"/contact.html\"' /tmp/p.html | wc -l) 採用前の園見学=$(grep -o '採用前の園見学を相談する' /tmp/p.html | wc -l) 看護資格を生かす=$(grep -o '関連する求人ガイド：看護資格' /tmp/p.html | wc -l) slug表示=$(grep -o '>hoiku assistant [a-z ]*<' /tmp/p.html | wc -l) テーマ別=$(grep -o 'テーマ別の求人ガイド' /tmp/p.html | wc -l)" >> $o
           done
           cat $o
           true
