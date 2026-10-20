@@ -1,0 +1,97 @@
+{
+ "status": {
+  "/": {
+   "code": 200,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 62371
+  },
+  "/wp-login.php": {
+   "code": 403,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 4002
+  },
+  "/wp-admin/": {
+   "code": 403,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 4002
+  },
+  "/wp-json/": {
+   "code": 403,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 2843
+  },
+  "/xmlrpc.php": {
+   "code": 403,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 2843
+  },
+  "/robots.txt": {
+   "code": 200,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 166
+  },
+  "/wp-sitemap.xml": {
+   "code": 200,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 639
+  },
+  "/sitemap.xml": {
+   "code": 200,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 4399
+  },
+  "/sitemap_index.xml": {
+   "code": 404,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 48357
+  },
+  "/feed/": {
+   "code": 200,
+   "location": null,
+   "server": "nginx",
+   "x-powered-by": null,
+   "len": 23150
+  }
+ },
+ "namespaces": false,
+ "api_status": {
+  "pages": 403,
+  "posts": 403,
+  "categories": 403,
+  "tags": 403,
+  "media": 403
+ },
+ "counts": {
+  "pages": 0,
+  "posts": 0,
+  "categories": 0,
+  "tags": 0,
+  "media": 0
+ },
+ "plugins": [
+  "contact-form-7",
+  "si-captcha-for-wordpress",
+  "simple-lightbox",
+  "vk-all-in-one-expansion-unit"
+ ],
+ "tracking": [],
+ "n_urls": 53
+}
