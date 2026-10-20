@@ -1,0 +1,41 @@
+# 放課後デイのサイト（afterschool.triocareer.jp）の本番確認：中村さんの修正（2026-10-20）が出ているか。corp-mirror ブランチだけで動く。
+name: Afterschool production check
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/ascheck.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check
+        shell: bash
+        run: |
+          set +e +o pipefail
+          mkdir -p corp-mirror/prodcheck
+          o=corp-mirror/prodcheck/afterschool.txt
+          echo "checked $(date -u +%FT%TZ) run ${GITHUB_RUN_ID}" > $o
+          B=https://afterschool.triocareer.jp
+          for u in / /lopp.html /compass.html /availability.html /contact.html /column/working-hours-shift.html /column/toshima-ochiai-minaminagasaki-job.html /column/what-is-houkago-day-job.html /column/nerima-musashiseki-job.html /column/hoikushi-houkago-day.html; do
+            code=$(curl -s -o /tmp/p.html -w '%{http_code}' "$B$u?nc=$RANDOM")
+            echo "== $u $code v=$(grep -o 'v=2026[0-9-]*' /tmp/p.html | head -1) 固有覚=$(grep -o '固有覚' /tmp/p.html | wc -l) 固有受容覚=$(grep -o '固有受容覚' /tmp/p.html | wc -l) 12月29日=$(grep -o '12月29日' /tmp/p.html | wc -l) 日曜=$(grep -o '日曜' /tmp/p.html | wc -l) 9:00〜18:00=$(grep -o '9:00〜18:00' /tmp/p.html | wc -l)" >> $o
+            grep -o '<tr><th>\(営業時間\|サービス提供時間\|休業日\|定員・空き\)</th><td>[^<]*' /tmp/p.html | sed 's/<[^>]*>/ /g' >> $o
+            grep -o '[^。>]*サービス提供時間[^。<]*。' /tmp/p.html | head -3 >> $o
+          done
+          cat $o
+          true
+      - name: Commit
+        if: always()
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror/prodcheck
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'Afterschool production check after the site manager corrections'
+          git push
