@@ -1,22 +1,24 @@
-node:internal/modules/cjs/loader:1433
-  throw err;
-  ^
-
-Error: Cannot find module 'playwright'
-Require stack:
-- /tmp/c.js
-    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
-    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
-    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
-    at Function._load (node:internal/modules/cjs/loader:1216:25)
-    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
-    at Module.require (node:internal/modules/cjs/loader:1527:12)
-    at require (node:internal/modules/helpers:147:16)
-    at Object.<anonymous> (/tmp/c.js:1:22)
-    at Module._compile (node:internal/modules/cjs/loader:1781:14)
-    at Object..js (node:internal/modules/cjs/loader:1913:10) {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [ '/tmp/c.js' ]
+{
+ "n": 56,
+ "errors": [],
+ "dead": [
+  "404 https://www.triocareer.jp/zzz-not-found/"
+ ],
+ "redirects": [
+  {
+   "url": "/company/companyoutline/",
+   "status": 301,
+   "location": "https://www.triocareer.jp/company/#company"
+  },
+  {
+   "url": "/thought/",
+   "status": 301,
+   "location": "https://www.triocareer.jp/company/#philosophy"
+  },
+  {
+   "url": "/author/infotriocareer-jp/",
+   "status": 301,
+   "location": "https://www.triocareer.jp/information/"
+  }
+ ]
 }
-
-Node.js v22.23.3

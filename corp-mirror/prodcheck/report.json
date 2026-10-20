@@ -1,0 +1,925 @@
+{
+ "pages": [
+  {
+   "view": "pc",
+   "url": "/",
+   "status": 200,
+   "title": "トリオキャリア株式会社｜保育・放課後等デイサービス・就労継続支援B型・コールセンター",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "育つ。\nはたらく。\nささえる。\nトリオキャリアがつなぐ。"
+   ],
+   "canon": "https://www.triocareer.jp/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/facilities/",
+   "status": 200,
+   "title": "施設マップ・施設一覧｜トリオキャリア株式会社（東京・千葉・栃木の10施設）",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "施設マップ"
+   ],
+   "canon": "https://www.triocareer.jp/facilities/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/",
+   "status": 200,
+   "title": "事業紹介｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "事業紹介"
+   ],
+   "canon": "https://www.triocareer.jp/service/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/childcare/",
+   "status": 200,
+   "title": "企業主導型保育 トリオランド｜世田谷区の0〜2歳児保育園｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "企業主導型保育"
+   ],
+   "canon": "https://www.triocareer.jp/service/childcare/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/after-school/",
+   "status": 200,
+   "title": "放課後等デイサービス ロップ・コンパスマイル｜練馬区・豊島区｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "放課後等デイサービス"
+   ],
+   "canon": "https://www.triocareer.jp/service/after-school/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/digilumi/",
+   "status": 200,
+   "title": "就労継続支援B型 でじるみ｜東京・千葉・栃木の6事業所｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "就労継続支援B型"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/callcenter/",
+   "status": 200,
+   "title": "コールセンター事業｜電話代行・テレマーケティング｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "コールセンター"
+   ],
+   "canon": "https://www.triocareer.jp/service/callcenter/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/company/",
+   "status": 200,
+   "title": "トリオキャリアについて｜理念・あゆみ・会社概要｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "トリオキャリアについて"
+   ],
+   "canon": "https://www.triocareer.jp/company/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/company/recruit/",
+   "status": 200,
+   "title": "採用情報｜保育士・保育補助・児童指導員の求人｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "採用情報"
+   ],
+   "canon": "https://www.triocareer.jp/company/recruit/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/information/",
+   "status": 200,
+   "title": "お知らせ・コラム｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "お知らせ・コラム"
+   ],
+   "canon": "https://www.triocareer.jp/information/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/contact/",
+   "status": 200,
+   "title": "お問い合わせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "お問い合わせ"
+   ],
+   "canon": "https://www.triocareer.jp/contact/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": true
+  },
+  {
+   "view": "pc",
+   "url": "/privacy/",
+   "status": 200,
+   "title": "プライバシーポリシー｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "プライバシーポリシー"
+   ],
+   "canon": "https://www.triocareer.jp/privacy/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/sitemap-page/",
+   "status": 200,
+   "title": "サイトマップ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "サイトマップ"
+   ],
+   "canon": "https://www.triocareer.jp/sitemap-page/",
+   "desc": 0,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/childcare/trioland-komazawa/",
+   "status": 200,
+   "title": "トリオランド駒沢大学園｜駒沢大学駅の企業主導型保育園（世田谷区）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "トリオランド駒沢大学園"
+   ],
+   "canon": "https://www.triocareer.jp/service/childcare/trioland-komazawa/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/childcare/trioland-umegaoka/",
+   "status": 200,
+   "title": "トリオランド梅ヶ丘園｜梅ヶ丘駅の企業主導型保育園（世田谷区）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "トリオランド梅ヶ丘園"
+   ],
+   "canon": "https://www.triocareer.jp/service/childcare/trioland-umegaoka/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/after-school/lopp/",
+   "status": 200,
+   "title": "放課後等デイサービス ロップ｜武蔵関駅の放課後等デイサービス（練馬区）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "放課後等デイサービス ロップ"
+   ],
+   "canon": "https://www.triocareer.jp/service/after-school/lopp/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/after-school/compasmile/",
+   "status": 200,
+   "title": "放課後等デイサービス コンパスマイル落合南長崎｜落合南長崎駅の放課後等デイサービス（豊島区）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "放課後等デイサービス コンパスマイル落合南長崎"
+   ],
+   "canon": "https://www.triocareer.jp/service/after-school/compasmile/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/digilumi/tokyooota/",
+   "status": 200,
+   "title": "でじるみ東京大田｜千鳥町駅の就労継続支援B型事業所（大田区）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ東京大田"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/tokyooota/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/digilumi/chibaabiko/",
+   "status": 200,
+   "title": "でじるみ千葉我孫子｜天王台駅の就労継続支援B型事業所（我孫子市）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ千葉我孫子"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/chibaabiko/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/digilumi/chibaichikawa/",
+   "status": 200,
+   "title": "でじるみ千葉市川｜南行徳駅の就労継続支援B型事業所（市川市）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ千葉市川"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/chibaichikawa/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/digilumi/tochigiutsunomiya/",
+   "status": 200,
+   "title": "でじるみ栃木宇都宮｜宇都宮駅の就労継続支援B型事業所（宇都宮市）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ栃木宇都宮"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/tochigiutsunomiya/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/digilumi/chibacyuo/",
+   "status": 200,
+   "title": "でじるみ千葉中央｜千葉中央駅の就労継続支援B型事業所（千葉市中央区）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ千葉中央"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/chibacyuo/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/service/digilumi/tochigioyama/",
+   "status": 200,
+   "title": "でじるみ栃木小山｜小山駅の就労継続支援B型事業所（小山市）｜トリオキャリア",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ栃木小山"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/tochigioyama/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/digilumi/1136/",
+   "status": 200,
+   "title": "でじるみ栃木小山OPENのお知らせ｜お知らせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ栃木小山OPENのお知らせ"
+   ],
+   "canon": "https://www.triocareer.jp/digilumi/1136/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/bussiness-information/1092/",
+   "status": 200,
+   "title": "でじるみ東京太田OPENのお知らせ｜お知らせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ東京太田OPENのお知らせ"
+   ],
+   "canon": "https://www.triocareer.jp/bussiness-information/1092/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/update/978/",
+   "status": 200,
+   "title": "企業主導型保育事業「トリオランド 駒沢大学園」2019年5月1日オープン｜お知らせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "企業主導型保育事業「トリオランド 駒沢大学園」2019年5月1日オープン"
+   ],
+   "canon": "https://www.triocareer.jp/update/978/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/category/digilumi/",
+   "status": 200,
+   "title": "でじるみ｜お知らせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "でじるみ"
+   ],
+   "canon": "https://www.triocareer.jp/category/digilumi/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "pc",
+   "url": "/zzz-not-found/",
+   "status": 404,
+   "title": "ページが見つかりません｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 1366,
+   "h1": [
+    "ページが見つかりません"
+   ],
+   "canon": null,
+   "desc": 0,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/",
+   "status": 200,
+   "title": "トリオキャリア株式会社｜保育・放課後等デイサービス・就労継続支援B型・コールセンター",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "育つ。\nはたらく。\nささえる。\nトリオキャリアがつなぐ。"
+   ],
+   "canon": "https://www.triocareer.jp/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/facilities/",
+   "status": 200,
+   "title": "施設マップ・施設一覧｜トリオキャリア株式会社（東京・千葉・栃木の10施設）",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "施設マップ"
+   ],
+   "canon": "https://www.triocareer.jp/facilities/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/",
+   "status": 200,
+   "title": "事業紹介｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "事業紹介"
+   ],
+   "canon": "https://www.triocareer.jp/service/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/childcare/",
+   "status": 200,
+   "title": "企業主導型保育 トリオランド｜世田谷区の0〜2歳児保育園｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "企業主導型保育"
+   ],
+   "canon": "https://www.triocareer.jp/service/childcare/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/after-school/",
+   "status": 200,
+   "title": "放課後等デイサービス ロップ・コンパスマイル｜練馬区・豊島区｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "放課後等デイサービス"
+   ],
+   "canon": "https://www.triocareer.jp/service/after-school/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/digilumi/",
+   "status": 200,
+   "title": "就労継続支援B型 でじるみ｜東京・千葉・栃木の6事業所｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "就労継続支援B型"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/callcenter/",
+   "status": 200,
+   "title": "コールセンター事業｜電話代行・テレマーケティング｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "コールセンター"
+   ],
+   "canon": "https://www.triocareer.jp/service/callcenter/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/company/",
+   "status": 200,
+   "title": "トリオキャリアについて｜理念・あゆみ・会社概要｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "トリオキャリアについて"
+   ],
+   "canon": "https://www.triocareer.jp/company/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/company/recruit/",
+   "status": 200,
+   "title": "採用情報｜保育士・保育補助・児童指導員の求人｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "採用情報"
+   ],
+   "canon": "https://www.triocareer.jp/company/recruit/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/information/",
+   "status": 200,
+   "title": "お知らせ・コラム｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "お知らせ・コラム"
+   ],
+   "canon": "https://www.triocareer.jp/information/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/contact/",
+   "status": 200,
+   "title": "お問い合わせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "お問い合わせ"
+   ],
+   "canon": "https://www.triocareer.jp/contact/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": true
+  },
+  {
+   "view": "sp",
+   "url": "/privacy/",
+   "status": 200,
+   "title": "プライバシーポリシー｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "プライバシーポリシー"
+   ],
+   "canon": "https://www.triocareer.jp/privacy/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/sitemap-page/",
+   "status": 200,
+   "title": "サイトマップ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "サイトマップ"
+   ],
+   "canon": "https://www.triocareer.jp/sitemap-page/",
+   "desc": 0,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/childcare/trioland-komazawa/",
+   "status": 200,
+   "title": "トリオランド駒沢大学園｜駒沢大学駅の企業主導型保育園（世田谷区）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "トリオランド駒沢大学園"
+   ],
+   "canon": "https://www.triocareer.jp/service/childcare/trioland-komazawa/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/childcare/trioland-umegaoka/",
+   "status": 200,
+   "title": "トリオランド梅ヶ丘園｜梅ヶ丘駅の企業主導型保育園（世田谷区）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "トリオランド梅ヶ丘園"
+   ],
+   "canon": "https://www.triocareer.jp/service/childcare/trioland-umegaoka/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/after-school/lopp/",
+   "status": 200,
+   "title": "放課後等デイサービス ロップ｜武蔵関駅の放課後等デイサービス（練馬区）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "放課後等デイサービス ロップ"
+   ],
+   "canon": "https://www.triocareer.jp/service/after-school/lopp/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/after-school/compasmile/",
+   "status": 200,
+   "title": "放課後等デイサービス コンパスマイル落合南長崎｜落合南長崎駅の放課後等デイサービス（豊島区）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "放課後等デイサービス コンパスマイル落合南長崎"
+   ],
+   "canon": "https://www.triocareer.jp/service/after-school/compasmile/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/digilumi/tokyooota/",
+   "status": 200,
+   "title": "でじるみ東京大田｜千鳥町駅の就労継続支援B型事業所（大田区）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ東京大田"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/tokyooota/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/digilumi/chibaabiko/",
+   "status": 200,
+   "title": "でじるみ千葉我孫子｜天王台駅の就労継続支援B型事業所（我孫子市）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ千葉我孫子"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/chibaabiko/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/digilumi/chibaichikawa/",
+   "status": 200,
+   "title": "でじるみ千葉市川｜南行徳駅の就労継続支援B型事業所（市川市）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ千葉市川"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/chibaichikawa/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/digilumi/tochigiutsunomiya/",
+   "status": 200,
+   "title": "でじるみ栃木宇都宮｜宇都宮駅の就労継続支援B型事業所（宇都宮市）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ栃木宇都宮"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/tochigiutsunomiya/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/digilumi/chibacyuo/",
+   "status": 200,
+   "title": "でじるみ千葉中央｜千葉中央駅の就労継続支援B型事業所（千葉市中央区）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ千葉中央"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/chibacyuo/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/service/digilumi/tochigioyama/",
+   "status": 200,
+   "title": "でじるみ栃木小山｜小山駅の就労継続支援B型事業所（小山市）｜トリオキャリア",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ栃木小山"
+   ],
+   "canon": "https://www.triocareer.jp/service/digilumi/tochigioyama/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/digilumi/1136/",
+   "status": 200,
+   "title": "でじるみ栃木小山OPENのお知らせ｜お知らせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ栃木小山OPENのお知らせ"
+   ],
+   "canon": "https://www.triocareer.jp/digilumi/1136/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/bussiness-information/1092/",
+   "status": 200,
+   "title": "でじるみ東京太田OPENのお知らせ｜お知らせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ東京太田OPENのお知らせ"
+   ],
+   "canon": "https://www.triocareer.jp/bussiness-information/1092/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/update/978/",
+   "status": 200,
+   "title": "企業主導型保育事業「トリオランド 駒沢大学園」2019年5月1日オープン｜お知らせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "企業主導型保育事業「トリオランド 駒沢大学園」2019年5月1日オープン"
+   ],
+   "canon": "https://www.triocareer.jp/update/978/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/category/digilumi/",
+   "status": 200,
+   "title": "でじるみ｜お知らせ｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "でじるみ"
+   ],
+   "canon": "https://www.triocareer.jp/category/digilumi/",
+   "desc": 1,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  },
+  {
+   "view": "sp",
+   "url": "/zzz-not-found/",
+   "status": 404,
+   "title": "ページが見つかりません｜トリオキャリア株式会社",
+   "theme": true,
+   "sw": 390,
+   "h1": [
+    "ページが見つかりません"
+   ],
+   "canon": null,
+   "desc": 0,
+   "headTitles": 1,
+   "brokenImg": [],
+   "form": false
+  }
+ ],
+ "redirects": [
+  {
+   "url": "/company/companyoutline/",
+   "status": 301,
+   "location": "https://www.triocareer.jp/company/#company"
+  },
+  {
+   "url": "/thought/",
+   "status": 301,
+   "location": "https://www.triocareer.jp/company/#philosophy"
+  },
+  {
+   "url": "/author/infotriocareer-jp/",
+   "status": 301,
+   "location": "https://www.triocareer.jp/information/"
+  }
+ ],
+ "errors": [],
+ "dead": [
+  "404 https://www.triocareer.jp/zzz-not-found/"
+ ],
+ "sitemap": {
+  "status": 200,
+  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"https://www.triocareer.jp/wp-sitemap-index.xsl\" ?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><sitemap><loc>https://www.triocareer.jp/wp-sitemap-posts-post-1.xml</loc></sitemap><sitemap><loc>https://www.triocareer.jp/wp-sitemap-posts-page-1.xml</loc></sitemap><sitemap><loc>https://www.triocareer.jp/wp-sitemap-taxonomies-category-1.xml</loc></sitemap><sitemap><loc>https://www.triocareer.jp/wp-sitemap-taxonomies-post_tag-1.xml</loc></sitemap><sitemap><loc>https://www.triocareer.jp/wp-sitemap-trio-1.xml</loc></sitemap></sitemapindex>\n"
+ }
+}
