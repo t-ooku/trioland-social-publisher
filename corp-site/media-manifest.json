@@ -1,0 +1,146 @@
+{
+ "compass-consult.webp": {
+  "bytes": 49402,
+  "sha256": "7218fb8226ac3056c8f8ad35dde51f42ced4d6d033e697ff5267f0932074a010"
+ },
+ "compass-playroom.webp": {
+  "bytes": 101750,
+  "sha256": "f6b5abcb402385901ab7429bcb5a620862a9dfd96648c75062f0d372a04a64a1"
+ },
+ "compass-room-b.webp": {
+  "bytes": 47978,
+  "sha256": "5e91513d33597192d3adca30f467fee1076997b5a1ed6a7b32ebcc6f5c36f209"
+ },
+ "h-compass.webp": {
+  "bytes": 114156,
+  "sha256": "06decc18c84faa5218dd4fece37157a7aaeaba67f02b91b48660694514ea10be"
+ },
+ "h-lopp-park.webp": {
+  "bytes": 497750,
+  "sha256": "c4b6358159aa80ce30d91e7e425fd6766f346af5a27aa107d3e8d500267ae09f"
+ },
+ "komazawa-exterior.webp": {
+  "bytes": 128620,
+  "sha256": "7eadab0d1a586bb65f3daf716337ab7ca99700c572f0fe38796f19bb62df121e"
+ },
+ "life-play.webp": {
+  "bytes": 47792,
+  "sha256": "27e7543f1c3ada8e67d8caa08de092e59dd7ab4a892a47c2b7fe077deca0bb65"
+ },
+ "life-room.webp": {
+  "bytes": 52258,
+  "sha256": "2362331e9ee56fc28522bea77cbdf7b98a744c4964a89b61da4726c5f232c05b"
+ },
+ "life-table.webp": {
+  "bytes": 33842,
+  "sha256": "3d22c1c405a4057177d270bf8fd0a002494dad4a508ed10763e9623f864a9c66"
+ },
+ "life-water.webp": {
+  "bytes": 112762,
+  "sha256": "1417dddd5faba26fc14ca3692dbaa77fff860443ed761af2509e1779cf7544b0"
+ },
+ "logo_y.png": {
+  "bytes": 8453,
+  "sha256": "fb6374046c838ae2bcaba965199930e6fcad4418f6c72e9312ca79aaca2b1498"
+ },
+ "lopp-act-craft.webp": {
+  "bytes": 141400,
+  "sha256": "21a69ea714f1fa77f8805ece8c7ea92c94c503bfb8048d4ca8c052aa864d2b8b"
+ },
+ "lopp-act-park.webp": {
+  "bytes": 259302,
+  "sha256": "695932e2e205751ab4da7885a27b68124addbffd3e724c9cb9f1398c0759b8b0"
+ },
+ "lopp-act-star.webp": {
+  "bytes": 113846,
+  "sha256": "63832c7036ba49dfa638621c566c7643b789233e98597f95f71371f3e6e3072f"
+ },
+ "lopp-room.webp": {
+  "bytes": 136942,
+  "sha256": "e269bbc714feaa376f9de50390ccfccc91997ea6e3456a83b00672b5c27479e1"
+ },
+ "rc-staff.webp": {
+  "bytes": 91164,
+  "sha256": "b4b81981f2b4e99a473f3f0ff834d362c93cea3ab413bc4af44e449d183fb9c5"
+ },
+ "t-about.webp": {
+  "bytes": 114438,
+  "sha256": "b53e21a7b0ce4208117d4788bacd0d4fddff538d21c4038a7c35dd1d9d276aff"
+ },
+ "t-call-2.webp": {
+  "bytes": 128298,
+  "sha256": "3ba7f89b0279d6b4e7b7ee0f3a0222b57fc630da7004de51a516b217bd0bba84"
+ },
+ "t-call.webp": {
+  "bytes": 225926,
+  "sha256": "4c81084aec87a68a9c62ea7d66ff646e3e7c12300d2e23ac5005a32ffa579b17"
+ },
+ "t-lopp-kart.webp": {
+  "bytes": 315342,
+  "sha256": "0034da25fbcaa6e660c06102609e2c7ea90599952ea61e0ca3018828b6cf6261"
+ },
+ "umegaoka-exterior.webp": {
+  "bytes": 120232,
+  "sha256": "df47ea503254280786ab722dfb9247d3d87a81bf64ac5ccaaa770d7b8ff57055"
+ },
+ "v-gohan.mp4": {
+  "bytes": 1271882,
+  "sha256": "6f6bd2dd6f212b8fa283b2c6ec6a309155a9f657f1edab1898dff27c65c26fbe"
+ },
+ "v-gohan.webm": {
+  "bytes": 1089987,
+  "sha256": "ba732bb1002c696520908894da30b8aefd22633ad369048f3ca62620019c450c"
+ },
+ "v-gohan.webp": {
+  "bytes": 57094,
+  "sha256": "f4f75bd481f814c04987d383b47eb7c1c584720988dedbf98d9b2d8ca82aeadc"
+ },
+ "v-inochi.mp4": {
+  "bytes": 875981,
+  "sha256": "d61eda3171af4aa5c747f00b26114224e512fe0487b0c615faa1861a9449108a"
+ },
+ "v-inochi.webm": {
+  "bytes": 546701,
+  "sha256": "a751b58fd3eadccd0db0b63c753ba858f8a75a41df3d283e398502ae09ebfe62"
+ },
+ "v-inochi.webp": {
+  "bytes": 30024,
+  "sha256": "14f3ff245d0b965eabd5143b7bea3f2e76ceeb581a90b504b0e83efa5ff4b16c"
+ },
+ "v-karada.mp4": {
+  "bytes": 1586982,
+  "sha256": "3e19fe72bbf1115c9714bebff829b9968e34eb82447b56cc500ebadd939b62af"
+ },
+ "v-karada.webm": {
+  "bytes": 1318960,
+  "sha256": "b55b1cee84a048028e4fb1b9e8a487f687a288a37bb7316f3ecc5634af5cf3ab"
+ },
+ "v-karada.webp": {
+  "bytes": 61812,
+  "sha256": "0211c2fceb5fba0430d61268643b3cbd68ab66a87e82fcb766cf0851d99b8396"
+ },
+ "v-minna.mp4": {
+  "bytes": 1369133,
+  "sha256": "4d71106ed738eac62573faabb3d54a3f784e26fd4b9335130a3c0d2e2b1fabd8"
+ },
+ "v-minna.webm": {
+  "bytes": 1238815,
+  "sha256": "12cf022f2456ab9e8b704255a741346fd4a25cf30e61db0100d23dc66bb0bf99"
+ },
+ "v-minna.webp": {
+  "bytes": 41008,
+  "sha256": "66146a55411fdf4e0e4a692ed66252539cd67329ba31f8fafae8f87c5293d38b"
+ },
+ "v-mizu.mp4": {
+  "bytes": 1311552,
+  "sha256": "8f4a7a1ff7796d7448b84385f653f44537507fbba195c6db451f8cee588e7a0a"
+ },
+ "v-mizu.webm": {
+  "bytes": 1070408,
+  "sha256": "459cf712b96e53fc18f2755323b93bb9f43c09e301bdfd3604600727ea1fbd28"
+ },
+ "v-mizu.webp": {
+  "bytes": 64320,
+  "sha256": "574cc0a359c548b3b79a9008d04278a06c1951c19906c5fb1642ff0afd791a26"
+ }
+}

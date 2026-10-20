@@ -1,0 +1,266 @@
+
+/* ===== 複数ページ用の追加 ===== */
+.gnav a[aria-current="page"]{color:var(--teal)}
+.gnav a[aria-current="page"]::after{transform:scaleX(1)}
+.dd{position:relative}
+.ddm{position:absolute;left:-14px;top:100%;background:#fff;box-shadow:0 12px 30px -12px rgba(0,40,60,.3);border-top:2px solid var(--teal);padding:8px 0;min-width:200px;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .25s,transform .25s,visibility .25s}
+.dd:hover .ddm,.dd:focus-within .ddm{opacity:1;visibility:visible;transform:none}
+.ddm a{display:block;padding:8px 16px;font-size:13px}
+.ddm a::after{display:none}
+.ddm a:hover{background:var(--bg2)}
+@media (max-width:900px){.dd{display:block}.ddm{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;border:0;padding:0 0 0 14px;min-width:0}.ddm a{border-bottom:1px solid var(--line);padding:10px 0;font-size:14px}}
+.gnav{gap:24px}
+@media (max-width:1160px) and (min-width:901px){.gnav{gap:16px;font-size:12.5px}.hd .logo img{width:150px}}
+
+/* ページ見出し */
+.phead{background:linear-gradient(135deg,#eaf4f4,#f6f8f7);padding-block:64px 48px;border-bottom:1px solid var(--line)}
+.phead h1.sub{font-size:clamp(28px,3.4vw,42px)}
+.phead p{margin:14px 0 0;max-width:40em;font-size:15px}
+.crumb{font-size:12.5px;color:var(--muted);padding-block:14px 0}
+.crumb a{color:var(--muted);text-decoration:none}.crumb a:hover{color:var(--teal)}
+
+/* 地図 */
+.mapsec{padding-block:56px 64px;background:linear-gradient(180deg,var(--bg),#eef5f5)}
+.mapgrid{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.9fr);gap:36px;align-items:center}
+.maptx p{margin:18px 0 0;font-size:15px;line-height:2}
+@media (max-width:960px){.mapgrid{grid-template-columns:1fr}}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
+.stats div{border-left:2px solid var(--teal);padding-left:12px}
+.stats b{display:block;font:300 clamp(34px,4vw,48px)/1.1 var(--en);color:var(--ink);font-variant-numeric:tabular-nums}
+.stats span{font-size:12.5px;color:var(--muted)}
+section .stats{margin-bottom:26px}
+@media (min-width:961px){.wrap>.stats{grid-template-columns:repeat(4,1fr)}}
+.mapbox{min-width:0}
+.maps{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:14px;align-items:start}
+.maps figure{margin:0;background:#fff;border-radius:8px;padding:10px;box-shadow:0 18px 40px -26px rgba(0,60,80,.45);position:relative}
+.maps figcaption{position:absolute;left:16px;top:12px;z-index:2;font:500 11px var(--en);letter-spacing:.2em;color:var(--teal);background:rgba(255,255,255,.85);padding:2px 8px;border-radius:99px}
+@media (max-width:640px){.maps{grid-template-columns:1fr}}
+.kmap{width:100%;height:auto;display:block;overflow:hidden}
+.kmap .sea{fill:#e6f1f4}
+.kmap .pref{fill:#f7f5ef;stroke:#c9d6d8;stroke-width:.8}
+.kmap .pref.on{fill:#fff}
+.kmap .ward{fill:none;stroke:#d6e0e2;stroke-width:.6}
+.kmap .plabel{font:500 11px var(--sans);fill:#9aa9ad;letter-spacing:.1em;text-anchor:middle}
+.kmap .insetbox{fill:none;stroke:var(--teal);stroke-width:1.2;stroke-dasharray:4 3}
+.kmap .link{fill:none;stroke:var(--teal);stroke-width:1.1;opacity:.45;stroke-dasharray:600;stroke-dashoffset:600}
+.kmap.go .link{animation:draw 1.6s ease forwards;animation-delay:calc(.4s + var(--i)*.12s)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.kmap .pin{cursor:pointer}
+.kmap .pin path{fill:var(--c)}
+.kmap .pin .drop{transform-origin:0 0}
+.kmap.go .pin .drop{animation:drop .7s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(.2s + var(--i)*.12s)}
+@keyframes drop{from{transform:translateY(-26px) scale(.4);opacity:0}to{transform:none;opacity:1}}
+.kmap .pin .pulse{fill:var(--c);opacity:0}
+.kmap.go .pin .pulse{animation:pulse 2.6s ease-out infinite;animation-delay:calc(1.2s + var(--i)*.15s)}
+@keyframes pulse{0%{opacity:.45;transform:scale(.4)}100%{opacity:0;transform:scale(2.6)}}
+.kmap .pin .tip{font:700 11px var(--sans);fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:3px;opacity:0;transition:opacity .2s}
+.kmap .pin:hover .tip,.kmap .pin:focus .tip{opacity:1}
+.kmap.tmap .pin .tip,.kmap.mini .pin .tip{opacity:1}
+.kmap .pin.off{opacity:.12;pointer-events:none}
+.kmap .link.off{opacity:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.lg-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;font:500 12.5px var(--sans);color:var(--ink);cursor:pointer}
+.lg-btn i{width:10px;height:10px;border-radius:50%}
+.lg-btn[aria-pressed="false"]{opacity:.45}
+.lg-btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+/* 施設カード */
+.fgroup{margin-top:36px}
+.gh{display:flex;align-items:center;gap:10px;font-size:20px;letter-spacing:.08em}
+.gh i{width:12px;height:12px;border-radius:50%}
+.gh small{font:400 12.5px var(--sans);color:var(--muted);margin-left:6px}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:16px}
+@media (max-width:900px){.fgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.fgrid{grid-template-columns:1fr}}
+.fcard{display:flex;flex-direction:column;background:#fff;border-radius:6px;overflow:hidden;text-decoration:none;box-shadow:0 10px 26px -20px rgba(0,40,60,.5);transition:transform .35s,box-shadow .35s}
+.fcard:hover,.fcard:focus-visible{transform:translateY(-4px);box-shadow:0 16px 32px -18px rgba(0,40,60,.5)}
+.fcard .ph{position:relative;aspect-ratio:3/2;overflow:hidden}
+.fcard .ph img{width:100%;height:100%;object-fit:cover;transition:transform 1s}
+.fcard:hover .ph img{transform:scale(1.05)}
+.bz{display:inline-block;font:500 11.5px var(--sans);color:#fff;background:var(--c);border-radius:99px;padding:3px 10px;letter-spacing:.06em}
+.fcard .ph .bz{position:absolute;left:10px;top:10px;color:#fff;font-size:11.5px;line-height:1.4}
+.fcard .in{padding:14px 16px 16px;display:flex;flex-direction:column;gap:4px}
+.fcard b{font:600 16px var(--mincho);color:var(--ink);letter-spacing:.04em}
+.fcard span{font-size:12.5px;color:var(--muted);line-height:1.6}
+.fcard em{font-style:normal;font-size:12.5px;color:var(--teal);margin-top:4px}
+
+/* 事業カード（事業紹介ページ） */
+.bcards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.bcard{display:grid;grid-template-columns:auto 1fr auto;gap:4px 18px;align-items:center;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:6px;padding:26px 24px;transition:border-color .3s,transform .3s}
+.bcard:hover{border-color:var(--teal);transform:translateY(-3px)}
+.bcard .n{font:300 13px var(--en);letter-spacing:.3em;color:var(--teal);grid-row:span 2}
+.bcard b{font:600 20px var(--mincho);color:var(--ink)}
+.bcard small{font-size:13px;color:var(--muted)}
+.bcard em{font-style:normal;color:var(--teal);grid-row:1/3;grid-column:3}
+@media (max-width:700px){.bcards{grid-template-columns:1fr}}
+
+/* 施設ページ */
+.fhero{background:linear-gradient(135deg,#eaf4f4,#f7f8f6);padding-block:48px}
+.fh-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:44px;align-items:center}
+.fhero h1{font-size:clamp(24px,3vw,36px);letter-spacing:.06em;margin-top:12px}
+.fhero .addr{margin:12px 0 0;font-size:15px;color:var(--ink)}
+.fhero .acc{margin:4px 0 0;font-size:14px}
+.fh-btn{display:flex;flex-wrap:wrap;gap:10px}
+.fh-btn .btn{margin-top:18px}
+.fhero .ph img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:6px;box-shadow:18px 18px 0 #dcebeb}
+@media (max-width:800px){.fh-grid{grid-template-columns:1fr;gap:26px}.fhero .ph{order:-1}}
+.fbody{padding-block:30px 80px}
+.summary{background:#fff;border-left:3px solid var(--teal);border-radius:4px;padding:20px 24px;box-shadow:0 10px 26px -22px rgba(0,40,60,.5)}
+.summary h2{font-size:18px;letter-spacing:.08em}
+.summary ul{margin:10px 0 0;padding-left:1.2em;font-size:14.5px;line-height:1.9}
+.summary .upd{margin:10px 0 0;font-size:12px;color:var(--muted)}
+table.info th{width:8em;color:var(--muted);font-weight:500}
+table.info td{color:var(--ink)}
+.accgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:start}
+.acclist{margin:0;padding-left:1.2em;font-size:14.5px;line-height:2}
+.accgrid .links{display:flex;flex-wrap:wrap;gap:10px}
+.minimap{margin:0;background:#fff;border-radius:8px;padding:8px;box-shadow:0 14px 30px -22px rgba(0,60,80,.5)}
+@media (max-width:760px){.accgrid{grid-template-columns:1fr}}
+.fgal{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.fgal figure{margin:0}
+.fgal figure.wide{grid-column:1/-1}
+.fgal img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px}
+.fgal figure.wide img{aspect-ratio:4/1}
+.fgal figcaption{font-size:12.5px;color:var(--muted);margin-top:4px}
+.faq{border-top:1px solid var(--line)}
+.qa{border-bottom:1px solid var(--line)}
+.qa summary{cursor:pointer;list-style:none;padding:16px 30px 16px 0;font-weight:500;color:var(--ink);position:relative}
+.qa summary::before{content:"Q.";font:500 15px var(--en);color:var(--teal);margin-right:10px}
+.qa summary::after{content:"＋";position:absolute;right:0;color:var(--muted)}
+.qa[open] summary::after{content:"－"}
+.qa p{margin:0 0 16px;font-size:14.5px;line-height:1.9;padding-left:28px}
+
+/* あゆみ */
+.tl{list-style:none;margin:30px 0 0;padding:0 0 0 22px;border-left:1px solid var(--line)}
+.tl li{position:relative;padding:0 0 22px 18px;display:grid;grid-template-columns:90px 1fr;gap:14px}
+.tl li::before{content:"";position:absolute;left:-28px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px #dff0f0}
+.tl time{font:400 15px var(--en);color:var(--teal);letter-spacing:.08em}
+@media (max-width:520px){.tl li{grid-template-columns:1fr;gap:0}}
+
+/* お知らせ・お問い合わせ */
+.newsec{padding-block:80px 30px}
+.ctasec{padding-block:30px 90px}
+.ctasec .contact{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center}
+.ctasec .contact p{margin:10px 0 0;font-size:14.5px;opacity:.9}
+@media (max-width:760px){.ctasec .contact{grid-template-columns:1fr}}
+.ffac{margin-top:26px;font-size:12.5px}
+.ffac>span{font:400 11px var(--en);letter-spacing:.24em;color:#7fc8cd}
+.ffac ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px 16px}
+.ffac a{color:#c9d6db;text-decoration:none}
+.ffac a:hover{color:#fff}
+.hero{min-height:min(62vh,560px)}
+@media (prefers-reduced-motion:reduce){.kmap .link{stroke-dashoffset:0}}
+
+/* トップのスライド：動画の後ろに静止画を敷く（動画が読み込めない端末でも絵が出る） */
+.stage .sl .pv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:none!important}
+.stage .sl video{position:absolute;inset:0}
+@media (max-width:760px){.stage .ctrl button{width:22px}.stage .ctrl{gap:6px}}
+
+.hero .copy h1{font-size:clamp(24px,2.6vw,36px);letter-spacing:.24em}
+@media (max-width:760px){.hero .copy h1{font-size:24px;letter-spacing:.12em}}
+
+.hero .copy h1 em{font-style:normal;color:var(--teal)}
+
+.hero .copy h1 em.tag{font-size:.62em;letter-spacing:.18em;margin-right:.8em;color:var(--teal)}
+@media (max-width:760px){.hero .copy h1 em.tag{display:inline-block;margin:6px 0 0;font-size:.7em}}
+
+/* 改行は文節で（2026-10-19）：見出しは語のまとまりごとに折り返す。Chrome・Edge は本文も文節で折り返す */
+.nw{display:inline-block}
+body{word-break:auto-phrase}
+.maptx h2.sub{font-size:clamp(24px,2.3vw,31px);letter-spacing:.06em}
+
+/* メニューの段差をなくす（2026-10-19）：ドロップダウン付きの「事業紹介」も同じ高さにそろえる */
+.gnav{align-items:center}
+.gnav>a,.dd>a{display:block}
+/* お問い合わせの箱：スマホは1列（2026-10-19） */
+.contact{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+@media (max-width:760px){.contact{grid-template-columns:minmax(0,1fr);padding:28px 22px}.contact .tel{font-size:28px}}
+.co-grid{grid-template-columns:minmax(0,1fr)}
+@media (min-width:961px){.co-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}}
+.co-grid .tbl th{white-space:normal}
+/* 施設マップを横に広げる（2026-10-19）：文章は他の段と左をそろえ、地図は画面の右端近くまで */
+@media (min-width:961px){
+  .mapsec>.wrap{max-width:none;padding-left:max(20px,calc((100% - 1120px)/2));padding-right:max(2.5vw,calc((100% - 1680px)/2))}
+  .mapgrid{grid-template-columns:minmax(300px,340px) minmax(0,1fr);gap:clamp(28px,3vw,56px)}
+}
+/* トップの理念：右側に三者の図と Mission・Credo（2026-10-19）。左の見出しと上をそろえる */
+.philo{align-items:start}
+@media (min-width:761px){.philo-r{padding-top:46px}}
+.philo-r{display:grid;gap:22px}
+.philo-r p{font-size:16px;line-height:2.1;color:var(--ink)}
+.philo-r .two{margin-top:0}
+.philo-r .link-more{justify-self:start}
+.trio{width:100%;max-width:420px;height:auto;display:block}
+.trio circle{fill-opacity:.12;stroke-width:1.4}
+.trio .c1{fill:#00919c;stroke:#00919c}.trio .c2{fill:#005c87;stroke:#005c87}.trio .c3{fill:#6fb7a4;stroke:#3f9a83}
+.trio .lb{font:600 15px var(--mincho);fill:var(--ink);text-anchor:middle;letter-spacing:.08em}
+.trio .en{font:600 15px var(--en);fill:var(--teal);text-anchor:middle;letter-spacing:.3em}
+.trio .en.sm{font-size:10px;letter-spacing:.35em}
+.rv.on .trio circle{animation:trioIn 1.1s cubic-bezier(.2,.7,.2,1) both}
+.rv.on .trio .c2{animation-delay:.15s}.rv.on .trio .c3{animation-delay:.3s}
+@keyframes trioIn{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.trio circle{transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:reduce){.rv.on .trio circle{animation:none}}
+/* でじるみの写真の代わり（掲載許可が出るまで）：でじるみの紫とアイコンの図（2026-10-20） */
+.dgart{display:grid;place-content:center;justify-items:center;gap:8px;width:100%;height:100%;min-height:180px;color:#fff;text-align:center;
+  background:radial-gradient(circle at 18% 22%,rgba(255,255,255,.22) 0 2px,transparent 2.5px) 0 0/22px 22px,radial-gradient(circle at 80% 10%,#b8a3ff 0,transparent 55%),linear-gradient(135deg,#7d5fe3,#4b3aa3)}
+.dgart svg{width:min(150px,46%);height:auto;opacity:.95}
+.dgart b{font:700 clamp(18px,2.2vw,26px)/1.2 var(--sans);letter-spacing:.12em}
+.dgart small{font:500 12.5px/1.4 var(--sans);letter-spacing:.12em;opacity:.85}
+.dgart.abs{position:absolute;inset:0}
+.dgart.big svg{width:min(220px,55%)}
+.fcard .ph .dgart{position:absolute;inset:0;min-height:0}
+.fcard .ph .dgart svg{width:38%}
+.fcard .ph .dgart b{font-size:17px}
+.menu .mi{display:grid;place-items:center;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7d5fe3,#4b3aa3);color:#fff;margin-bottom:10px}
+.menu .mi svg{width:46%;height:auto;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.menu .mi svg .f{fill:currentColor;stroke:none}
+.fhero .ph:has(.dgart){position:relative;aspect-ratio:3/2;border-radius:6px;overflow:hidden;box-shadow:18px 18px 0 #dcebeb}
+.bhead .media .dgart{position:absolute;inset:0}
+/* ===== WordPress 版で使う部品（お知らせ一覧・記事・お問い合わせフォーム）2026-10-20 ===== */
+.cols3.cols2{grid-template-columns:1fr 1fr}
+@media (max-width:860px){.cols3.cols2{grid-template-columns:1fr}}
+.newsall{padding-block:40px 10px}
+.newsall .list a{display:grid;grid-template-columns:120px auto 1fr;gap:4px 16px;align-items:baseline;padding:18px 0;font-size:15px}
+.newsall .list time{display:inline}
+.newsall .cat{justify-self:start;font:500 11.5px var(--sans);letter-spacing:.08em;color:var(--teal);border:1px solid currentColor;border-radius:99px;padding:1px 10px;white-space:nowrap}
+@media (max-width:640px){.newsall .list a{grid-template-columns:auto 1fr}.newsall .list a .tt{grid-column:1/-1}}
+.pager{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 0}
+.pager a,.pager span{display:inline-grid;place-items:center;min-width:40px;height:40px;padding:0 12px;border:1px solid var(--line);border-radius:4px;text-decoration:none;font:500 14px var(--en)}
+.pager .current{background:var(--teal);border-color:var(--teal);color:#fff}
+.post{max-width:820px;margin:0 auto;padding-block:40px 80px}
+.post .meta{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font:400 13px var(--en);letter-spacing:.1em;color:var(--teal)}
+.post h1{font-size:clamp(24px,3vw,34px);line-height:1.5;letter-spacing:.04em;margin-top:14px}
+.post .body{margin-top:32px;font-size:16px;line-height:2;color:var(--ink);word-break:normal;overflow-wrap:anywhere}
+.post .body p{margin:0 0 1.2em}.post .body img{max-width:100%;height:auto;border-radius:6px}
+.post .body h2{font-size:22px;margin:2em 0 .6em;padding-left:14px;border-left:3px solid var(--teal)}
+.post .body h3{font-size:18px;margin:1.6em 0 .5em}
+.post .body table{border-collapse:collapse;width:100%}.post .body th,.post .body td{border:1px solid var(--line);padding:10px 12px;text-align:left}
+.post .body a{color:var(--teal)}
+.post .nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
+.post .nav a{display:block;text-decoration:none;font-size:14px;line-height:1.6}.post .nav .next{text-align:right}
+.post .nav small{display:block;font:500 11px var(--en);letter-spacing:.2em;color:var(--teal)}
+.post .back{margin-top:36px}
+.empty{padding-block:30px 60px;font-size:15px}
+/* お問い合わせフォーム（Contact Form 7） */
+.cfsec{padding-block:20px 90px}
+.cflead{margin:14px 0 0;font-size:15px}
+.cfbox{margin-top:26px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:clamp(18px,4vw,40px)}
+.cfbox table{width:100%;border-collapse:collapse}
+.cfbox tr{border-bottom:1px solid var(--line)}
+.cfbox th{width:220px;text-align:left;vertical-align:top;padding:20px 16px 20px 0;font-weight:600;font-size:15px;color:var(--ink)}
+.cfbox td{padding:14px 0}
+.cfbox .alert.caption,.cfbox .caption{color:#c0392b;font-size:12px;font-weight:500;margin-left:4px}
+.cfbox input[type=text],.cfbox input[type=email],.cfbox input[type=tel],.cfbox input[type=url],.cfbox textarea,.cfbox select{width:100%;max-width:100%;box-sizing:border-box;font:16px var(--sans);padding:12px 14px;border:1px solid #c9d3d6;border-radius:6px;background:#fbfcfc;color:var(--ink)}
+.cfbox textarea{min-height:180px}
+.cfbox input:focus,.cfbox textarea:focus,.cfbox select:focus{outline:2px solid var(--teal);outline-offset:1px;background:#fff}
+.cfbox input[type=submit],.cfbox button[type=submit]{appearance:none;display:inline-block;margin-top:24px;background:var(--teal);color:#fff;border:0;border-radius:99px;padding:15px 56px;font:600 16px var(--sans);letter-spacing:.12em;cursor:pointer}
+.cfbox input[type=submit]:hover{filter:brightness(1.08)}
+.cfbox p{font-size:14.5px}
+.cfbox .wpcf7-list-item{display:inline-block;margin:6px 18px 6px 0}
+.cfbox .wpcf7-not-valid-tip{color:#c0392b;font-size:13px;margin-top:6px;display:block}
+.cfbox .wpcf7-response-output{margin:20px 0 0;padding:12px 16px;border-radius:6px;font-size:14px}
+.cfbox img{max-width:100%;height:auto}
+@media (max-width:700px){.cfbox th,.cfbox td{display:block;width:auto;padding:12px 0 4px}.cfbox td{padding:0 0 16px}.cfbox tr{display:block}}
+.phead .phead-t{font-family:var(--mincho);font-size:clamp(28px,3.4vw,42px);color:var(--ink);margin:10px 0 0;letter-spacing:.1em;line-height:1.4}
+p,li,dd,figcaption{text-wrap:pretty}
