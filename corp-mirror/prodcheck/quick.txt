@@ -1,0 +1,6 @@
+/ 200  theme=5 <title>HOME｜トリオキャリア株式会社
+/service/ 200  theme=5 <title>事業紹介｜トリオキャリア株式会社
+/facilities/ 200  theme=9 <title>施設マップ・施設一覧｜トリオキャリア株式会社（東京・千葉・栃木の10施設）
+/contact/ 200  theme=5 <title>お問い合わせ｜トリオキャリア株式会社
+/company/ 200  theme=6 <title>トリオキャリアについて｜理念・あゆみ・会社概要｜トリオキャリア株式会社
+/information/ 200  theme=5 <title>お知らせ・コラム｜トリオキャリア株式会社
