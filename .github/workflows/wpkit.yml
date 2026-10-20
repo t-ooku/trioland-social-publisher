@@ -1,0 +1,45 @@
+# トリオキャリア HP の載せ替え：本番と同じ版の WordPress・プラグインを取ってくる（作業環境での検証用、2026-10-20）。
+# 作業環境からは wordpress.org に直接つなげないので CI で取得し、corp-mirror ブランチに置く。main には入れない。
+name: WordPress test kit
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/wpkit.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  kit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download
+        shell: bash
+        run: |
+          set -u
+          mkdir -p corp-mirror/wpkit && cd corp-mirror/wpkit
+          get() { # get <file> <url> [<fallback url>]
+            curl -fsSL -o "$1" "$2" && { echo "ok $1 <- $2"; return; }
+            [ $# -ge 3 ] && curl -fsSL -o "$1" "$3" && { echo "ok(fallback) $1 <- $3"; return; }
+            echo "FAILED $1"
+          }
+          get wordpress.tar.gz https://wordpress.org/wordpress-6.0.17.tar.gz https://wordpress.org/wordpress-6.0.tar.gz
+          get contact-form-7.zip https://downloads.wordpress.org/plugin/contact-form-7.5.1.6.zip https://downloads.wordpress.org/plugin/contact-form-7.zip
+          get vk-all-in-one-expansion-unit.zip https://downloads.wordpress.org/plugin/vk-all-in-one-expansion-unit.8.0.2.zip https://downloads.wordpress.org/plugin/vk-all-in-one-expansion-unit.zip
+          get si-captcha-for-wordpress.zip https://downloads.wordpress.org/plugin/si-captcha-for-wordpress.zip
+          get simple-lightbox.zip https://downloads.wordpress.org/plugin/simple-lightbox.zip
+          get lightning.zip https://downloads.wordpress.org/theme/lightning.7.4.0.zip https://downloads.wordpress.org/theme/lightning.zip
+          get wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          ls -la; sha256sum * > SHA256SUMS
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror/wpkit
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'WordPress test kit (same versions as production) for local theme checks'
+          git push
