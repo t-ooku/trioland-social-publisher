@@ -13,7 +13,7 @@ BASE = "https://hoiku.triocareer.jp"
 # 受け口は Worker に置いたままなので、相対パスではなく絶対 URL で呼ぶ（Worker 側で CORS 許可済み）。
 API = "https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry"
 OUT = pathlib.Path(__file__).parent / "site"
-V = "20261018-01"
+V = "20261023-01"
 
 # ---------------------------------------------------------------- 施設データ
 KOMA = dict(
@@ -70,6 +70,7 @@ def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-previe
 <title>{title}</title>
 <meta name="description" content="{desc}">
 <meta name="robots" content="{robots}">
+<meta name="google-site-verification" content="GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI">
 <link rel="canonical" href="{BASE}{path}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="トリオランド">
