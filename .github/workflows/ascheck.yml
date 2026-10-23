@@ -1,4 +1,4 @@
-# 放課後デイ・保育園の求人ガイド・会社HPの本番確認（2026-10-20、長期休みの時間を追加後）。
+# 放課後デイ・保育園・会社HPの本番確認（2026-10-23：Search Console の確認タグ）。
 name: Afterschool production check
 on:
   push:
@@ -37,6 +37,10 @@ jobs:
           for u in / /company/recruit/ /service/ /service/childcare/ /service/callcenter/ /contact/ /information/ /privacy/ /sitemap-page/ /product-news/1074/; do
             code=$(curl -sL -o /tmp/p.html -w '%{http_code}' "https://www.triocareer.jp$u?nc=$RANDOM")
             echo "== corp $u $code 1000円=$(grep -o '1,000円\|1000円\|1,100円\|1100円' /tmp/p.html | wc -l) 時給=$(grep -o '時給[^<]\{0,20\}' /tmp/p.html | head -3 | tr '\n' ' ')" >> $o
+          done
+          for s in https://hoiku.triocareer.jp/ https://hoiku.triocareer.jp/recruit.html https://afterschool.triocareer.jp/ https://www.triocareer.jp/; do
+            curl -sL -o /tmp/p.html "$s?nc=$RANDOM"
+            echo "== gsc $s $(grep -o 'google-site-verification" content="[^"]*' /tmp/p.html | head -1) v=$(grep -o 'v=2026[0-9-]*\|ver=1\.[0-9.]*' /tmp/p.html | head -1)" >> $o
           done
           cat $o
           true
