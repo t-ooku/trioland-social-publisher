@@ -309,6 +309,32 @@ function trio_form($id) {
 }
 
 /* ---------------------------------------------------------------- 共通の設定 */
+/* ---------------------------------------------------------------- Search Console・アクセス解析（外観 → カスタマイズ →「計測・Search Console」で入れる） */
+function trio_clean_code($v) { return preg_replace('/[^A-Za-z0-9_\-]/', '', (string) $v); }
+function trio_gsc_code($v) {
+	// <meta name="google-site-verification" content="…"> を丸ごと貼っても、content の中身だけ取り出す
+	if (preg_match('/content=["\']([^"\']+)["\']/', (string) $v, $m)) { $v = $m[1]; }
+	return trio_clean_code($v);
+}
+add_action('customize_register', function ($c) {
+	$c->add_section('trio_measure', array('title' => '計測・Search Console', 'priority' => 160,
+		'description' => 'Google Search Console の「HTML タグ」の確認コードと、Google アナリティクス 4 の測定 ID（G- から始まる）を入れます。空欄なら何も出しません。'));
+	$c->add_setting('trio_gsc', array('type' => 'option', 'default' => '', 'sanitize_callback' => 'trio_gsc_code'));
+	$c->add_control('trio_gsc', array('section' => 'trio_measure', 'label' => 'Search Console の確認コード（HTML タグをそのまま貼っても可）', 'type' => 'text'));
+	$c->add_setting('trio_ga4', array('type' => 'option', 'default' => '', 'sanitize_callback' => 'trio_clean_code'));
+	$c->add_control('trio_ga4', array('section' => 'trio_measure', 'label' => 'GA4 の測定 ID（例：G-XXXXXXXXXX）', 'type' => 'text'));
+});
+add_action('wp_head', function () {
+	// 初期値：放課後デイのサイトで確認済みの、オーナーの Google アカウントの確認コード（2026-10-07 c1283a6）。カスタマイズで別のコードを入れたらそちらを使う
+	$g = trio_gsc_code(get_option('trio_gsc', '') !== '' ? get_option('trio_gsc') : 'GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI');
+	if ($g !== '') { echo '<meta name="google-site-verification" content="' . esc_attr($g) . "\">\n"; }
+	$a = trio_clean_code(get_option('trio_ga4', ''));
+	if ($a !== '' && strpos($a, 'G-') === 0) {
+		echo '<script async src="https://www.googletagmanager.com/gtag/js?id=' . esc_attr($a) . '"></script>' . "\n";
+		echo "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','" . esc_js($a) . "');</script>\n";
+	}
+}, 1);
+
 add_action('after_setup_theme', function () {
 	add_theme_support('post-thumbnails');
 	add_theme_support('automatic-feed-links');
