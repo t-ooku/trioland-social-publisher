@@ -212,6 +212,22 @@
     </div>
     <p class="hint">メールアドレスと電話番号は、どちらか一方で構いません。</p>
     <div class="row">
+      <div class="field"><label for="f-role">希望職種（未定でも可）</label>
+        <select id="f-role" name="jobType">
+          <option value="">選択してください</option>
+          <option value="保育士">保育士</option>
+          <option value="保育補助">保育補助</option>
+          <option value="見学・相談のみ">見学・相談のみ</option>
+        </select></div>
+      <div class="field"><label for="f-facility">希望園（未定でも可）</label>
+        <select id="f-facility" name="facility">
+          <option value="">選択してください</option>
+          <option value="駒沢大学園">駒沢大学園</option>
+          <option value="梅ヶ丘園">梅ヶ丘園</option>
+          <option value="どちらも検討中">どちらも検討中</option>
+        </select></div>
+    </div>
+    <div class="row">
       <div class="field"><label for="f-child">ご経験</label>
         <input id="f-child" name="child" placeholder="例：保育士5年 / ブランクあり / 未経験"></div>
       <div class="field"><label for="f-timing">勤務開始のご希望</label>
@@ -249,6 +265,14 @@
     event.preventDefault();
     var data = {};
     new FormData(form).forEach(function (value, key) { data[key] = value; });
+    // The existing Make email mapping always receives 'message'. Include the
+    // selected job and nursery there as well as in their dedicated API fields.
+    if (data.destination === "recruit") {
+      var details = [];
+      if (data.jobType) details.push("希望職種：" + data.jobType);
+      if (data.facility) details.push("希望園：" + data.facility);
+      if (details.length) data.message = details.join(" ／ ") + " ／ " + data.message;
+    }
     button.disabled = true;
     show("送信しています…", "sending");
     fetch("https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry", {

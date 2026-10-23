@@ -120,6 +120,14 @@
     event.preventDefault();
     var data = {};
     new FormData(form).forEach(function (value, key) { data[key] = value; });
+    // The existing Make email mapping always receives 'message'. Include the
+    // selected job and nursery there as well as in their dedicated API fields.
+    if (data.destination === "recruit") {
+      var details = [];
+      if (data.jobType) details.push("希望職種：" + data.jobType);
+      if (data.facility) details.push("希望園：" + data.facility);
+      if (details.length) data.message = details.join(" ／ ") + " ／ " + data.message;
+    }
     button.disabled = true;
     show("送信しています…", "sending");
     fetch("https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry", {
