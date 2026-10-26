@@ -1,4 +1,4 @@
-checked 2026-10-23T04:35:15Z run 39901102112
+checked 2026-10-26T02:54:02Z run 40261365264
 == / 200 v=v=20261020-02 固有覚=0 固有受容覚=1 12月29日=0 日曜=0 9:00〜18:00=0
 == /lopp.html 200 v=v=20261020-02 固有覚=0 固有受容覚=0 12月29日=0 日曜=0 9:00〜18:00=1
   営業時間  平日 10:00〜19:00／土日祝・長期休み 9:00〜18:00
@@ -50,4 +50,4 @@ checked 2026-10-23T04:35:15Z run 39901102112
 == gsc https://hoiku.triocareer.jp/ google-site-verification" content="GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI v=v=20261023-01
 == gsc https://hoiku.triocareer.jp/recruit.html google-site-verification" content="GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI v=v=20261023-01
 == gsc https://afterschool.triocareer.jp/ google-site-verification" content="GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI v=v=20261020-02
-== gsc https://www.triocareer.jp/  v=ver=1.0.4
+== gsc https://www.triocareer.jp/ google-site-verification" content="GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI v=ver=1.0.5
