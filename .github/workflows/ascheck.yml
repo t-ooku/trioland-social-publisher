@@ -1,4 +1,4 @@
-# 放課後デイ・保育園・会社HPの本番確認（2026-10-23：Search Console の確認タグ）。
+# 放課後デイ・保育園・会社HPの本番確認（2026-10-26：会社HP 1.0.5 の確認タグ）。
 name: Afterschool production check
 on:
   push:
