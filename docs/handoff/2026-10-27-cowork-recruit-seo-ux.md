@@ -19,11 +19,11 @@
 ## 本日Codex/GPT側で実施した変更（同じ箇所の重複編集禁止）
 1. `site/recruit/hoikushi-tokyo23-salary-condition-guide.html`：保育士給与について、運営会社の最新公式採用一覧を直接確認できるリンクを設置。個別手当・住居条件は未確認のまま。
 2. `site/recruit/nursery-cooking-staff-setagaya.html`：2026-09-11の調理スタッフ求人内容を過去情報と明記。現行一覧に調理職の掲載が見当たらない点を日付と公式リンク付きで記載。
-3. `.github/workflows/site-smoke.yml`：給与条件ガイドの本番リンク・採用フォーム導線確認を追加。CI結果と本番反映の成功は別に確認する。
+3. `site/recruit/nursery-cook-qualification-required-check-guide.html`：2026-10-10の調理資格の募集表示を過去の情報と明記し、現行採用一覧へリンク。資格を無条件に推定しない。\n4. `.github/workflows/site-smoke.yml`：給与条件ガイドと更新した調理関係ガイド2本を含む計5記事の本番リンク・採用フォーム導線確認を追加。CI結果と本番反映の成功は別に確認する。
 
 ## Coworkの具体的な点検・提案タスク
 1. **最優先：採用者を誤誘導する表現の精査**
-   - `site/recruit/nursery-cook-qualification-required-check-guide.html` には2026-10-10当時の調理スタッフ募集が説明されている。現在は会社の採用一覧に調理スタッフが見当たらないため、「現在も募集」と誤認させない書き出しを**修正前/修正後**で提案。
+   - `site/recruit/nursery-cook-qualification-required-check-guide.html` は今回「過去の募集」と明記した。現在募集との混同がなお起きないか、資格情報と本文中の残存表現をレビューし、必要なら**修正前/修正後**を提案。
    - `site/recruit/part-time-nursery-cooking-staff.html`、`site/recruit/nursery-cooking-staff-setagaya.html` と相互参照し、過去条件が現在の募集条件に見えないか点検。
 2. **検索意図のカニバリ候補**
    - `nursery-cook-qualification-required-check-guide.html` vs `nursery-cook-experience-preferred-guide.html`：資格要件と経験者優遇の役割差、重複段落、本文の独自性を比較。
