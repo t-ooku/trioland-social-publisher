@@ -79,14 +79,11 @@ jobs:
           else:
               print('recruit index already complete')
           PY
-      - name: Point recruit links to this site's recruit page
-        # トリオキャリア HP の採用ページは時給が東京都の最低賃金を下回ったままなので、リンクしない（2026-10-09 オーナーの指示）。
-        # 求人ガイドを直接 site/recruit/ に足したときも、ここで園の採用ページ（/recruit.html#jobs）へ付け替える。
-        shell: bash
-        run: |
-          perl -0pi -e 's{<a href="https://www\.triocareer\.jp/company/recruit/?"[^>]*>[^<]*</a>}{<a href="/recruit.html#jobs">トリオランドの採用情報</a>}g' site/*.html site/recruit/*.html
-          perl -pi -e 's{https://www\.triocareer\.jp/company/recruit/?}{/recruit.html#jobs}g' site/*.html site/recruit/*.html
-          ! grep -rl 'triocareer\.jp/company/recruit' site/*.html site/recruit/*.html
+      # Parent-company recruitment page was verified against the published
+      # 2026-10-26 information. The obsolete 2026-10-09 blanket rewrite
+      # removed valid company -> nursery recruitment cross-navigation.
+      # Do not silently overwrite official company-page links in articles.
+      # Recheck salary discrepancies in the daily audit instead.
       - name: Recruit guide quality (apply links, workplace facts)
         # 全記事に応募フォーム・園見学への直接リンクを置き、勤務地の書き方を採用ページ（2園）にそろえる（2026-10-18 Cowork）。
         # 中身は tools/recruit_quality.py。何度走らせても同じ結果になる。
