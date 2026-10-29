@@ -103,7 +103,7 @@ jobs:
         run: |
           set -euo pipefail
           base='https://hoiku.triocareer.jp'
-          for p in /recruit/hoikushi-current-opening-official-check-guide.html /recruit/nursery-cook-experience-preferred-guide.html /recruit/hoikushi-tokyo23-salary-condition-guide.html /recruit/nursery-cooking-staff-setagaya.html /recruit/nursery-cook-qualification-required-check-guide.html /recruit/nursery-cook-holiday-leave-guide.html; do
+          for p in /recruit/hoikushi-current-opening-official-check-guide.html /recruit/nursery-cook-experience-preferred-guide.html /recruit/hoikushi-tokyo23-salary-condition-guide.html /recruit/nursery-cooking-staff-setagaya.html /recruit/nursery-cook-qualification-required-check-guide.html /recruit/nursery-cook-holiday-leave-guide.html /recruit/hoiku-assistant-holiday-leave-guide.html; do
             ok=0
             for attempt in 1 2 3 4 5 6; do
               if curl --max-time 30 -fsSL "$base$p" -o /tmp/recruit-guide.html \
