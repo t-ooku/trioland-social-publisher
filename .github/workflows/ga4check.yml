@@ -1,0 +1,33 @@
+# GA4 本番確認（2026-11-03）：3ホストの公開ページのタグとブラウザ送信を調べる。corp-mirror ブランチだけで動く。
+# 送信（/g/collect）は Playwright で止めるので、本番 GA4 に確認アクセスは届かない。問い合わせは送らない。
+name: GA4 production check
+on:
+  push:
+    branches: [corp-mirror]
+    paths: ['.github/workflows/ga4check.yml', 'corp-mirror/ga4check/check.js', 'corp-mirror/ga4check/trigger.txt']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: |
+          npm i --no-save playwright@1.47.2 2>&1 | tail -2
+          npx playwright install --with-deps chromium 2>&1 | tail -2
+      - name: Check
+        continue-on-error: true
+        run: NODE_PATH="$GITHUB_WORKSPACE/node_modules" node corp-mirror/ga4check/check.js corp-mirror/ga4check
+      - name: Commit
+        if: always()
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add corp-mirror/ga4check
+          git diff --cached --quiet && exit 0
+          git commit -q -m 'GA4 production check'
+          for i in 1 2 3; do git push && exit 0; git pull --rebase -q origin corp-mirror; sleep 5; done
