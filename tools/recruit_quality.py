@@ -5,11 +5,15 @@
 2. 事実の統一：保育士・保育補助・看護師の記事で「勤務地は駒沢大学園（だけ）」と読める文を、
    採用ページと同じ「駒沢大学園・梅ヶ丘園の2園」に直す。調理スタッフの記事は募集状況が要確認のため触らない。
 3. 存在しない記事へのリンクを、ある記事へ付け替える。
+4. GA4 の計測タグ（tools/trio_ga4.py、測定 ID G-773Y7ZR3JX）を一覧・全記事の <head> に入れる（2026-11-03）。
+   タグを入れ直しても更新日は変えない（中身の更新ではないため）。
 
 2026-10-18 Cowork（docs/seo/2026-10-18-cowork-recruit-audit.md）。
 """
 import datetime, re, sys
 from pathlib import Path
+
+from trio_ga4 import ensure_in_html as ensure_ga4
 
 ROOT = Path(sys.argv[1] if len(sys.argv) > 1 else 'site/recruit')
 TODAY = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).date()
@@ -137,13 +141,17 @@ def main():
     if idx.exists():
         o = idx.read_text(encoding='utf-8'); t = o
         for a, b in INDEX_FIX.items(): t = t.replace(a, b)
+        t = ensure_ga4(t)
         if t != o: idx.write_text(t, encoding='utf-8'); n += 1
     for f in sorted(ROOT.glob('*.html')):
         if f.name == 'index.html':
             continue
-        o = f.read_text(encoding='utf-8'); t = fix(f.name, o)
+        o = f.read_text(encoding='utf-8'); t = ensure_ga4(fix(f.name, o))
         if t != o:
             f.write_text(t, encoding='utf-8'); n += 1
+    noga = [f.name for f in ROOT.glob('*.html') if 'id="trio-ga4"' not in f.read_text(encoding='utf-8')]
+    if noga:
+        sys.exit('recruit_quality: no GA4 tag in ' + ', '.join(noga))
     left = [f.name for f in ROOT.glob('*.html') if f.name != 'index.html' and 'recruit.html#form' not in f.read_text(encoding='utf-8')]
     print('recruit_quality: updated', n, 'files')
     if left:

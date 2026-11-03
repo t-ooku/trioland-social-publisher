@@ -98,6 +98,32 @@ jobs:
           code=$(curl --max-time 30 -s -o /dev/null -w '%{http_code}' https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry)
           echo "inquiry GET status: $code (405 is expected; delivery is not tested)"
           test "$code" = 405
+      - name: GA4 tag in public HTML (GET only; sending and GA4 receipt are checked separately)
+        # 2026-11-03：保育HP・放課後デイ・採用ガイドは tools/trio_ga4.py のタグ（G-773Y7ZR3JX）が1つだけあること。
+        # 会社HP（WordPress）はカスタマイズ画面の設定しだいなので、無くても失敗にせず警告だけ出す。
+        shell: bash
+        run: |
+          set -uo pipefail
+          bad=0
+          for u in https://hoiku.triocareer.jp/ https://hoiku.triocareer.jp/contact.html https://hoiku.triocareer.jp/recruit.html \
+                   https://hoiku.triocareer.jp/recruit/ https://hoiku.triocareer.jp/recruit/nursery-shift-hours-check-guide.html \
+                   https://afterschool.triocareer.jp/ https://afterschool.triocareer.jp/contact.html https://afterschool.triocareer.jp/column/; do
+            ok=0
+            for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
+              if curl --max-time 30 -fsSL "$u?nc=$RANDOM" -o /tmp/ga.html; then
+                n=$(grep -o 'id="trio-ga4"' /tmp/ga.html | wc -l); m=$(grep -o 'G-773Y7ZR3JX' /tmp/ga.html | wc -l)
+                if [ "$n" = 1 ] && [ "$m" -ge 1 ]; then ok=1; break; fi
+              fi
+              sleep 15
+            done
+            echo "GA4 tag $u = $ok"
+            [ "$ok" = 1 ] || bad=1
+          done
+          curl --max-time 30 -fsSL "https://www.triocareer.jp/?nc=$RANDOM" -o /tmp/ga.html || true
+          c=$(grep -o 'G-773Y7ZR3JX' /tmp/ga.html | wc -l); t=$(grep -o 'id="trio-ga4"' /tmp/ga.html | wc -l)
+          echo "corporate www.triocareer.jp: G-773Y7ZR3JX=$c trio-ga4=$t"
+          [ "$c" -ge 1 ] || echo "::warning::www.triocareer.jp has no G-773Y7ZR3JX yet (WordPress customizer setting)"
+          exit $bad
       - name: Updated recruitment guides (GET only; no application submit)
         shell: bash
         run: |

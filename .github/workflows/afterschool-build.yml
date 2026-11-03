@@ -18,6 +18,7 @@ on:
     branches: [main]
     paths:
       - 'afterschool/build_site.py'
+      - 'tools/trio_ga4.py'
       - 'afterschool/site/assets/site.css'
       - 'afterschool/content/**'
       - 'afterschool/tools/**'

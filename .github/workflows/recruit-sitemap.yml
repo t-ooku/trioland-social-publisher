@@ -6,6 +6,7 @@ on:
       - 'site/recruit/**'
       - '.github/workflows/recruit-sitemap.yml'
       - 'tools/recruit_quality.py'
+      - 'tools/trio_ga4.py'
   workflow_run:
     workflows: ['Build site']
     types: [completed]
