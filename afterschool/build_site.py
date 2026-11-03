@@ -15,6 +15,12 @@
 """
 import json
 import pathlib
+import sys
+
+# GA4（測定 ID G-773Y7ZR3JX）。3サイト共通のタグは tools/trio_ga4.py に置く（2026-11-03）。
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "tools"))
+from trio_ga4 import head_tag as _ga4_head_tag  # noqa: E402
+GA4_TAG = _ga4_head_tag()
 
 BASE = "https://afterschool.triocareer.jp"
 WORKER = "https://trioland-social-publisher.mygate-jp.workers.dev"
@@ -289,6 +295,7 @@ def head(title, desc, path, extra_ld=None, og_image="compass-room-a.webp",
 <meta name="description" content="{desc}">
 <meta name="robots" content="{robots}">
 <meta name="google-site-verification" content="GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI">
+{GA4_TAG}
 <link rel="canonical" href="{BASE}{path}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{SITE_NAME}">
@@ -564,6 +571,9 @@ FORM_JS = r'''
     var data = {};
     new FormData(form).forEach(function (value, key) { data[key] = String(value).trim(); });
     var recruit = data.kind === "recruit";
+    // GA4：送る値は決まったコードだけ（入力内容は送らない）。tools/trio_ga4.py
+    var gaType = recruit ? "afterschool_recruit" : "afterschool_use";
+    var gaFacility = /^(lopp|compass|any)$/.test(data.facility || "") ? data.facility : "none";
     var required = recruit ? ["facility", "jobType", "age", "gender", "experience", "license", "employment", "tel"]
                            : ["facility", "grade", "school", "area", "tel"];
     for (var i = 0; i < required.length; i++) {
@@ -591,15 +601,19 @@ FORM_JS = r'''
       return response.json().then(function (body) { return { response: response, body: body }; });
     }).then(function (result) {
       if (result.response.ok && result.body.ok) {
+        window.trioTrack("inquiry_submit_success", { form_type: gaType, facility: gaFacility });
         form.reset(); syncKind();
         show("送信しました。担当者より折り返しご連絡いたします。", "done");
         return;
       }
+      window.trioTrack("inquiry_submit_error", { form_type: gaType,
+        error_code: /^[A-Z_]{2,40}$/.test(String(result.body.error || "")) ? result.body.error : "unknown" });
       var msg = MESSAGES[result.body.error];
       if (result.body.error === "FIELD_REQUIRED") msg = "「" + (LABELS[result.body.field] || result.body.field) + "」は必須です。";
       show(msg || FALLBACK, "error");
       button.disabled = false;
     }).catch(function () {
+      window.trioTrack("inquiry_submit_error", { form_type: gaType, error_code: "network" });
       show(FALLBACK, "error");
       button.disabled = false;
     });
@@ -622,7 +636,7 @@ def inquiry_form(default_kind="use"):
   <div class="kicker">CONTACT</div>
   <h2>見学・利用のご相談／採用のお問い合わせ</h2>
   <p class="lead">下のフォームからお送りください。利用のご相談はご希望の事業所に、採用のお問い合わせは採用担当に直接届きます。お電話でも承っています。</p>
-  <form class="inquiry" id="inquiry-form" novalidate>
+  <form class="inquiry" id="inquiry-form" data-ga-form="afterschool" novalidate>
     <div class="row">
       <div class="field"><label for="f-kind">お問い合わせの種別 <span class="req">必須</span></label>
         <select id="f-kind" name="kind" required>
