@@ -4,7 +4,7 @@ name: GA4 production check
 on:
   push:
     branches: [corp-mirror]
-    paths: ['.github/workflows/ga4check.yml', 'corp-mirror/ga4check/check.js', 'corp-mirror/ga4check/trigger.txt']
+    paths: ['.github/workflows/ga4check.yml', 'corp-mirror/ga4check/check.cjs', 'corp-mirror/ga4check/trigger.txt']
   workflow_dispatch:
 permissions:
   contents: write
@@ -27,7 +27,7 @@ jobs:
         continue-on-error: true
         shell: bash
         run: |
-          NODE_PATH="$GITHUB_WORKSPACE/node_modules" timeout 900 node corp-mirror/ga4check/check.js corp-mirror/ga4check >> corp-mirror/ga4check/log.txt 2>&1 || echo "check exit $?" >> corp-mirror/ga4check/log.txt
+          NODE_PATH="$GITHUB_WORKSPACE/node_modules" timeout 900 node corp-mirror/ga4check/check.cjs corp-mirror/ga4check >> corp-mirror/ga4check/log.txt 2>&1 || echo "check exit $?" >> corp-mirror/ga4check/log.txt
           tail -40 corp-mirror/ga4check/log.txt
       - name: Commit
         if: always()
