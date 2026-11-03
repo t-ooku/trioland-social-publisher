@@ -1,6 +1,6 @@
 {
- "checked": "2026-11-03T06:26:54.587Z",
- "run": "41589876450",
+ "checked": "2026-11-03T11:05:12.397Z",
+ "run": "41624518550",
  "sites": {
   "corp": {
    "base": "https://www.triocareer.jp",
@@ -9,236 +9,428 @@
      "path": "/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 1,
       "gtm": 0,
       "analyticsJs": 0,
       "trioMarker": 0,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/",
+       "dh": "www.triocareer.jp",
+       "dbg": "",
+       "tt": "",
+       "ep": {}
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /company/recruit/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/company/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 1,
       "gtm": 0,
       "analyticsJs": 0,
       "trioMarker": 0,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/company/",
+       "dh": "www.triocareer.jp",
+       "dbg": "",
+       "tt": "",
+       "ep": {}
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /company/recruit/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/service/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 1,
       "gtm": 0,
       "analyticsJs": 0,
       "trioMarker": 0,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/service/",
+       "dh": "www.triocareer.jp",
+       "dbg": "",
+       "tt": "",
+       "ep": {}
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /contact/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/service/childcare/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 1,
       "gtm": 0,
       "analyticsJs": 0,
       "trioMarker": 0,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/service/childcare/",
+       "dh": "www.triocareer.jp",
+       "dbg": "",
+       "tt": "",
+       "ep": {}
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /contact/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/service/childcare/trioland-komazawa/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 1,
       "gtm": 0,
       "analyticsJs": 0,
       "trioMarker": 0,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/service/childcare/trioland-komazawa/",
+       "dh": "www.triocareer.jp",
+       "dbg": "",
+       "tt": "",
+       "ep": {}
+      }
+     ],
      "actions": [
       {
        "action": "cta_click tel:",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/service/after-school/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 1,
       "gtm": 0,
       "analyticsJs": 0,
       "trioMarker": 0,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/service/after-school/",
+       "dh": "www.triocareer.jp",
+       "dbg": "",
+       "tt": "",
+       "ep": {}
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /contact/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/service/after-school/lopp/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
       "gtm": 0,
       "analyticsJs": 0,
-      "trioMarker": 0,
+      "trioMarker": 1,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/service/after-school/lopp/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
      "actions": [
       {
        "action": "cta_click tel:",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/service/digilumi/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
       "gtm": 0,
       "analyticsJs": 0,
-      "trioMarker": 0,
+      "trioMarker": 1,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/service/digilumi/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /contact/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/service/callcenter/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
       "gtm": 0,
       "analyticsJs": 0,
-      "trioMarker": 0,
+      "trioMarker": 1,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/service/callcenter/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /contact/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/company/recruit/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
       "gtm": 0,
       "analyticsJs": 0,
-      "trioMarker": 0,
+      "trioMarker": 1,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/company/recruit/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
      "actions": [
       {
        "action": "cta_click https://hoiku.triocareer.jp/recruit.html",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/contact/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
       "gtm": 0,
       "analyticsJs": 0,
-      "trioMarker": 0,
+      "trioMarker": 1,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/contact/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "inquiry_form_start",
+       "dl": "https://www.triocareer.jp/contact/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.form_type": "corp_form_234"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "cta_click",
+       "dl": "https://www.triocareer.jp/contact/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.cta_type": "recruit",
+        "ep.link_location": "footer",
+        "ep.transport_type": "beacon",
+        "ep.link_domain": "www.triocareer.jp",
+        "ep.link_path": "/company/recruit/"
+       }
+      }
+     ],
      "actions": [
       {
        "action": "form_focus_type",
@@ -246,76 +438,127 @@
       },
       {
        "action": "cta_click /company/recruit/",
-       "newHits": []
+       "newHits": [
+        "inquiry_form_start",
+        "cta_click"
+       ]
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/information/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
       "gtm": 0,
       "analyticsJs": 0,
-      "trioMarker": 0,
+      "trioMarker": 1,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/information/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /company/recruit/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/bussiness-information/1092/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
       "gtm": 0,
       "analyticsJs": 0,
-      "trioMarker": 0,
+      "trioMarker": 1,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/bussiness-information/1092/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /contact/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     },
     {
      "path": "/privacy/",
      "status": 200,
      "html": {
-      "ids": [],
-      "gtagScripts": 0,
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
       "gtm": 0,
       "analyticsJs": 0,
-      "trioMarker": 0,
+      "trioMarker": 1,
       "siteKit": 0,
       "exunitGa": 0
      },
-     "gtagLoaded": [],
-     "hits": [],
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://www.triocareer.jp/privacy/",
+       "dh": "www.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
      "actions": [
       {
        "action": "cta_click /contact/",
        "newHits": []
       }
      ],
-     "pageViews": 0
+     "pageViews": 1
     }
    ]
   },
@@ -350,12 +593,26 @@
        "ep": {
         "ep.debug_mode": "true"
        }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "scroll",
+       "dl": "https://hoiku.triocareer.jp/",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "epn.percent_scrolled": "90"
+       }
       }
      ],
      "actions": [
       {
        "action": "cta_click /contact.html",
-       "newHits": []
+       "newHits": [
+        "scroll"
+       ]
       }
      ],
      "pageViews": 1
