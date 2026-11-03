@@ -5,3 +5,5 @@ node_modules/
 worker-configuration.d.ts
 trioland-admin-secrets.txt
 afterschool/.assets-src/
+__pycache__/
+*.pyc
