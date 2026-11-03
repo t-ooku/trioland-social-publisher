@@ -15,12 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install
+        continue-on-error: true
+        shell: bash
         run: |
-          npm i --no-save playwright@1.47.2 2>&1 | tail -2
-          npx playwright install --with-deps chromium 2>&1 | tail -2
+          mkdir -p corp-mirror/ga4check
+          echo "run ${GITHUB_RUN_ID} $(date -u +%FT%TZ)" > corp-mirror/ga4check/log.txt
+          npm i --no-save playwright@1.47.2 >> corp-mirror/ga4check/log.txt 2>&1 || echo "npm failed" >> corp-mirror/ga4check/log.txt
+          npx playwright install --with-deps chromium >> corp-mirror/ga4check/log.txt 2>&1 || echo "playwright install failed" >> corp-mirror/ga4check/log.txt
+          tail -5 corp-mirror/ga4check/log.txt
       - name: Check
         continue-on-error: true
-        run: NODE_PATH="$GITHUB_WORKSPACE/node_modules" node corp-mirror/ga4check/check.js corp-mirror/ga4check
+        shell: bash
+        run: |
+          NODE_PATH="$GITHUB_WORKSPACE/node_modules" timeout 900 node corp-mirror/ga4check/check.js corp-mirror/ga4check >> corp-mirror/ga4check/log.txt 2>&1 || echo "check exit $?" >> corp-mirror/ga4check/log.txt
+          tail -40 corp-mirror/ga4check/log.txt
       - name: Commit
         if: always()
         shell: bash
