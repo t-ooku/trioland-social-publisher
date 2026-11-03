@@ -150,3 +150,8 @@ Windsor.aiは読み取り用のまま使う。接続済みプロパティ `56209
 2. （問い合わせ計測用）テーマ 1.0.6 のアップロード（外観 → テーマ → 新規追加 → テーマのアップロード → 置き換え）。
 3. GA4：レポート → リアルタイムを開いた状態で3サイトを開き、3つのホストが出るか確認（GA4 を読む接続がないため）。
 4. 任意：GA4 管理 → イベントで `inquiry_submit_success` をキーイベントにする。
+
+### 追記 2026-11-03 20:20 JST：GA4 受信を確認
+- 会社HP：オーナーがカスタマイズで `G-773Y7ZR3JX` を公開（**コードコミットなし／設定変更のみ**）、続けてテーマ 1.0.6 をアップロード。CI（corp-mirror run 41624518550、20:05 JST）で14ページすべてタグ・page_view 1回・tid 一致、/contact/ で `inquiry_form_start`（corp_form_234）と `cta_click` の送信を確認。
+- GA4 DebugView（オーナー画面のスクリーンショット）：確認用端末から page_view を受信。20:16:09 `https://www.triocareer.jp/`、20:16:25 `https://hoiku.triocareer.jp/…`、20:16:43 `https://afterschool.triocareer.jp/…`。debug_mode・traffic_type 付き、page_location から `?ga_debug=1` が外れている。
+- 状態：3ホストとも ①公開タグ ②ブラウザ送信 ③GA4受信 ＝**本番確認済み**（ページ閲覧）。CTA・入力開始は送信まで確認、GA4 側での表示は未確認。送信成功イベントは本番未検証（実送信禁止のため）。通常レポートへの反映は 24〜48 時間後に確認する。
