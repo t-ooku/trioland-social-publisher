@@ -139,6 +139,7 @@ PHP_FILES["functions.php"] = r"""<?php
  */
 defined('ABSPATH') || exit;
 define('TRIO_VERSION', '@@VERSION@@');
+define('TRIO_GA4_TAG', @@GA4_TAG@@);
 
 function trio_routes() {
 	static $r = null;
@@ -328,10 +329,12 @@ add_action('wp_head', function () {
 	// 初期値：放課後デイのサイトで確認済みの、オーナーの Google アカウントの確認コード（2026-10-07 c1283a6）。カスタマイズで別のコードを入れたらそちらを使う
 	$g = trio_gsc_code(get_option('trio_gsc', '') !== '' ? get_option('trio_gsc') : 'GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI');
 	if ($g !== '') { echo '<meta name="google-site-verification" content="' . esc_attr($g) . "\">\n"; }
+	// GA4（2026-11-03）：保育HP・放課後デイと同じタグ（tools/trio_ga4.py）。本番の3ホストのときだけ送る。
+	// ログイン中（管理者の確認）・カスタマイズ画面のプレビュー・下書きプレビューでは出さない（利用者の数に混ぜない）。
+	// Contact Form 7 の wpcf7mailsent（メール送信に成功）だけを inquiry_submit_success にする。
 	$a = trio_clean_code(get_option('trio_ga4', ''));
-	if ($a !== '' && strpos($a, 'G-') === 0) {
-		echo '<script async src="https://www.googletagmanager.com/gtag/js?id=' . esc_attr($a) . '"></script>' . "\n";
-		echo "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','" . esc_js($a) . "');</script>\n";
+	if ($a !== '' && strpos($a, 'G-') === 0 && !is_user_logged_in() && !is_customize_preview() && !is_preview()) {
+		echo str_replace('__TRIO_GA4_ID__', esc_js($a), TRIO_GA4_TAG) . "\n";
 	}
 }, 1);
 
@@ -452,6 +455,10 @@ function trio_desc_of($post) {
 	return mb_substr($t, 0, 110);
 }
 """
+# GA4 タグ（tools/trio_ga4.py と共通。測定 ID は WordPress の設定値を入れる）
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "tools"))
+from trio_ga4 import head_tag as _ga4_head_tag  # noqa: E402
+PHP_FILES["functions.php"] = PHP_FILES["functions.php"].replace("@@GA4_TAG@@", php_str(_ga4_head_tag("__TRIO_GA4_ID__")))
 PHP_FILES["inc/sitemap.php"] = r"""<?php
 defined('ABSPATH') || exit;
 /** pages/ のデザインのページ（トップ・事業紹介・施設・会社案内など）を wp-sitemap.xml に載せる */
