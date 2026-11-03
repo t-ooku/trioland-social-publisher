@@ -1,6 +1,6 @@
-run 41588065362 2026-11-03T06:09:14Z
+run 41589876450 2026-11-03T06:26:25Z
 
-added 256 packages, and audited 257 packages in 14s
+added 256 packages, and audited 257 packages in 15s
 
 75 packages are looking for funding
   run `npm fund` for details
@@ -23,26 +23,26 @@ npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install
 Installing dependencies...
 Switching to root user to install dependencies...
 Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+Get:3 https://packages.microsoft.com/ubuntu/26.04/prod resolute InRelease [3964 B]
+Get:7 https://packages.microsoft.com/ubuntu/26.04/prod resolute/main amd64 Packages [131 kB]
+Get:8 https://packages.microsoft.com/ubuntu/26.04/prod resolute/main arm64 Packages [120 kB]
 Hit:2 http://azure.archive.ubuntu.com/ubuntu resolute InRelease
-Get:6 https://packages.microsoft.com/ubuntu/26.04/prod resolute InRelease [3964 B]
-Get:3 http://azure.archive.ubuntu.com/ubuntu resolute-updates InRelease [137 kB]
-Get:4 http://azure.archive.ubuntu.com/ubuntu resolute-backports InRelease [137 kB]
-Get:5 http://azure.archive.ubuntu.com/ubuntu resolute-security InRelease [137 kB]
-Get:7 https://packages.microsoft.com/ubuntu/26.04/prod resolute/main arm64 Packages [120 kB]
-Get:8 http://azure.archive.ubuntu.com/ubuntu resolute-updates/main amd64v3 Packages [804 kB]
-Get:14 https://packages.microsoft.com/ubuntu/26.04/prod resolute/main amd64 Packages [131 kB]
-Get:9 http://azure.archive.ubuntu.com/ubuntu resolute-updates/main Translation-en [184 kB]
-Get:10 http://azure.archive.ubuntu.com/ubuntu resolute-updates/universe amd64v3 Packages [375 kB]
-Get:11 http://azure.archive.ubuntu.com/ubuntu resolute-updates/universe Translation-en [118 kB]
-Get:12 http://azure.archive.ubuntu.com/ubuntu resolute-updates/restricted amd64v3 Packages [543 kB]
-Get:13 http://azure.archive.ubuntu.com/ubuntu resolute-updates/restricted Translation-en [112 kB]
+Get:4 http://azure.archive.ubuntu.com/ubuntu resolute-updates InRelease [137 kB]
+Get:5 http://azure.archive.ubuntu.com/ubuntu resolute-backports InRelease [137 kB]
+Get:6 http://azure.archive.ubuntu.com/ubuntu resolute-security InRelease [137 kB]
+Get:9 http://azure.archive.ubuntu.com/ubuntu resolute-updates/main amd64v3 Packages [804 kB]
+Get:10 http://azure.archive.ubuntu.com/ubuntu resolute-updates/main Translation-en [184 kB]
+Get:11 http://azure.archive.ubuntu.com/ubuntu resolute-updates/universe amd64v3 Packages [375 kB]
+Get:12 http://azure.archive.ubuntu.com/ubuntu resolute-updates/universe Translation-en [118 kB]
+Get:13 http://azure.archive.ubuntu.com/ubuntu resolute-updates/restricted amd64v3 Packages [543 kB]
+Get:14 http://azure.archive.ubuntu.com/ubuntu resolute-updates/restricted Translation-en [112 kB]
 Get:15 http://azure.archive.ubuntu.com/ubuntu resolute-security/main amd64v3 Packages [651 kB]
 Get:16 http://azure.archive.ubuntu.com/ubuntu resolute-security/main Translation-en [146 kB]
 Get:17 http://azure.archive.ubuntu.com/ubuntu resolute-security/universe amd64v3 Packages [206 kB]
 Get:18 http://azure.archive.ubuntu.com/ubuntu resolute-security/universe Translation-en [67.9 kB]
 Get:19 http://azure.archive.ubuntu.com/ubuntu resolute-security/restricted amd64v3 Packages [529 kB]
 Get:20 http://azure.archive.ubuntu.com/ubuntu resolute-security/restricted Translation-en [108 kB]
-Fetched 4510 kB in 0s (12.0 MB/s)
+Fetched 4510 kB in 1s (8101 kB/s)
 Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -119,7 +119,7 @@ Get:7 http://azure.archive.ubuntu.com/ubuntu resolute/main amd64v3 xfonts-encodi
 Get:8 http://azure.archive.ubuntu.com/ubuntu resolute/main amd64v3 xfonts-utils amd64 1:7.7+7build1 [97.3 kB]
 Get:9 http://azure.archive.ubuntu.com/ubuntu resolute/universe amd64v3 xfonts-cyrillic all 1:1.0.5+nmu1build1 [384 kB]
 Get:10 http://azure.archive.ubuntu.com/ubuntu resolute/universe amd64v3 xfonts-scalable all 1:1.0.3-1.3build1 [304 kB]
-Fetched 21.9 MB in 1s (37.0 MB/s)
+Fetched 21.9 MB in 0s (74.1 MB/s)
 Selecting previously unselected package fonts-ipafont-gothic.
 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 212715 files and directories currently installed.)
 Preparing to unpack .../0-fonts-ipafont-gothic_00303-23ubuntu1_all.deb ...
@@ -200,16 +200,78 @@ Downloading FFMPEG playwright build v1010 from https://playwright.azureedge.net/
 |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
 |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
 FFMPEG playwright build v1010 downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1010
-file:///home/runner/work/trioland-social-publisher/trioland-social-publisher/corp-mirror/ga4check/check.js:4
-const { chromium } = require('playwright');
-                     ^
-
-ReferenceError: require is not defined in ES module scope, you can use import instead
-This file is being treated as an ES module because it has a '.js' file extension and '/home/runner/work/trioland-social-publisher/trioland-social-publisher/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
-    at file:///home/runner/work/trioland-social-publisher/trioland-social-publisher/corp-mirror/ga4check/check.js:4:22
-    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
-    at async node:internal/modules/esm/loader:647:26
-    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
-
-Node.js v24.22.1
-check exit 1
+checked 2026-11-03T06:26:54.587Z run 41589876450
+## corp https://www.triocareer.jp
+/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /company/recruit/ -> []
+/company/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /company/recruit/ -> []
+/service/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /contact/ -> []
+/service/childcare/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /contact/ -> []
+/service/childcare/trioland-komazawa/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click tel: -> []
+/service/after-school/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /contact/ -> []
+/service/after-school/lopp/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click tel: -> []
+/service/digilumi/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /contact/ -> []
+/service/callcenter/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /contact/ -> []
+/company/recruit/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click https://hoiku.triocareer.jp/recruit.html -> []
+/contact/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   form_focus_type -> []
+   cta_click /company/recruit/ -> []
+/information/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /company/recruit/ -> []
+/bussiness-information/1092/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /contact/ -> []
+/privacy/ 200 htmlIDs=[] gtagScripts=0 gtm=0 ua=0 trio=0 loaded=[] page_view=0 tid=[] events=[]
+   cta_click /contact/ -> []
+## hoiku https://hoiku.triocareer.jp
+/ 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp]
+   cta_click /contact.html -> []
+/komazawa.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp]
+   cta_click /contact.html -> []
+/umegaoka.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp]
+   cta_click /contact.html -> []
+/contact.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp inquiry_form_start@hoiku.triocareer.jp cta_click@hoiku.triocareer.jp]
+   form_focus_type -> []
+   cta_click /contact.html -> [inquiry_form_start,cta_click]
+/recruit.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp inquiry_form_start@hoiku.triocareer.jp cta_click@hoiku.triocareer.jp]
+   form_focus_type -> []
+   cta_click /contact.html -> [inquiry_form_start,cta_click]
+/faq.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp]
+   cta_click /contact.html -> []
+/column.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp]
+   cta_click /contact.html -> []
+/column/gosui-check-anzen.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp]
+   cta_click /contact.html -> []
+/recruit/ 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp]
+   cta_click /recruit.html#summary -> []
+/recruit/around-20-capacity-nursery-job.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp]
+   cta_click /recruit.html#summary -> []
+/recruit/nursery-shift-hours-check-guide.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@hoiku.triocareer.jp cta_click@hoiku.triocareer.jp]
+   cta_click https://www.triocareer.jp/company/recruit/ -> [cta_click]
+## afterschool https://afterschool.triocareer.jp
+/ 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@afterschool.triocareer.jp]
+   cta_click /contact.html -> []
+/lopp.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@afterschool.triocareer.jp]
+   cta_click /contact.html -> []
+/compass.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@afterschool.triocareer.jp]
+   cta_click /contact.html -> []
+/approach.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@afterschool.triocareer.jp]
+   cta_click /contact.html -> []
+/availability.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@afterschool.triocareer.jp]
+   cta_click /contact.html -> []
+/contact.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@afterschool.triocareer.jp inquiry_form_start@afterschool.triocareer.jp cta_click@afterschool.triocareer.jp]
+   form_focus_type -> []
+   cta_click /contact.html -> [inquiry_form_start,cta_click]
+/recruit.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@afterschool.triocareer.jp inquiry_form_start@afterschool.triocareer.jp cta_click@afterschool.triocareer.jp]
+   form_focus_type -> []
+   cta_click /contact.html -> [inquiry_form_start,cta_click]
+/column/hoikushi-houkago-day.html 200 htmlIDs=[G-773Y7ZR3JX] gtagScripts=2 gtm=0 ua=0 trio=1 loaded=[G-773Y7ZR3JX] page_view=1 tid=[G-773Y7ZR3JX] events=[page_view@afterschool.triocareer.jp]
+   cta_click /contact.html -> []

@@ -1,0 +1,1213 @@
+{
+ "checked": "2026-11-03T06:26:54.587Z",
+ "run": "41589876450",
+ "sites": {
+  "corp": {
+   "base": "https://www.triocareer.jp",
+   "pages": [
+    {
+     "path": "/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /company/recruit/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/company/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /company/recruit/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/service/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /contact/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/service/childcare/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /contact/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/service/childcare/trioland-komazawa/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click tel:",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/service/after-school/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /contact/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/service/after-school/lopp/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click tel:",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/service/digilumi/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /contact/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/service/callcenter/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /contact/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/company/recruit/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click https://hoiku.triocareer.jp/recruit.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/contact/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "form_focus_type",
+       "newHits": []
+      },
+      {
+       "action": "cta_click /company/recruit/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/information/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /company/recruit/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/bussiness-information/1092/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /contact/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    },
+    {
+     "path": "/privacy/",
+     "status": 200,
+     "html": {
+      "ids": [],
+      "gtagScripts": 0,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 0,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [],
+     "hits": [],
+     "actions": [
+      {
+       "action": "cta_click /contact/",
+       "newHits": []
+      }
+     ],
+     "pageViews": 0
+    }
+   ]
+  },
+  "hoiku": {
+   "base": "https://hoiku.triocareer.jp",
+   "pages": [
+    {
+     "path": "/",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/komazawa.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/komazawa",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/umegaoka.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/umegaoka",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/contact.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/contact",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "inquiry_form_start",
+       "dl": "https://hoiku.triocareer.jp/contact",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.form_type": "nursery_visit"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "cta_click",
+       "dl": "https://hoiku.triocareer.jp/contact",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.cta_type": "contact",
+        "ep.link_location": "nav",
+        "ep.transport_type": "beacon",
+        "ep.link_domain": "hoiku.triocareer.jp",
+        "ep.link_path": "/contact.html"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "form_focus_type",
+       "newHits": []
+      },
+      {
+       "action": "cta_click /contact.html",
+       "newHits": [
+        "inquiry_form_start",
+        "cta_click"
+       ]
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/recruit.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/recruit",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "inquiry_form_start",
+       "dl": "https://hoiku.triocareer.jp/recruit",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.form_type": "nursery_recruit"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "cta_click",
+       "dl": "https://hoiku.triocareer.jp/recruit",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.cta_type": "contact",
+        "ep.link_location": "nav",
+        "ep.transport_type": "beacon",
+        "ep.link_domain": "hoiku.triocareer.jp",
+        "ep.link_path": "/contact.html"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "form_focus_type",
+       "newHits": []
+      },
+      {
+       "action": "cta_click /contact.html",
+       "newHits": [
+        "inquiry_form_start",
+        "cta_click"
+       ]
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/faq.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/faq",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/column.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/column",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/column/gosui-check-anzen.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/column/gosui-check-anzen",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/recruit/",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/recruit/",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /recruit.html#summary",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/recruit/around-20-capacity-nursery-job.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/recruit/around-20-capacity-nursery-job",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /recruit.html#summary",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/recruit/nursery-shift-hours-check-guide.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://hoiku.triocareer.jp/recruit/nursery-shift-hours-check-guide",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "cta_click",
+       "dl": "https://hoiku.triocareer.jp/recruit/nursery-shift-hours-check-guide",
+       "dh": "hoiku.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.cta_type": "recruit",
+        "ep.link_location": "content",
+        "ep.transport_type": "beacon",
+        "ep.link_domain": "www.triocareer.jp",
+        "ep.link_path": "/company/recruit/"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click https://www.triocareer.jp/company/recruit/",
+       "newHits": [
+        "cta_click"
+       ]
+      }
+     ],
+     "pageViews": 1
+    }
+   ]
+  },
+  "afterschool": {
+   "base": "https://afterschool.triocareer.jp",
+   "pages": [
+    {
+     "path": "/",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://afterschool.triocareer.jp/",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/lopp.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://afterschool.triocareer.jp/lopp",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/compass.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://afterschool.triocareer.jp/compass",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/approach.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://afterschool.triocareer.jp/approach",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/availability.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://afterschool.triocareer.jp/availability",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/contact.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://afterschool.triocareer.jp/contact",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "inquiry_form_start",
+       "dl": "https://afterschool.triocareer.jp/contact",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.form_type": "afterschool_use"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "cta_click",
+       "dl": "https://afterschool.triocareer.jp/contact",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.cta_type": "contact",
+        "ep.link_location": "nav",
+        "ep.transport_type": "beacon",
+        "ep.link_domain": "afterschool.triocareer.jp",
+        "ep.link_path": "/contact.html"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "form_focus_type",
+       "newHits": []
+      },
+      {
+       "action": "cta_click /contact.html",
+       "newHits": [
+        "inquiry_form_start",
+        "cta_click"
+       ]
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/recruit.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://afterschool.triocareer.jp/recruit",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "inquiry_form_start",
+       "dl": "https://afterschool.triocareer.jp/recruit",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.form_type": "afterschool_recruit"
+       }
+      },
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "cta_click",
+       "dl": "https://afterschool.triocareer.jp/recruit",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true",
+        "ep.cta_type": "contact",
+        "ep.link_location": "nav",
+        "ep.transport_type": "beacon",
+        "ep.link_domain": "afterschool.triocareer.jp",
+        "ep.link_path": "/contact.html"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "form_focus_type",
+       "newHits": []
+      },
+      {
+       "action": "cta_click /contact.html",
+       "newHits": [
+        "inquiry_form_start",
+        "cta_click"
+       ]
+      }
+     ],
+     "pageViews": 1
+    },
+    {
+     "path": "/column/hoikushi-houkago-day.html",
+     "status": 200,
+     "html": {
+      "ids": [
+       "G-773Y7ZR3JX"
+      ],
+      "gtagScripts": 2,
+      "gtm": 0,
+      "analyticsJs": 0,
+      "trioMarker": 1,
+      "siteKit": 0,
+      "exunitGa": 0
+     },
+     "gtagLoaded": [
+      "G-773Y7ZR3JX"
+     ],
+     "hits": [
+      {
+       "tid": "G-773Y7ZR3JX",
+       "en": "page_view",
+       "dl": "https://afterschool.triocareer.jp/column/hoikushi-houkago-day",
+       "dh": "afterschool.triocareer.jp",
+       "dbg": "true",
+       "tt": "",
+       "ep": {
+        "ep.debug_mode": "true"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "action": "cta_click /contact.html",
+       "newHits": []
+      }
+     ],
+     "pageViews": 1
+    }
+   ]
+  }
+ }
+}
