@@ -4,7 +4,12 @@
 すべてのページを共通ヘッダー/フッターから生成する。
 写真は1枚につきサイト全体で1回だけ使用する（重複禁止）。
 """
-import os, re, json, pathlib
+import os, re, sys, json, pathlib
+
+# GA4（測定 ID G-773Y7ZR3JX）。3サイト共通のタグは tools/trio_ga4.py に置く（2026-11-03）。
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent / "tools"))
+from trio_ga4 import head_tag as _ga4_head_tag
+GA4_TAG = _ga4_head_tag()
 
 # 本番 URL。2026-09-18 に Cloudflare Pages（hoiku.triocareer.jp）へ切り替えた。
 # workers.dev 側にも同じ HTML が出るが、canonical はこの URL に統一する（検索エンジンの評価を新ドメインへ集める）。
@@ -73,6 +78,7 @@ def head(title, desc, path, extra_ld=None, robots="index,follow,max-image-previe
 <meta name="description" content="{desc}">
 <meta name="robots" content="{robots}">
 <meta name="google-site-verification" content="GGR_eaakJpEhbyW9CRI4FER9Gov1ET9YTNrP6fPFnAI">
+{GA4_TAG}
 <link rel="canonical" href="{BASE}{path}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="トリオランド">
@@ -244,7 +250,7 @@ def inquiry_form(mode):
   <div class="kicker">CONTACT</div>
   <h2>{title}</h2>
   <p class="lead">{lead}</p>
-  <form class="inquiry" id="inquiry-form" novalidate>
+  <form class="inquiry" id="inquiry-form" data-ga-form="{'nursery_recruit' if mode == 'recruit' else 'nursery_visit'}" novalidate>
     {dest_field}
     <div class="field"><label for="f-name">お名前 <span class="req">必須</span></label>
       <input id="f-name" name="name" required autocomplete="name"></div>
@@ -283,6 +289,12 @@ def inquiry_form(mode):
     status.textContent = text;
     status.className = "form-status " + kind;
   }}
+  // GA4：送る値は決まったコードだけ（入力内容は送らない）。tools/trio_ga4.py
+  var GA_FACILITY = {{ komazawa: "komazawa", umegaoka: "umegaoka", general: "undecided",
+    "駒沢大学園": "komazawa", "梅ヶ丘園": "umegaoka", "どちらも検討中": "either" }};
+  function gaFacility(d) {{
+    return GA_FACILITY[d.destination === "recruit" ? d.facility : d.destination] || "none";
+  }}
   form.addEventListener("submit", function (event) {{
     event.preventDefault();
     var data = {{}};
@@ -305,13 +317,17 @@ def inquiry_form(mode):
       return response.json().then(function (body) {{ return {{ response: response, body: body }}; }});
     }}).then(function (result) {{
       if (result.response.ok && result.body.ok) {{
+        window.trioTrack("inquiry_submit_success", {{ form_type: form.getAttribute("data-ga-form"), facility: gaFacility(data) }});
         form.reset();
         show("送信しました。担当者より折り返しご連絡いたします。", "done");
         return;
       }}
+      window.trioTrack("inquiry_submit_error", {{ form_type: form.getAttribute("data-ga-form"),
+        error_code: /^[A-Z_]{{2,40}}$/.test(String(result.body.error || "")) ? result.body.error : "unknown" }});
       show(MESSAGES[result.body.error] || FALLBACK, "error");
       button.disabled = false;
     }}).catch(function () {{
+      window.trioTrack("inquiry_submit_error", {{ form_type: form.getAttribute("data-ga-form"), error_code: "network" }});
       show(FALLBACK, "error");
       button.disabled = false;
     }});
