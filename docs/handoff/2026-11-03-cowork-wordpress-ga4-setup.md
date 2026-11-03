@@ -116,3 +116,37 @@ Windsor.aiは読み取り用のまま使う。接続済みプロパティ `56209
 - DebugView：https://support.google.com/analytics/answer/7201382?hl=ja
 
 この指示書は、サイトのタグ設置・データ受信が完了したことの証拠ではありません。
+
+## 8. 実施結果（2026-11-03 15:30 JST 時点、Claude／Cowork。Codex 担当分のコード変更も Claude が実施）
+
+測定 ID `G-773Y7ZR3JX`（プロパティ 562097032）。GA4 のアカウント・プロパティ・ストリームは作っていない。HOSHILU・黒谷HPは混ぜていない。
+
+| 対象ホスト | 設定・コード反映 | 公開タグ確認 | ブラウザ送信 | GA4受信 | CTA・開始・成功イベント | 残課題 |
+|---|---|---|---|---|---|---|
+| www.triocareer.jp | **未設定**（WordPress 管理画面に入れる接続がない。オーナー操作待ち） | 2026-11-03 15:26 JST：14ページすべて GA4/GTM/UA タグなし＝既存タグとの重複なし | 未（タグなし） | 未 | テーマ 1.0.6 で実装・ローカル検証済み、本番未反映 | ①カスタマイズで ID 入力 ②1.0.6 のアップロード（問い合わせ計測用） |
+| hoiku.triocareer.jp | コード反映済み（main 2348cdd・4d86bae、CI で生成） | 確認済み：本番11ページ（主要・コラム・採用ガイド）で `trio-ga4` 1つ。main の生成済み HTML は両サイト計154ページ（採用ガイド122本を含む）すべてにタグ1つ | 確認済み：各ページ page_view 1回・tid=G-773Y7ZR3JX・hostname=hoiku | **未確認**（GA4 画面を見る権限・接続なし） | 実装済み。本番で inquiry_form_start・cta_click の送信を確認（送信は止めて GA4 へは届けていない）。成功イベントはモックで検証、本番実送信なし | GA4 リアルタイムでの受信確認 |
+| afterschool.triocareer.jp | コード反映済み（main e6c80c2、CI で生成） | 確認済み：8ページで `trio-ga4` 1つ | 確認済み：各ページ page_view 1回・tid=G-773Y7ZR3JX | **未確認** | 実装済み。本番で inquiry_form_start・cta_click の送信を確認。成功はモックで検証 | 同上 |
+
+確認方法：corp-mirror ブランチの `GA4 production check`（run 41589876450、`corp-mirror/ga4check/summary.txt`・`report.json`）。Playwright で本番ページを開き、`/g/collect` への送信を記録してから止める（本番 GA4 には確認アクセスを届けない）。フォームは1文字入力のみで送信しない。GA4 はイベントをまとめて送るため、2.5 秒の待機では CTA クリックの送信を拾えなかったページがある（問い合わせページでは次の送信にまとめて出ていた）。
+
+### 実装（tools/trio_ga4.py に共通化）
+- 本番3ホストのときだけ動く（プレビュー・localhost・workers.dev では gtag.js も読まない）。page_view は `config` の自動送信だけ（手動送信なし＝二重送信なし）。
+- 送る URL は utm_ 以外のクエリを外す。Google シグナル・広告のパーソナライズは無効。
+- イベント（自動の form_start / form_submit / click と名前を分けた）：
+  - `cta_click`：cta_type = contact / recruit / tel / line / mail、link_location = header / nav / mobilebar / footer / content。**押しただけ。問い合わせ完了ではない。**電話番号は送らない。
+  - `inquiry_form_start`：最初の入力（1ページ1回）。form_type = nursery_visit / nursery_recruit / afterschool_use / afterschool_recruit / corp_form_234（会社HP）。
+  - `inquiry_submit_success`：保育HP・放課後デイは /api/inquiry が `ok:true` を返し「送信しました」を出したときだけ。会社HPは CF7 の `wpcf7mailsent` だけ。facility は決まったコード（komazawa / umegaoka / undecided / either / lopp / compass / any / none）。
+  - `inquiry_submit_error`：error_code は API の決まったコード、`network`、CF7 は invalid / spam / mail_failed。
+- 氏名・電話・メール・相談本文・子どもの情報はどのイベントにも入れない（ローカル検証で dataLayer に無いことを確認）。
+- 検証端末だけ `?ga_debug=1` で debug_mode と `traffic_type=internal`（`?ga_debug=0` で解除）。GA4 の既定の「内部トラフィック」フィルタ（テスト状態）で区別できる。
+- 採用ガイド（Codex 作成の静的記事）は `tools/recruit_quality.py` が毎回タグを入れ直す（更新日は変えない）。build-photos・afterschool-build・recruit-sitemap は `tools/trio_ga4.py` の変更でも動く。site-smoke に「公開HTMLにタグが1つ」の検査を追加（会社HPは警告のみ）。
+
+### ローカル検証（本番の問い合わせは送っていない）
+- 保育HP・放課後デイ：生成済み HTML を本番ホスト名で開き、/api/inquiry をモック。成功→success 1件のみ／INVALID_EMAIL・TOO_MANY_REQUESTS・通信断・不明エラー→error のみ・success なし／本番外ホスト→何も積まない。42項目すべて合格。
+- 会社HP：本番と同じ版の WordPress（CF7 5.1.6）にテーマ 1.0.6 を入れて検証。未入力→`invalid`、メール送信失敗→`mail_failed`、成功→`wpcf7mailsent` で success。ログイン中は GA4 タグを出さない。Search Console の確認コードは変更なし。1.0.5 との差は functions.php の GA4 部分と版番号だけ。
+
+### 本人操作が必要なもの
+1. WordPress：外観 → カスタマイズ → 計測・Search Console → 「GA4 の測定 ID」に `G-773Y7ZR3JX` → 公開（これだけで会社HPのページ閲覧が届く）。
+2. （問い合わせ計測用）テーマ 1.0.6 のアップロード（外観 → テーマ → 新規追加 → テーマのアップロード → 置き換え）。
+3. GA4：レポート → リアルタイムを開いた状態で3サイトを開き、3つのホストが出るか確認（GA4 を読む接続がないため）。
+4. 任意：GA4 管理 → イベントで `inquiry_submit_success` をキーイベントにする。
