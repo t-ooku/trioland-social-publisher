@@ -4,6 +4,7 @@ import { createMcpHandler, getMcpAuthContext } from "agents/mcp/server";
 import { z } from "zod";
 import { handleInquiry } from "./inquiry.js";
 import { handleRecruitApi, renderRecruitAdmin, saveRecruitAdmin, resetRecruitAdmin } from "./afterschool_recruit.js";
+import { handleStepRequest, handleStepAdminGet, handleStepAdminPost } from "./step.js";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -61,6 +62,11 @@ export const appHandler = {
 
       if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
         return await handleAdminRequest(request, env);
+      }
+
+      // 中途採用者のステップアップ。職員がリンク（トークン）で開く。requireAdmin より前に置く。
+      if (url.pathname === "/step" || url.pathname.startsWith("/step/")) {
+        return await handleStepRequest(request, env);
       }
 
       // 問い合わせフォームの受け口。保護者・応募者が使うので requireAdmin より前に置く。
@@ -431,6 +437,9 @@ async function handleAdminRequest(request, env) {
     if (request.method === "GET" && url.pathname === "/admin/recruit") {
       return await renderRecruitAdmin(request, env, session, { adminStyles, securityHeaders, escapeHtml });
     }
+    if (request.method === "GET" && (url.pathname === "/admin/step" || url.pathname.startsWith("/admin/step/"))) {
+      return await handleStepAdminGet(request, env, session, { escapeHtml });
+    }
     if (request.method === "GET" && url.pathname === "/admin/connect-instagram") {
       const authorizationUrl = await createInstagramAuthorizationUrl(env, url.origin, "/admin");
       return redirect(authorizationUrl);
@@ -498,6 +507,9 @@ async function handleAdminRequest(request, env) {
     }
     if (url.pathname === "/admin/make/diagnose") {
       return await runMakeDiagnosis(env);
+    }
+    if (url.pathname === "/admin/step" || url.pathname.startsWith("/admin/step/")) {
+      return await handleStepAdminPost(request, form, env, session, { escapeHtml });
     }
     if (url.pathname === "/admin/recruit") {
       await saveRecruitAdmin(form, env, session);
@@ -844,6 +856,7 @@ ${notices.map((notice) => `<div class="notice ${notice.startsWith("エラー:") 
 
 <section><div class="section-head"><div><span class="step">M</span><h2>Make / Googleビジネスプロフィール</h2></div><span class="pill ${makeConnected ? "done" : ""}">${makeConnected ? "API接続済み" : "未接続"}</span></div><p>シナリオ ${MAKE_SCENARIO_ID} の構成と直近実行ログを、トークンを表示せずに診断します。</p><a class="button" href="/admin/make">Make診断画面を開く</a></section>
 <section><div class="section-head"><div><span class="step">R</span><h2>放デイ求人の編集</h2></div><span class="pill">afterschool.triocareer.jp</span></div><p>ロップ・コンパスマイルの採用ページに載せる給与・勤務時間・応募資格などを編集します。保存するとすぐ公開されます。</p><a class="button" href="/admin/recruit">求人編集画面を開く</a></section>
+<section><div class="section-head"><div><span class="step">S</span><h2>中途採用者のステップアップ</h2></div><span class="pill">職員用・非公開</span></div><p>新人の登録、本人・指導役・園長リンク（QR）の発行、進み具合と定着率の確認をします。</p><a class="button" href="/admin/step">ステップアップ管理を開く</a></section>
 
 <section><div class="section-head"><div><span class="step">1</span><h2>Instagram接続</h2></div><span class="pill ${instagramConnected ? "done" : ""}">${instagramConnected ? "完了" : "初回のみ"}</span></div>
 <p>Instagramプロアカウントを公式APIへ接続します。HOSHILUには影響しません。</p>
@@ -1552,6 +1565,7 @@ function securityHeaders(setCookie) {
     "x-content-type-options": "nosniff",
     "referrer-policy": "no-referrer",
     "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "x-robots-tag": "noindex, nofollow",
   };
   if (setCookie) headers["set-cookie"] = setCookie;
   return headers;

@@ -24,6 +24,13 @@
       "binding": "OAUTH_KV"
     }
   ],
+  "d1_databases": [
+    {
+      "binding": "STEP_DB",
+      "database_name": "trio_step",
+      "migrations_dir": "migrations"
+    }
+  ],
   "r2_buckets": [
     {
       "binding": "MEDIA_BUCKET"
