@@ -965,7 +965,7 @@ def page_availability():
   <p class="note">送迎は地域によって対応できない場合があります。お住まいの町名をお知らせください。</p>
 </div></section>
 </main>
-{cta("空き状況の確認は、フォームからも。", "ご希望の曜日とお子さまの学年をお書き添えください。折り返しご連絡します。")}
+{cta("希望施設を選んで、空き状況・見学を相談する", "最新の空き状況と送迎の対応範囲は施設ごとに異なります。希望施設を選ぶと相談フォームに進みます。", primary=("/contact.html?facility=lopp#form", "ロップの見学・空き状況を相談"), second=("/contact.html?facility=compass#form", "コンパスマイルの見学・空き状況を相談"))}
 ''' + footer()
 
 
