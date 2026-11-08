@@ -880,6 +880,10 @@ def page_facility(p, path, gallery, intro, about, active):
         f'<figure><img src="/assets/photos/{f}?v={V}" alt="{alt}" loading="lazy" decoding="async"><figcaption>{cap}</figcaption></figure>'
         for f, alt, cap in gallery)
     about_html = "".join(f"<p>{para}</p>" for para in about)
+    # AS-01: コンパスマイルだけ、見学・空き状況の相談を直接フォームに案内する。
+    # facility=compass はフォーム既存JSが初期選択する。必須項目・送信先は変更しない。
+    consult_label = "コンパスマイルの見学・空き状況を相談する" if p is COMPASS else "見学・利用のご相談"
+    consult_anchor = "#form" if p is COMPASS else ""
     return head(
         f"{p['full']}（{p['ward']}{p['town']}・{p['station']}駅）｜{SITE_NAME}",
         f"{p['full']}。{p['access'][0]}。〒{p['zip']} {p['addr']}。サービス提供時間 {p['hours']}。送迎{p['pickup']}。小学生〜高校生。見学・利用のご相談はお電話（{p['tel']}）またはフォームから。",
@@ -891,7 +895,7 @@ def page_facility(p, path, gallery, intro, about, active):
     <img class="page-logo" src="/assets/photos/{p["logo"]}?v={V}" width="{p["logo_w"]}" height="{p["logo_h"]}" alt="{p["name"]} ロゴ" decoding="async">
     <h1>{p["full"]}</h1>
     <p class="lead">{intro}</p>
-    <div class="actions"><a class="btn accent" href="/contact.html?facility={p["key"]}">見学・利用のご相談</a><a class="btn outline" href="tel:{p["tel"].replace("-", "")}">{p["tel"]}</a></div>
+    <div class="actions"><a class="btn accent" href="/contact.html?facility={p["key"]}{consult_anchor}">{consult_label}</a><a class="btn outline" href="tel:{p["tel"].replace("-", "")}">{p["tel"]}</a></div>
   </div>
   <div class="hero-media"><figure><img src="/assets/photos/{p["photo"]}?v={V}" alt="{p["photo_alt"]}" decoding="async"><figcaption>{p["name"]} 入口</figcaption></figure></div>
 </div></section>
