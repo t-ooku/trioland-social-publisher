@@ -1,0 +1,44 @@
+# ステップアップ表（/step）の本番確認。Workers Builds のデプロイを待ってから、公開されている入口だけを確かめる。
+# 本物のリンク（トークン）は使わない。存在しないトークンで API を叩き、404 が返る（＝D1 につながっている）ことを見る。
+name: Step app production check
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/step*.js"
+      - "src/worker.js"
+      - "wrangler.jsonc"
+      - ".github/workflows/step-check.yml"
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait for deploy and check /step
+        env:
+          BASE: https://trioland-social-publisher.mygate-jp.workers.dev
+        run: |
+          set -u
+          ok=0
+          for i in $(seq 1 40); do
+            code=$(curl -s -o app.js -w '%{http_code}' "$BASE/step/app.js" || true)
+            if [ "$code" = "200" ] && grep -q 'step/api' app.js; then ok=1; break; fi
+            echo "waiting for deploy ($i) status=$code"; sleep 30
+          done
+          [ "$ok" = 1 ] || { echo '::error::/step/app.js が公開されていません'; exit 1; }
+          fail=0
+          check() { if [ "$2" = "$3" ]; then echo "ok   $1 ($3)"; else echo "::error::$1 expected $2 got $3"; fail=1; fi; }
+          check "/health" 200 "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/health")"
+          check "/step/app.css" 200 "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/step/app.css")"
+          check "/step/unknown (404 page)" 404 "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/step/unknown")"
+          body=$(curl -s -w ' %{http_code}' -H 'authorization: Bearer AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' "$BASE/step/api/me")
+          echo "api with unknown link: $body"
+          case "$body" in *LINK_INVALID*404) echo 'ok   /step/api/me rejects unknown link (D1 reachable)';; *) echo '::error::/step/api/me unexpected'; fail=1;; esac
+          check "/admin/step without login (redirect)" 302 "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/admin/step")"
+          robots=$(curl -s -D - -o /dev/null "$BASE/step/unknown" | tr -d '\r' | grep -i '^x-robots-tag:' || true)
+          echo "$robots" | grep -qi noindex && echo 'ok   noindex header' || { echo '::error::noindex header missing'; fail=1; }
+          check "/api/inquiry OPTIONS (既存の問い合わせ)" 204 "$(curl -s -o /dev/null -w '%{http_code}' -X OPTIONS -H 'Origin: https://hoiku.triocareer.jp' "$BASE/api/inquiry")"
+          exit $fail
