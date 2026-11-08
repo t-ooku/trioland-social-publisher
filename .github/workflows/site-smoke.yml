@@ -2,9 +2,13 @@ name: Trioland site smoke
 on:
   # 写真ビルドが終わってから走らせる（画像コミット前に走ると必ず落ちるため）
   workflow_run:
-    workflows: ["Build site"]
+    workflows: ["Build site", "Build afterschool site"]
     types: [completed]
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/site-smoke.yml'
   schedule:
     - cron: '15 23 * * *' # 08:15 JST
 permissions:
@@ -98,6 +102,22 @@ jobs:
           code=$(curl --max-time 30 -s -o /dev/null -w '%{http_code}' https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry)
           echo "inquiry GET status: $code (405 is expected; delivery is not tested)"
           test "$code" = 405
+      - name: Afterschool consultation CTA in public HTML (GET only; no form submit)
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://afterschool.triocareer.jp'
+          # Pages rollout can lag the Actions-generated HTML commit; verify the actual public response.
+          ok=0
+          for attempt in $(seq 1 12); do
+            if curl --max-time 30 -fsSL "$base/availability.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/availability-public.html                 && grep -Fq 'href="/contact.html?facility=lopp#form"' /tmp/availability-public.html                 && grep -Fq 'href="/contact.html?facility=compass#form"' /tmp/availability-public.html                 && grep -Fq '希望施設を選んで、空き状況・見学を相談する' /tmp/availability-public.html                 && curl --max-time 30 -fsSL "$base/compass.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/compass-public.html                 && grep -Fq 'href="/contact.html?facility=compass#form"' /tmp/compass-public.html                 && curl --max-time 30 -fsSL "$base/contact.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/contact-public.html                 && grep -Fq 'id="form"' /tmp/contact-public.html                 && grep -Fq 'q.get("facility")' /tmp/contact-public.html; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          echo "Afterschool CTA GET verification: $ok"
+          test "$ok" = 1
       - name: GA4 tag in public HTML (GET only; sending and GA4 receipt are checked separately)
         # 2026-11-03：保育HP・放課後デイ・採用ガイドは tools/trio_ga4.py のタグ（G-773Y7ZR3JX）が1つだけあること。
         # 会社HP（WordPress）はカスタマイズ画面の設定しだいなので、無くても失敗にせず警告だけ出す。
