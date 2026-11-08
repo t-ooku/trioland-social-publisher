@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "trioland-social-publisher",
-  "main": "src/index.js",
+  "main": "src/worker.js",
   "compatibility_date": "2026-08-11",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "keep_vars": true,
@@ -22,6 +22,14 @@
     },
     {
       "binding": "OAUTH_KV"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "STEP_DB",
+      "database_name": "trio_step",
+      "database_id": "1aade7a9-3239-4541-a856-b986cdcc5707",
+      "migrations_dir": "migrations"
     }
   ],
   "r2_buckets": [
