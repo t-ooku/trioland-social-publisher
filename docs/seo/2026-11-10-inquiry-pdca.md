@@ -73,3 +73,8 @@ GSC速報（確定と分離）：11/08 PT 会社16/322、保育2/67、放デイ0
 
 ## セキュリティ
 公開リポジトリにシークレット・Webhook URL・氏名/学校名/電話/メール/問い合わせ本文を書かない。Makeの再送/キュー削除/シナリオ再実行、本番フォーム送信、課金/権限変更はしない。Coworkの受領と実行は未確認のまま記録する。
+
+## 2026-11-10 08:52 JST 追加の再実行結果
+- 誤った健康判定を防ぐため、Webhookがシナリオに未接続ならALERTになるよう修正（commit `7a670666aa4ad027f3415af99c6801da76adbbf3`）。既存site-smokeのpush監視対象にMakeチェック用Pythonも追加（`ad162547a32cde8531c6969d31d55e5c1d1caf4f`）。
+- [Actions run 42723829749](https://github.com/t-ooku/trioland-social-publisher/actions/runs/42723829749) **success**。ローカル判定**6ケースPASS**。保育sitemap/canonical検査、放デイ公開相談CTA検査もPASS。
+- Make APIはSecret未設定のため依然 **UNKNOWN (Read-only Make API token not configured)**。workflow successとMake配送正常を混同しない。今朝の本番メール配送状況は未取得。
