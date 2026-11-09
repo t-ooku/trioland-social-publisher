@@ -21,6 +21,8 @@ on:
     paths:
       - 'build_site.py'
       - 'tools/trio_ga4.py'
+      - 'tools/normalize_public_urls.py'
+      - 'tools/test_normalize_public_urls.py'
       - 'content/**'
       - 'site/assets/photo-src/**'
       - 'tools/decode_photos.py'
@@ -116,6 +118,13 @@ jobs:
           ! grep -rhoP 'mygate-jp\.workers\.dev(?!/api/)' site/*.html site/recruit/*.html site/sitemap.xml site/robots.txt | grep .
           echo 'canonical base normalized'
 
+      # Pages redirects *.html to extensionless paths. Keep canonical/OG/sitemap
+      # aligned with that final URL without touching forms, navigation or files.
+      - name: Canonical URLs match Cloudflare Pages
+        run: |
+          python3 -m unittest discover -s tools -p 'test_normalize_public_urls.py'
+          python3 tools/normalize_public_urls.py site
+
       # 2026-10-26: Parent-company recruitment page no longer displays the
       # previously identified sub-minimum wage rates (verified with the live
       # official website). Keep official cross-site links intact; check wages
@@ -146,3 +155,4 @@ jobs:
             sleep $((i * 5))
           done
           echo 'push failed 5 times'; exit 1
+

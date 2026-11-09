@@ -102,6 +102,36 @@ jobs:
           code=$(curl --max-time 30 -s -o /dev/null -w '%{http_code}' https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry)
           echo "inquiry GET status: $code (405 is expected; delivery is not tested)"
           test "$code" = 405
+      - name: Hoiku canonical and sitemap agree with final Pages URLs (GET only)
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import time
+          import urllib.request
+          from xml.etree import ElementTree as ET
+          from tools.normalize_public_urls import Canonicals, canonical_url
+          base = 'https://hoiku.triocareer.jp'
+          sample = ['/', '/komazawa', '/umegaoka', '/recruit', '/recruit/nursery-shift-hours-check-guide']
+          for attempt in range(12):
+              try:
+                  with urllib.request.urlopen(base + '/sitemap.xml', timeout=30) as r:
+                      urls = [n.text for n in ET.fromstring(r.read()).findall('.//{*}loc')]
+                  assert urls and len(urls) == len(set(urls)), 'empty or duplicate sitemap'
+                  assert all(canonical_url(u) == u for u in urls), 'sitemap still contains redirect sources'
+                  for path in sample:
+                      u = base + path
+                      with urllib.request.urlopen(u, timeout=30) as r:
+                          assert r.status == 200 and r.url == u, 'unexpected status/redirect: ' + u
+                          h = Canonicals(); h.feed(r.read().decode('utf-8'))
+                          assert h.urls == [u] and not h.noindex, 'canonical/noindex mismatch: ' + u
+                  print('Hoiku live sitemap', len(urls), 'URLs; canonical samples PASS')
+                  break
+              except Exception as e:
+                  print('rollout attempt', attempt + 1, str(e))
+                  if attempt == 11:
+                      raise
+                  time.sleep(10)
+          PY
       - name: Afterschool consultation CTA in public HTML (GET only; no form submit)
         shell: bash
         run: |
@@ -193,3 +223,4 @@ jobs:
             if (!issues.some(i => !i.pull_request && i.title === title)) {
               await github.rest.issues.create({ owner, repo, title, body: 'Inspection failed. See Actions run: ' + context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId + '\nGET checks only; no inquiries submitted. No personal data included.' });
             }
+

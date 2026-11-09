@@ -7,6 +7,8 @@ on:
       - '.github/workflows/recruit-sitemap.yml'
       - 'tools/recruit_quality.py'
       - 'tools/trio_ga4.py'
+      - 'tools/normalize_public_urls.py'
+      - 'tools/test_normalize_public_urls.py'
   workflow_run:
     workflows: ['Build site']
     types: [completed]
@@ -28,6 +30,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import html, re
+          from tools.normalize_public_urls import canonical_url
 
           base='https://hoiku.triocareer.jp'
           recruit=Path('site/recruit')
@@ -40,7 +43,7 @@ jobs:
           for f in sorted(recruit.glob('*.html')):
               if f.name=='index.html':
                   continue
-              url=f'{base}/recruit/{f.name}'
+              url=canonical_url(f'{base}/recruit/{f.name}')
               if url not in existing:
                   missing.append(f'<url><loc>{url}</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>')
           if missing:
@@ -90,6 +93,10 @@ jobs:
         # 中身は tools/recruit_quality.py。何度走らせても同じ結果になる。
         shell: bash
         run: python3 tools/recruit_quality.py site/recruit
+      - name: Canonical URLs match Cloudflare Pages
+        run: |
+          python3 -m unittest discover -s tools -p 'test_normalize_public_urls.py'
+          python3 tools/normalize_public_urls.py site
       - name: Commit discovery files if changed
         shell: bash
         run: |
@@ -106,3 +113,4 @@ jobs:
             sleep $((i * 5))
           done
           echo 'push failed 5 times'; exit 1
+
