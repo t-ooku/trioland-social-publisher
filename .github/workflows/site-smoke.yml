@@ -82,6 +82,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Make inquiry relay health check (read-only; no customer data)
+        env:
+          MAKE_API_TOKEN: ${{ secrets.MAKE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/make_inquiry_health.py --self-test
+          python3 tools/make_inquiry_health.py
       - name: Public Pages and inquiry route (GET only)
         shell: bash
         run: |
