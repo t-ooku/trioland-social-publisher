@@ -107,25 +107,35 @@ jobs:
         run: |
           python3 - <<'PY'
           import time
-          import urllib.request
+          import subprocess
           from xml.etree import ElementTree as ET
           from tools.normalize_public_urls import Canonicals, canonical_url
           base = 'https://hoiku.triocareer.jp'
+          # Reuse curl, the transport used by every existing live check above.
+          # Python urllib gets 403 here; do not change identity or weaken WAF.
+          def load(url):
+              r = subprocess.run(['curl', '-sS', '-L', '--max-time', '30',
+                                  '-w', '\n%{url_effective}\n%{http_code}', url],
+                                 capture_output=True, text=True, check=True)
+              body, final_url, code = r.stdout.rsplit('\n', 2)
+              if code in ('401', '403'):
+                  raise PermissionError('live check denied: ' + code + ' ' + url)
+              assert code == '200' and final_url == url, 'unexpected status/redirect: ' + url
+              return body
           sample = ['/', '/komazawa', '/umegaoka', '/recruit', '/recruit/nursery-shift-hours-check-guide']
           for attempt in range(12):
               try:
-                  with urllib.request.urlopen(base + '/sitemap.xml', timeout=30) as r:
-                      urls = [n.text for n in ET.fromstring(r.read()).findall('.//{*}loc')]
+                  urls = [n.text for n in ET.fromstring(load(base + '/sitemap.xml')).findall('.//{*}loc')]
                   assert urls and len(urls) == len(set(urls)), 'empty or duplicate sitemap'
                   assert all(canonical_url(u) == u for u in urls), 'sitemap still contains redirect sources'
                   for path in sample:
                       u = base + path
-                      with urllib.request.urlopen(u, timeout=30) as r:
-                          assert r.status == 200 and r.url == u, 'unexpected status/redirect: ' + u
-                          h = Canonicals(); h.feed(r.read().decode('utf-8'))
-                          assert h.urls == [u] and not h.noindex, 'canonical/noindex mismatch: ' + u
+                      h = Canonicals(); h.feed(load(u))
+                      assert h.urls == [u] and not h.noindex, 'canonical/noindex mismatch: ' + u
                   print('Hoiku live sitemap', len(urls), 'URLs; canonical samples PASS')
                   break
+              except PermissionError:
+                  raise
               except Exception as e:
                   print('rollout attempt', attempt + 1, str(e))
                   if attempt == 11:
