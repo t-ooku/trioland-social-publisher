@@ -23,7 +23,7 @@ def assess(scenario: dict, hook: dict) -> tuple[str, list[str]]:
     """Returns HEALTHY/ALERT/UNKNOWN and public-safe reasons."""
     if scenario.get("id") != int(SCENARIO) or hook.get("id") != int(HOOK):
         return "UNKNOWN", ["Make API target ID could not be verified"]
-    if hook.get("scenarioId") not in (None, int(SCENARIO)):
+    if hook.get("scenarioId") != int(SCENARIO):
         return "ALERT", ["Webhook linked to a different scenario"]
     fields = ("isActive", "isinvalid")
     if any(not isinstance(scenario.get(k), bool) for k in fields):
@@ -78,8 +78,9 @@ def self_test() -> int:
     assert assess({**good_s, "isActive": False}, good_h)[0] == "ALERT"
     assert assess(good_s, {**good_h, "queueCount": 2})[0] == "ALERT"
     assert assess(good_s, {**good_h, "enabled": False})[0] == "ALERT"
+    assert assess(good_s, {**good_h, "scenarioId": None})[0] == "ALERT"
     assert assess({}, good_h)[0] == "UNKNOWN"
-    print("Make relay local decision tests PASS (5 cases; no API request)")
+    print("Make relay local decision tests PASS (6 cases; no API request)")
     return 0
 
 
