@@ -9,6 +9,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/site-smoke.yml'
+      - 'tools/make_inquiry_health.py'
   schedule:
     - cron: '15 23 * * *' # 08:15 JST
 permissions:
