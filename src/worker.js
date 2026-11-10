@@ -79,6 +79,55 @@ async function handleStepAdmin(request, env) {
   }
 }
 
+
+/** Management-only KPI dashboard: never expose analytics in the public site assets. */
+const KPI_ASSET_BASE = "https://raw.githubusercontent.com/t-ooku/trioland-social-publisher/main/dashboard/";
+async function handleKpiAdmin(request, env) {
+  const url = new URL(request.url);
+  const session = await adminSession(request, env);
+  if (!session) return Response.redirect(url.origin + "/admin/access", 302);
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return new Response("Method Not Allowed", { status: 405, headers: { allow: "GET, HEAD" } });
+  }
+  const wantsData = url.pathname === "/admin/kpi/data";
+  const upstreamUrl = KPI_ASSET_BASE + (wantsData ? "latest.json" : "index.html");
+  try {
+    const result = await fetch(upstreamUrl, {
+      headers: { accept: wantsData ? "application/json" : "text/html" },
+      redirect: "error",
+      cache: "no-store"
+    });
+    if (!result.ok) throw new Error("KPI_SOURCE_UNAVAILABLE");
+    let content = await result.text();
+    if (content.length > 250000) throw new Error("KPI_SOURCE_TOO_LARGE");
+    if (wantsData) {
+      const parsed = JSON.parse(content);
+      if (parsed.schemaVersion !== 1 || !Array.isArray(parsed.sites) || !Array.isArray(parsed.ga4Series))
+        throw new Error("KPI_SOURCE_INVALID");
+      return new Response(request.method === "HEAD" ? null : JSON.stringify(parsed), {
+        headers: { "content-type":"application/json; charset=utf-8", "cache-control":"private, no-store",
+          "x-robots-tag":"noindex, nofollow", "x-content-type-options":"nosniff" }
+      });
+    }
+    const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
+      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    content = content.replace(/__NONCE__/g, nonce);
+    return new Response(request.method === "HEAD" ? null : content, {
+      headers: {
+        "content-type":"text/html; charset=utf-8", "cache-control":"private, no-store",
+        "content-security-policy":"default-src 'none'; script-src 'nonce-" + nonce + "'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+        "x-robots-tag":"noindex, nofollow", "x-frame-options":"DENY",
+        "x-content-type-options":"nosniff", "referrer-policy":"no-referrer"
+      }
+    });
+  } catch (e) {
+    return new Response("KPIダッシュボードの取得に失敗しました。少し後に再読み込みしてください。", {
+      status: 503, headers: { "content-type":"text/plain; charset=utf-8",
+        "cache-control":"private, no-store", "x-robots-tag":"noindex, nofollow" }
+    });
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -87,6 +136,9 @@ export default {
     }
     if (url.pathname === "/admin/step" || url.pathname.startsWith("/admin/step/")) {
       return handleStepAdmin(request, env);
+    }
+    if (url.pathname === "/admin/kpi" || url.pathname === "/admin/kpi/data") {
+      return handleKpiAdmin(request, env);
     }
     return mainWorker.fetch(request, env, ctx);
   },
