@@ -1,0 +1,47 @@
+name: KPI dashboard safety and publish check
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dashboard/**'
+      - 'src/worker.js'
+      - '.github/workflows/kpi-dashboard-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify worker syntax and dashboard data without PII
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check src/worker.js
+          node <<'JS'
+          const fs=require('fs'),assert=require('assert');
+          const d=JSON.parse(fs.readFileSync('dashboard/latest.json','utf8'));
+          const html=fs.readFileSync('dashboard/index.html','utf8');
+          assert.equal(d.schemaVersion,1);
+          assert.equal(d.sites.length,3);
+          assert(d.ga4Series.length>0 && d.gscSeries.length>0);
+          assert(d.events.corp[3]===null && d.events.hoiku[3]===null && d.events.after[3]===null);
+          assert(html.includes('/admin/kpi/data') && html.includes('__NONCE__'));
+          const forbidden=/(?:BEGIN\s+(?:RSA|OPENSSH|PRIVATE)\s+KEY|MAKE_API_TOKEN\s*=|GMAIL_PASSWORD\s*=|Bearer\s+\S{15,})/i;
+          assert(!forbidden.test(JSON.stringify(d)),'possible secret detected');
+          console.log('dashboard safety/schema checks: PASS');
+          JS
+      - name: Check unauthenticated KPI route is protected (after deployment)
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          u='https://trioland-social-publisher.mygate-jp.workers.dev/admin/kpi'
+          code=$(curl -sS --max-time 15 -o /tmp/kpi-body -D /tmp/kpi-headers -w '%{http_code}' "$u" || true)
+          echo "public HTTP status: $code"
+          if [ "$code" = 302 ] && grep -qi 'location: .*\/admin\/access' /tmp/kpi-headers; then
+            echo 'Protected route is deployed'; exit 0
+          fi
+          echo 'UNVERIFIED: worker route not deployed or unavailable. Do not claim live dashboard success.'
+          exit 1
