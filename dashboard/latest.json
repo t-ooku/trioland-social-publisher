@@ -1,0 +1,468 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-10",
+  "ga4Date": "2026-11-09",
+  "gscDate": "2026-11-08",
+  "ga4Timezone": "Asia/Tokyo",
+  "gscTimezone": "America/Los_Angeles",
+  "sites": [
+    {
+      "id": "corp",
+      "name": "会社HP",
+      "host": "www.triocareer.jp",
+      "url": "https://www.triocareer.jp/",
+      "color": "#1d9280"
+    },
+    {
+      "id": "hoiku",
+      "name": "トリオランド",
+      "host": "hoiku.triocareer.jp",
+      "url": "https://hoiku.triocareer.jp/",
+      "color": "#5b7fca"
+    },
+    {
+      "id": "after",
+      "name": "アフタースクール",
+      "host": "afterschool.triocareer.jp",
+      "url": "https://afterschool.triocareer.jp/",
+      "color": "#dc9a58"
+    }
+  ],
+  "ga4Series": [
+    {
+      "date": "2026-11-03",
+      "corp": [
+        10,
+        10,
+        11,
+        12
+      ],
+      "hoiku": [
+        4,
+        2,
+        6,
+        6
+      ],
+      "after": [
+        2,
+        0,
+        3,
+        2
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "corp": [
+        20,
+        19,
+        23,
+        46
+      ],
+      "hoiku": [
+        5,
+        4,
+        5,
+        5
+      ],
+      "after": [
+        1,
+        1,
+        1,
+        2
+      ]
+    },
+    {
+      "date": "2026-11-05",
+      "corp": [
+        33,
+        32,
+        42,
+        62
+      ],
+      "hoiku": [
+        12,
+        7,
+        13,
+        29
+      ],
+      "after": [
+        4,
+        2,
+        6,
+        13
+      ]
+    },
+    {
+      "date": "2026-11-06",
+      "corp": [
+        25,
+        22,
+        31,
+        50
+      ],
+      "hoiku": [
+        12,
+        9,
+        13,
+        15
+      ],
+      "after": null
+    },
+    {
+      "date": "2026-11-07",
+      "corp": [
+        5,
+        5,
+        6,
+        16
+      ],
+      "hoiku": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "after": null
+    },
+    {
+      "date": "2026-11-08",
+      "corp": [
+        35,
+        35,
+        36,
+        41
+      ],
+      "hoiku": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "after": [
+        2,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "corp": [
+        36,
+        32,
+        41,
+        105
+      ],
+      "hoiku": [
+        4,
+        3,
+        4,
+        5
+      ],
+      "after": [
+        6,
+        2,
+        7,
+        13
+      ]
+    }
+  ],
+  "ga4Seven": {
+    "period": "2026-11-03〜11-09（11/3部分日）",
+    "corp": [
+      156,
+      155,
+      190,
+      332
+    ],
+    "hoiku": [
+      39,
+      27,
+      44,
+      63
+    ],
+    "after": [
+      13,
+      6,
+      19,
+      33
+    ]
+  },
+  "gscSeries": [
+    {
+      "date": "2026-11-01",
+      "corp": [
+        14,
+        338,
+        7.068
+      ],
+      "hoiku": [
+        4,
+        58,
+        7.0345
+      ],
+      "after": [
+        0,
+        17,
+        5.8235
+      ]
+    },
+    {
+      "date": "2026-11-02",
+      "corp": [
+        14,
+        253,
+        7.3281
+      ],
+      "hoiku": [
+        2,
+        40,
+        8.475
+      ],
+      "after": [
+        2,
+        23,
+        7.913
+      ]
+    },
+    {
+      "date": "2026-11-03",
+      "corp": [
+        17,
+        297,
+        7.0067
+      ],
+      "hoiku": [
+        6,
+        87,
+        7.0345
+      ],
+      "after": [
+        0,
+        24,
+        7.0833
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "corp": [
+        11,
+        379,
+        6.9525
+      ],
+      "hoiku": [
+        9,
+        79,
+        8.9494
+      ],
+      "after": [
+        0,
+        20,
+        9.35
+      ]
+    },
+    {
+      "date": "2026-11-05",
+      "corp": [
+        16,
+        364,
+        7.3104
+      ],
+      "hoiku": [
+        0,
+        59,
+        8.1695
+      ],
+      "after": [
+        0,
+        23,
+        8.2609
+      ]
+    },
+    {
+      "date": "2026-11-06",
+      "corp": [
+        5,
+        225,
+        7.6578
+      ],
+      "hoiku": [
+        3,
+        36,
+        8.0278
+      ],
+      "after": [
+        0,
+        9,
+        8.7778
+      ]
+    },
+    {
+      "date": "2026-11-07",
+      "corp": [
+        3,
+        186,
+        8.2258
+      ],
+      "hoiku": [
+        0,
+        37,
+        14.1081
+      ],
+      "after": [
+        0,
+        12,
+        4.6667
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "corp": [
+        16,
+        322,
+        6.5683
+      ],
+      "hoiku": [
+        2,
+        67,
+        8.7761
+      ],
+      "after": [
+        0,
+        12,
+        6.1667
+      ]
+    }
+  ],
+  "events": {
+    "date": "2026-11-09",
+    "corp": [
+      13,
+      5,
+      4,
+      null
+    ],
+    "hoiku": [
+      2,
+      null,
+      null,
+      null
+    ],
+    "after": [
+      1,
+      5,
+      5,
+      null
+    ]
+  },
+  "backlog": {
+    "period": "2026-11-01〜11-09",
+    "identified": "2026-11-09",
+    "verifiedExternal": 6,
+    "hoiku": 5,
+    "after": 1,
+    "tests": 5,
+    "totalQueued": 11
+  },
+  "make": {
+    "status": "unknown",
+    "detail": "Make監視ロジック6ケースPASS。読取専用APIトークン未設定のため現在稼働は未確認。",
+    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/42723829749"
+  },
+  "pdca": [
+    {
+      "id": "MAIL-P0",
+      "site": "all",
+      "priority": "P0",
+      "stage": "Check",
+      "status": "未完了",
+      "title": "問い合わせメールの配送を監視",
+      "detail": "11/1〜9に通知11件が滞留。11/9復旧済みだが最新のライブ状態は未取得。",
+      "next": "Make read-only APIの稼働・キューを確認",
+      "owner": "Codex / Cowork",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-10-inquiry-pdca.md"
+    },
+    {
+      "id": "AS-03",
+      "site": "after",
+      "priority": "P1",
+      "stage": "Check",
+      "status": "効果検証中",
+      "title": "空き状況から施設別の見学相談へ",
+      "detail": "ロップとコンパスマイルを選んで相談できる導線に変更。11/9公開GET確認。",
+      "next": "11/16・11/23に実相談件数を比較",
+      "owner": "Codex / Cowork",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/42537393051"
+    },
+    {
+      "id": "AS-01",
+      "site": "after",
+      "priority": "P1",
+      "stage": "Check",
+      "status": "効果検証中",
+      "title": "コンパスマイルの第一画面CTA",
+      "detail": "見学・空き状況の相談であることを明確化。",
+      "next": "施設選択の実操作と受付結果の確認",
+      "owner": "Cowork / Codex",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/28e3c9d0859385e4e030cf857eefed9d5334cb8a"
+    },
+    {
+      "id": "CORP-01",
+      "site": "corp",
+      "priority": "P1",
+      "stage": "Plan",
+      "status": "要確認",
+      "title": "個人相談時の「御社名」必須欄",
+      "detail": "見学・利用相談での入力負担を減らせる可能性。受付仕様が未確認。",
+      "next": "WordPress CF7と受信要件を照合して改善案を決定",
+      "owner": "Cowork",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/issues/15"
+    },
+    {
+      "id": "SEO-01",
+      "site": "hoiku",
+      "priority": "P2",
+      "stage": "Check",
+      "status": "効果検証中",
+      "title": "保育SEOのcanonical・sitemap",
+      "detail": "重複URLとサイトマップの整合を修正。インデックス改善は未判定。",
+      "next": "11/16・11/23にGSCで比較",
+      "owner": "Codex",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-09-indexing-notifications-pdca.md"
+    }
+  ],
+  "history": [
+    {
+      "date": "11/10",
+      "title": "Makeの読み取り監視コードを追加",
+      "result": "判定テスト成功／ライブ稼働はUNKNOWN",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/42723829749"
+    },
+    {
+      "date": "11/09",
+      "title": "空き状況→施設別相談の公開HTML確認",
+      "result": "本番GET成功／実問い合わせ効果は未判定",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/42537393051"
+    },
+    {
+      "date": "11/09",
+      "title": "Make滞留通知11件を復旧",
+      "result": "過去期間の外部実相談6件、内部テスト5件",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-10-inquiry-pdca.md"
+    },
+    {
+      "date": "11/08",
+      "title": "コンパスマイル相談導線の変更",
+      "result": "main反映・ビルド成功、後日本番確認",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/28e3c9d0859385e4e030cf857eefed9d5334cb8a"
+    }
+  ],
+  "warnings": [
+    "実問い合わせはGA4送信成功イベントと未照合。11/9のイベントを真正な受付件数にしません。",
+    "11/1〜9の滞留復旧6件は11/9単独の新規数ではありません。",
+    "GA4の11/3は部分日、11/1〜2は計測欠測。7日集計は参考値です。",
+    "GSCは米国太平洋時間。GA4のJST日付と直接比較しません。",
+    "3ホストのアクティブユーザーを合算して全体ユニークとは呼びません。",
+    "アフタースクール11/6・7はGA4日別取得行なし。0人に置き換えません。"
+  ]
+}
