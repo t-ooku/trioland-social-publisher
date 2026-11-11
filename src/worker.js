@@ -2,6 +2,7 @@
 // index.js（Instagram 投稿・問い合わせ API・求人管理・MCP）には手を入れていない。
 import mainWorker from "./index.js";
 import { handleStep, renderStepAdmin, issueNurseryLinkAdmin } from "./step.js";
+import { assetBody } from "./step_assets.js";
 
 const ADMIN_SESSION_COOKIE = "__Host-TRIOLAND_ADMIN_SESSION";
 
@@ -132,6 +133,10 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === "/step" || url.pathname.startsWith("/step/")) {
+      const asset = request.method === "GET" ? assetBody(url.pathname) : null;
+      if (asset) {
+        return new Response(asset.body, { headers: { "content-type": asset.type, "cache-control": "public, max-age=86400", "x-content-type-options": "nosniff", "x-robots-tag": "noindex, nofollow" } });
+      }
       return handleStep(request, env);
     }
     if (url.pathname === "/admin/step" || url.pathname.startsWith("/admin/step/")) {
