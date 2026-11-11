@@ -79,14 +79,20 @@ export function computeStages(checklist, checks, reviews, startDate, today) {
   return { stages, current: current && { id: current.id, title: current.title, theme: current.theme, needsReview: current.needsReview }, ok, total, next };
 }
 
-/** 直近2週続けて「つらい」(3) なら true。moods は {week, level} の配列。 */
-export function moodAlert(moods, today) {
+/**
+ * 「つらい」(3) が weeks 週続いていれば true（既定は2週）。今週が未回答なら先週から数える。
+ * moods は {week, level} の配列。
+ */
+export function moodAlert(moods, today, weeks = 2) {
+  const n = Math.max(1, Math.min(8, Number(weeks) || 2));
   const thisWeek = mondayOf(today);
-  const lastWeek = addDays(thisWeek, -7);
-  const twoAgo = addDays(thisWeek, -14);
   const byWeek = new Map(moods.map((m) => [m.week, Number(m.level)]));
-  const a = byWeek.get(thisWeek), b = byWeek.get(lastWeek), c = byWeek.get(twoAgo);
-  return (a === 3 && b === 3) || (a === undefined && b === 3 && c === 3);
+  let week = byWeek.has(thisWeek) ? thisWeek : addDays(thisWeek, -7);
+  for (let i = 0; i < n; i += 1) {
+    if (byWeek.get(week) !== 3) return false;
+    week = addDays(week, -7);
+  }
+  return true;
 }
 
 /** 定着の集計。learners は {start_date, status, left_date}。 */
@@ -203,7 +209,7 @@ export function learnerSignals(checklist, checks, reviews, moods, learner, today
  * stages（{title, days} の配列）を渡すと、「どの段階の時期に辞めたか」を退職日の入社何日目で数える
  * （過去の退職者をあとから登録した場合も時期で分けられるように）。渡さなければ記録した left_stage で数える。
  */
-export function turnoverAnalytics(people, today, months = 12, stages = null) {
+export function turnoverAnalytics(people, today, months = 12, stages = null, reasons = LEFT_REASONS) {
   const left = people.filter((p) => p.status === "left" && p.left_date);
   const inPlaceOn = (p, date) => p.start_date < date && !(p.status === "left" && p.left_date && p.left_date < date);
   const thisYm = today.slice(0, 7);
@@ -284,11 +290,69 @@ export function turnoverAnalytics(people, today, months = 12, stages = null) {
     byStage: stages && stages.length
       ? count(left, (p) => { const d = dayNumber(p.start_date, p.left_date); const st = [...stages].sort((a, b) => a.days - b.days).find((x) => d <= x.days); return st ? st.title : "それ以降"; })
       : count(left, (p) => p.left_stage || "不明"),
-    byReason: count(left, (p) => (p.left_reason && LEFT_REASONS[p.left_reason] ? p.left_reason : "unknown")),
+    byReason: count(left, (p) => (p.left_reason && reasons[p.left_reason] ? p.left_reason : "unknown")),
     tenure,
     calMonths,
     compare: { left: profile(left), stayed: profile(stayedGroup) },
     byMentor: groupRows((p) => p.mentor_name || "未定"),
     byEmployment: groupRows((p) => (p.employment === "parttime" ? "パート" : "常勤")),
   };
+}
+
+/* ---------- ログイン・設定まわりの入力チェック ---------- */
+
+/** ログインID：英小文字・数字・ . _ - の 3〜30 文字。大文字は小文字にする。 */
+export function cleanLoginId(value) {
+  const v = String(value ?? "").trim().toLowerCase();
+  return /^[a-z0-9][a-z0-9._-]{2,29}$/.test(v) ? v : "";
+}
+
+/** パスワードの決まり：8〜72文字、英字と数字を両方ふくむ。問題があればエラー名、なければ空文字。 */
+export function passwordProblem(pw, loginId = "") {
+  const v = String(pw ?? "");
+  if (v.length < 8) return "PW_TOO_SHORT";
+  if (v.length > 72) return "PW_TOO_LONG";
+  if (!/[A-Za-z]/.test(v) || !/[0-9]/.test(v)) return "PW_NEEDS_MIX";
+  if (loginId && v.toLowerCase().includes(String(loginId).toLowerCase())) return "PW_HAS_ID";
+  return "";
+}
+
+/** 退職理由の設定を整える。[{key,label,active}]。key は英小文字。 */
+export function cleanReasons(list) {
+  const fail = (msg) => { const e = new Error(msg); e.status = 400; throw e; };
+  if (!Array.isArray(list) || list.length < 1 || list.length > 20) fail("REASON_COUNT");
+  const keys = new Set();
+  const given = new Set(list.map((r) => String(r?.key || "").trim()).filter(Boolean));
+  let n = 1;
+  return list.map((r) => {
+    let key = String(r?.key || "").trim();
+    if (!key) { // 新しく足した理由には、かぶらない key をつける
+      while (given.has(`c${n}`) || keys.has(`c${n}`)) n += 1;
+      key = `c${n}`;
+    }
+    if (!/^[a-z0-9_]{1,20}$/.test(key) || keys.has(key)) fail("REASON_KEY");
+    keys.add(key);
+    const label = cleanText(r.label, 30);
+    if (!label) fail("REASON_LABEL");
+    return { key, label, active: r.active !== false };
+  });
+}
+
+/** YouTube などの URL を確かめる。YouTube なら動画 ID も返す。http(s) 以外は空。 */
+export function parseStudyUrl(value) {
+  let u;
+  try { u = new URL(String(value ?? "").trim()); } catch { return null; }
+  if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+  if (u.username || u.password) return null;
+  const host = u.hostname.replace(/^www\./, "").replace(/^m\./, "");
+  let videoId = "";
+  if (host === "youtu.be") videoId = u.pathname.slice(1).split("/")[0];
+  else if (host === "youtube.com" || host === "youtube-nocookie.com") {
+    if (u.pathname === "/watch") videoId = u.searchParams.get("v") || "";
+    else { const m = u.pathname.match(/^\/(?:shorts|embed|live)\/([^/?#]+)/); if (m) videoId = m[1]; }
+  }
+  if (videoId && !/^[A-Za-z0-9_-]{6,20}$/.test(videoId)) videoId = "";
+  const href = u.toString();
+  if (href.length > 500) return null;
+  return { url: href, videoId };
 }
