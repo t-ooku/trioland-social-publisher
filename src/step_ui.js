@@ -12,12 +12,13 @@ export const STEP_HTML = `<!doctype html>
 <title>トリオランド ステップアップ表</title>
 <link rel="icon" type="image/png" href="/step/icon.png">
 <link rel="apple-touch-icon" href="/step/icon.png">
-<link rel="stylesheet" href="/step/app.css?v=2">
-<script src="/step/app.js?v=2" defer></script>
+<link rel="stylesheet" href="/step/app.css?v=3">
+<script src="/step/app.js?v=3" defer></script>
 </head>
 <body>
 <header class="top"><div class="wrap">
   <div class="brand"><img src="/step/logo.webp" width="280" height="84" alt="トリオランド"><span class="app-name">ステップアップ表</span></div>
+  <div class="who" id="who" hidden></div>
   <nav class="tabs" id="tabs" aria-label="画面の切り替え" hidden></nav>
 </div></header>
 <main class="wrap" id="app"><p class="loading">読み込み中…</p></main>
@@ -267,6 +268,53 @@ details.retire>summary{color:var(--danger);font-weight:800;cursor:pointer;font-s
 table.stats{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
 table.stats td,table.stats th{border-bottom:2px solid var(--line);padding:8px 4px;text-align:left}
 @media (prefers-reduced-motion:reduce){.stage.current .node::after,.here img,.track .me img,.mark.pop,.mark.pop::after{animation:none}}
+/* ログイン・設定・自己研修 */
+.who{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:700}
+.who .wn{max-width:12em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+input[type=password]{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 10px;width:100%}
+.login{max-width:420px;margin-left:auto;margin-right:auto;display:grid;gap:10px}
+.login .buddy{margin-top:0}
+.btn.big{padding:10px 26px;font-size:16px}
+.picker{display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:800;font-family:var(--display);font-size:14px}
+.picker select{width:auto;min-width:10em}
+.cred{border-color:var(--blue-d)}
+.credbox{display:grid;gap:8px;margin-top:8px;background:var(--blue-soft);border-radius:16px;padding:12px}
+.credbox small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+.credbox code{font-size:13px;word-break:break-all}
+.credbox code.big{font-size:20px;font-weight:800;letter-spacing:.06em}
+.acctbox{margin-top:14px;border-top:2px dashed var(--line);padding-top:10px}
+ul.accts{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}
+ul.accts li{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:2px solid var(--line);border-radius:14px;padding:8px 10px}
+ul.accts li.off{opacity:.55}
+ul.accts .an{display:flex;gap:6px 10px;align-items:baseline;flex-wrap:wrap;min-width:0}
+ul.accts code{font-size:12px;background:var(--blue-soft);padding:1px 6px;border-radius:6px}
+ul.accts .meta{font-size:12px;color:var(--muted)}
+.addform{margin-top:12px;border-top:2px dashed var(--line);padding-top:4px}
+label.check{display:flex;gap:6px;align-items:center;font-size:13px;font-weight:700;margin-top:8px}
+ul.reasons{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+ul.reasons li{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
+ul.reasons label.check{margin:0;white-space:nowrap}
+.exp{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+a.btn{text-decoration:none;color:inherit;display:inline-block}
+ol.chapters{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+ol.chapters li{border:2px solid var(--line);border-radius:14px;padding:8px 12px}
+ol.chapters li.ok,ul.study li.ok{border-color:var(--yellow);background:var(--yellow-soft)}
+ul.study{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px}
+ul.study li{display:flex;gap:12px;border:2px solid var(--line);border-radius:16px;padding:10px;align-items:flex-start}
+ul.study .thumb{position:relative;flex:none;display:block;width:132px;border-radius:12px;overflow:hidden;background:var(--blue-soft)}
+ul.study .thumb img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+ul.study .play{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:22px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+ul.study .sb{min-width:0;flex:1}
+ul.study a.st{font-weight:800;color:var(--blue-d);font-family:var(--display);word-break:break-word}
+@media (max-width:460px){ul.study li{flex-direction:column}ul.study .thumb{width:100%}}
+.chip.new{background:var(--pink-d);color:#fff}
+.themes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+a.theme{display:inline-block;text-decoration:none;font-family:var(--display);font-weight:800;font-size:13px;color:#fff;background:#C4302B;border-radius:999px;padding:6px 12px;box-shadow:0 3px 0 #8E1F1B}
+a.theme:active{transform:translateY(2px);box-shadow:0 1px 0 #8E1F1B}
+.sp{margin-top:6px}
+.sp textarea{margin-top:6px}
+.sedit{margin-top:8px}
+.sedit .grid2{margin-top:6px}
 #print{display:none}
 @media print{
   @page{size:A4;margin:12mm}
@@ -286,59 +334,131 @@ table.stats td,table.stats th{border-bottom:2px solid var(--line);padding:8px 4p
   .pr .det{font-size:8.5pt;color:#555}
   .pr .sign{font-size:9pt;margin-top:4px}
   .pr .card-print{border:1px dashed #888;padding:8px;margin:0 0 8px;break-inside:avoid}
+  .pr .card-print td{padding:4px 8px 4px 0;border-top:1px solid #ddd}
 }
 `;
 
 export const STEP_JS = String.raw`(function(){
 "use strict";
-var app=document.getElementById("app"),tabs=document.getElementById("tabs"),printBox=document.getElementById("print");
-var m=location.pathname.match(/^\/step\/([smn])\/([A-Za-z0-9_-]+)$/);
-var TOKEN=m?m[2]:"";
-var S={me:null,detail:null,detailId:null,draft:null,dirty:false,baseVersion:null,issued:null,busy:false,open:null,msg:""};
+var app=document.getElementById("app"),tabs=document.getElementById("tabs"),printBox=document.getElementById("print"),who=document.getElementById("who");
+var S={me:null,detail:null,detailId:null,draft:null,dirty:false,baseVersion:null,cred:null,busy:false,open:null,msg:"",csrf:"",nursery:"",study:null,accounts:null,gate:null};
 var ROLE_LABEL={self:"新人",mentor:"指導役",nursery:"園長"};
 
 function el(tag,attrs){var n=document.createElement(tag);if(attrs){for(var k in attrs){var v=attrs[k];if(v===null||v===undefined||v===false)continue;if(k==="class")n.className=v;else if(k==="text")n.textContent=v;else if(k.indexOf("on")===0)n.addEventListener(k.slice(2),v);else n.setAttribute(k,v===true?"":v);}}for(var i=2;i<arguments.length;i++){var c=arguments[i];if(c===null||c===undefined||c===false)continue;if(Array.isArray(c)){c.forEach(function(x){if(x)n.append(x.nodeType?x:document.createTextNode(String(x)));});}else n.append(c.nodeType?c:document.createTextNode(String(c)));}return n;}
 function md(s){if(!s)return "";var p=s.split("-");return Number(p[1])+"/"+Number(p[2]);}
 function ts(iso){if(!iso)return "";var d=new Date(iso);return (d.getMonth()+1)+"/"+d.getDate();}
 
-var ERR={LINK_INVALID:"このリンクは使えません。園長に新しいリンクをもらってください。",LEARNER_NOT_ACTIVE:"この新人は修了または退職になっているため、変更できません。",CHECKLIST_CHANGED:"ほかの人が先に項目を保存しました。画面を開き直してから、もう一度編集してください。",BAD_DATE:"日付が正しくありません。",NAME_REQUIRED:"名前を入れてください。",FORBIDDEN:"この操作はできません。",NOT_FOUND:"この新人さんは見つかりませんでした。一覧から選び直してください。",STEP_DB_NOT_CONFIGURED:"準備中です。しばらくしてから開いてください。"};
-function api(method,path,body){return fetch("/step/api"+path,{method:method,headers:Object.assign({"authorization":"Bearer "+TOKEN},body?{"content-type":"application/json"}:{}),body:body?JSON.stringify(body):undefined,cache:"no-store"}).then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok){var e=new Error(j.error||("HTTP "+r.status));e.code=j.error;e.status=r.status;throw e;}return j;});});}
+var ERR={LEARNER_NOT_ACTIVE:"この新人は修了または退職になっているため、変更できません。",CHECKLIST_CHANGED:"ほかの人が先に項目を保存しました。画面を開き直してから、もう一度編集してください。",BAD_DATE:"日付が正しくありません。",NAME_REQUIRED:"名前を入れてください。",FORBIDDEN:"この操作はできません。",NOT_FOUND:"見つかりませんでした。一覧から選び直してください。",STEP_DB_NOT_CONFIGURED:"準備中です。しばらくしてから開いてください。",
+  LOGIN_FAILED:"IDかパスワードがちがいます。",TOO_MANY_TRIES:"まちがいが続いたため、15分ほどログインできません。",LOGIN_REQUIRED:"ログインしてください。",CSRF:"画面が古くなっています。ページを開き直してください。",
+  WRONG_PASSWORD:"今のパスワードがちがいます。",PW_TOO_SHORT:"パスワードは8文字以上にしてください。",PW_TOO_LONG:"パスワードは72文字までです。",PW_NEEDS_MIX:"パスワードは英字と数字をまぜてください。",PW_HAS_ID:"パスワードにログインIDを入れないでください。",PW_SAME:"今とちがうパスワードにしてください。",
+  BAD_LOGIN_ID:"ログインIDは英小文字・数字・「-」「.」「_」で3〜30文字です。",LOGIN_ID_TAKEN:"そのログインIDはもう使われています。",BAD_MENTOR:"指導役をえらび直してください。",LAST_HQ:"本部IDが1つもなくなるため、止められません。",ACCOUNT_EXISTS:"この新人のIDはもうあります。",LEARNER_GONE:"新人の記録が見つかりません。園長に連絡してください。",
+  BAD_URL:"URLが正しくありません。https:// から始まるURLを入れてください。",TITLE_REQUIRED:"題名を入れてください。",BAD_REASON:"退職の理由をえらび直してください。",BAD_WEEKS:"週の数が正しくありません。",NO_NURSERY:"園をえらんでください。",BAD_ROLE:"役割をえらんでください。",TOO_MANY_ITEMS:"登録できる数の上限です。",REASON_COUNT:"理由は1〜20個にしてください。",REASON_LABEL:"理由の名前を入れてください。",REASON_KEY:"理由をもう一度保存し直してください。",TOO_MANY_NURSERIES:"園は30まで登録できます。",MUST_CHANGE_PASSWORD:"先にパスワードを変えてください。"};
+function api(method,path,body){
+  var h={};if(body)h["content-type"]="application/json";if(method!=="GET")h["x-step-csrf"]=S.csrf;
+  return fetch("/step/api"+path,{method:method,headers:h,body:body?JSON.stringify(body):undefined,cache:"no-store",credentials:"same-origin"}).then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok){var e=new Error(j.error||("HTTP "+r.status));e.code=j.error;e.status=r.status;if(r.status===401&&j.error==="LOGIN_REQUIRED"&&path!=="/me"){S.me=null;S.gate="login";renderGate();}throw e;}return j;});});
+}
 function errText(e){return ERR[e&&e.code]||"うまくいきませんでした。通信を確認して、もう一度お試しください。";}
-function flash(text,isErr){S.msg=text;S.msgErr=!!isErr;render();}
+function flash(text,isErr){S.msg=text;S.msgErr=!!isErr;if(S.me)render();else renderGate();}
+function qs(){return S.me&&S.me.user.role==="hq"&&S.nursery?"?nursery="+encodeURIComponent(S.nursery):"";}
 
 function load(){
-  if(!TOKEN||document.body.dataset.notfound){app.replaceChildren(el("div",{class:"card"},el("h1",{text:"ページが見つかりません"}),el("p",{text:"園長からもらったリンクを開いてください。"})));return Promise.resolve();}
-  return api("GET","/me").then(function(j){S.me=j;if(j.role==="nursery"){if(!S.dirty){S.draft=clone(j.checklist.stages);S.baseVersion=j.checklist.version;}var lm=route().match(/^l-([0-9a-f]{20})$/);if(lm&&!S.detailId)S.detailId=lm[1];}return S.detailId?loadDetail(S.detailId):null;}).then(render).catch(function(e){app.replaceChildren(el("div",{class:"card"},el("h1",{text:"開けませんでした"}),el("p",{text:errText(e)})));});
+  if(document.body.dataset.notfound){app.replaceChildren(el("div",{class:"card"},el("h1",{class:"ttl",text:"ページが見つかりません"}),el("p",null,el("a",{href:"/step/",text:"ログインの画面へ"}))));return Promise.resolve();}
+  return api("GET","/me"+(S.nursery?"?nursery="+encodeURIComponent(S.nursery):"")).then(function(j){
+    S.csrf=j.csrf;
+    if(j.user.must_change){S.me=null;S.gate="change";S.user=j.user;renderGate();return null;}
+    S.me=j;S.gate=null;S.user=j.user;
+    if(j.user.role==="hq")S.nursery=j.nursery||S.nursery;
+    if(j.role==="nursery"&&!S.dirty){S.draft=clone(j.checklist.stages);S.baseVersion=j.checklist.version;}
+    if(j.role!=="self"){var lm=route().match(/^l-([0-9a-f]{20})$/);if(lm&&!S.detailId)S.detailId=lm[1];}
+    return S.detailId?loadDetail(S.detailId):null;
+  }).then(function(){if(S.me)render();}).catch(function(e){
+    if(e.status===401){S.me=null;S.gate="login";renderGate();return;}
+    app.replaceChildren(el("div",{class:"card"},el("h1",{class:"ttl",text:"開けませんでした"}),el("p",{text:errText(e)}),el("button",{class:"btn",type:"button",text:"もう一度",onclick:function(){load();}})));
+  });
 }
-function loadDetail(id){return api("GET","/learners/"+id).then(function(j){S.detail=j;S.detailId=id;}).catch(function(e){S.detail=null;S.detailId=null;flash(errText(e),true);});}
+function loadDetail(id){return api("GET","/learners/"+id).then(function(j){S.detail=j;S.detailId=id;}).catch(function(e){S.detail=null;S.detailId=null;S.msg=errText(e);S.msgErr=true;});}
 function clone(o){return JSON.parse(JSON.stringify(o));}
 
-/* ---------- 画面の切り替え（園長） ---------- */
+/* ---------- 画面の切り替え ---------- */
 function route(){return (location.hash||"").slice(1);}
-window.addEventListener("hashchange",function(){var r=route();if(S.me&&S.me.role==="nursery"){var lm=r.match(/^l-([0-9a-f]{20})$/);if(lm){if(S.detailId!==lm[1]){S.detail=null;S.detailId=lm[1];loadDetail(lm[1]).then(render);}else render();return;}S.detailId=null;S.detail=null;}render();});
+window.addEventListener("hashchange",function(){if(!S.me)return;var r=route();if(S.me.role!=="self"){var lm=r.match(/^l-([0-9a-f]{20})$/);if(lm){if(S.detailId!==lm[1]){S.detail=null;S.detailId=lm[1];render();loadDetail(lm[1]).then(render);}else render();return;}S.detailId=null;S.detail=null;}S.msg="";render();window.scrollTo(0,0);});
 window.addEventListener("beforeunload",function(e){if(S.dirty){e.preventDefault();e.returnValue="";}});
 
+function tabDefs(){
+  var me=S.me;
+  if(me.role==="self")return [["me","🌱 わたしの表"],["study","📚 自己研修"],["settings","⚙️ 設定"]];
+  if(me.role==="mentor")return [["list","👥 担当の新人"],["study","📚 研修"],["settings","⚙️ 設定"]];
+  return [["list","👥 新人"],["edit","✏️ 項目"],["stats","📊 分析"],["study","📚 研修"],["settings","⚙️ 設定"]];
+}
 function render(){
   var me=S.me;if(!me)return;
   var nodes=[];
   if(S.msg)nodes.push(el("p",{class:"notice"+(S.msgErr?" err":""),role:"status",text:S.msg}));
-  if(me.role==="nursery"){
-    var r=route();
-    tabs.hidden=false;
-    var tabDefs=[["list","👥 新人"],["edit","✏️ 項目の編集"],["stats","📊 分析"]];
-    var cur=/^l-/.test(r)?"list":(["list","edit","stats"].indexOf(r)>=0?r:"list");
-    tabs.replaceChildren.apply(tabs,tabDefs.map(function(t){return el("a",{href:"#"+t[0],"aria-current":t[0]===cur?"page":null,text:t[1]});}));
-    if(/^l-/.test(r)&&(S.detail||S.detailId)){nodes=nodes.concat(S.detail?renderLearner(S.detail,"nursery"):[el("p",{class:"loading",text:"読み込み中…"})]);}
-    else if(r==="edit")nodes=nodes.concat(renderEditor());
-    else if(r==="stats")nodes=nodes.concat(renderStats());
-    else nodes=nodes.concat(renderList());
-  }else{
-    tabs.hidden=true;
-    nodes=nodes.concat(renderLearner(me,me.role));
-  }
+  var r=route(),defs=tabDefs(),keys=defs.map(function(t){return t[0];});
+  var cur=/^l-/.test(r)&&me.role!=="self"?"list":(keys.indexOf(r)>=0?r:keys[0]);
+  tabs.hidden=false;
+  tabs.replaceChildren.apply(tabs,defs.map(function(t){return el("a",{href:"#"+t[0],"aria-current":t[0]===cur?"page":null,text:t[1]});}));
+  who.hidden=false;
+  who.replaceChildren(el("span",{class:"wn",text:me.user.name+"（"+me.user.role_label+"）"}),el("button",{class:"btn small",type:"button",text:"ログアウト",onclick:logout}));
+  if(me.user.role==="hq"&&(cur==="list"||cur==="stats"||cur==="edit"||cur==="study")&&!/^l-/.test(r))nodes.push(nurseryPicker());
+  if(cur==="settings")nodes=nodes.concat(renderSettings());
+  else if(cur==="study")nodes=nodes.concat(renderStudy());
+  else if(me.role==="self")nodes=nodes.concat(renderLearner(me,"self"));
+  else if(/^l-/.test(r)&&(S.detail||S.detailId))nodes=nodes.concat(S.detail?renderLearner(S.detail,S.detail.role):[el("p",{class:"loading",text:"読み込み中…"})]);
+  else if(cur==="edit")nodes=nodes.concat(renderEditor());
+  else if(cur==="stats")nodes=nodes.concat(renderStats());
+  else nodes=nodes.concat(renderList());
   app.replaceChildren.apply(app,nodes);
   S.pop=null;
   if(S.afterRender){var f=S.afterRender;S.afterRender=null;f();}
+}
+function nurseryPicker(){
+  var sel=el("select",{id:"pick-nursery","aria-label":"見る園"},S.me.nurseries.map(function(n){return el("option",{value:n.id,text:n.name+(n.active?"":"（停止中）")});}));sel.value=S.me.nursery;
+  sel.addEventListener("change",function(){if(S.dirty&&!window.confirm("保存していない変更があります。園を切り替えますか？")){sel.value=S.me.nursery;return;}S.dirty=false;S.nursery=sel.value;S.study=null;S.accounts=null;S.detailId=null;S.detail=null;load();});
+  return el("div",{class:"picker"},el("label",{for:"pick-nursery",text:"🏫 見る園"}),sel);
+}
+function logout(){api("POST","/logout").catch(function(){}).then(function(){S.me=null;S.csrf="";S.detail=null;S.detailId=null;S.study=null;S.accounts=null;S.gate="login";S.msg="ログアウトしました。";S.msgErr=false;location.hash="";renderGate();});}
+
+/* ---------- ログイン・最初のパスワード変更 ---------- */
+function renderGate(){
+  tabs.hidden=true;who.hidden=true;
+  var nodes=[];
+  if(S.msg)nodes.push(el("p",{class:"notice"+(S.msgErr?" err":""),role:"status",text:S.msg}));
+  nodes.push(S.gate==="change"?renderChange():renderLogin());
+  app.replaceChildren.apply(app,nodes);
+}
+function renderLogin(){
+  var id=el("input",{type:"text",id:"lg-id",autocomplete:"username",autocapitalize:"none",spellcheck:"false",inputmode:"email",maxlength:"30",required:true});
+  var pw=el("input",{type:"password",id:"lg-pw",autocomplete:"current-password",maxlength:"200",required:true});
+  var btn=el("button",{class:"btn primary big",type:"submit",text:"ログイン"});
+  return el("form",{class:"card login",onsubmit:function(ev){ev.preventDefault();btn.disabled=true;
+      api("POST","/login",{login_id:id.value.trim().toLowerCase(),password:pw.value}).then(function(){S.msg="";location.hash="";return load();}).catch(function(e){btn.disabled=false;pw.value="";flash(errText(e),true);});}},
+    el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:"おかえりなさい！ IDとパスワードを入れてね。"})),
+    document.body.dataset.oldlink?el("p",{class:"notice",text:"前の専用リンクは使えなくなりました。園長（または本部）から受け取ったIDとパスワードでログインしてください。"}):null,
+    el("label",{class:"f",for:"lg-id"},"ログインID",id),
+    el("label",{class:"f",for:"lg-pw"},"パスワード",pw),
+    el("div",{class:"row",style:"margin-top:12px"},btn),
+    el("p",{class:"hint",text:"パスワードを忘れたときは、新人・指導役は園長に、園長は本部に「仮パスワード」を出してもらってください。"}));
+}
+function pwFields(prefix,first){
+  var cur=el("input",{type:"password",id:prefix+"-cur",autocomplete:"current-password",maxlength:"200",required:true});
+  var nx=el("input",{type:"password",id:prefix+"-new",autocomplete:"new-password",maxlength:"72",required:true});
+  var cf=el("input",{type:"password",id:prefix+"-cf",autocomplete:"new-password",maxlength:"72",required:true});
+  return {cur:cur,nx:nx,cf:cf,nodes:[el("label",{class:"f",for:prefix+"-cur"},first?"仮パスワード（受け取ったもの）":"今のパスワード",cur),
+    el("label",{class:"f",for:prefix+"-new"},"新しいパスワード（8文字以上・英字と数字をまぜる）",nx),
+    el("label",{class:"f",for:prefix+"-cf"},"新しいパスワード（もう一度）",cf)]};
+}
+function submitPw(f,done){
+  if(f.nx.value!==f.cf.value){flash("新しいパスワードが2回とも同じになっていません。",true);return;}
+  api("POST","/password",{current:f.cur.value,next:f.nx.value}).then(done).catch(function(e){flash(errText(e),true);});
+}
+function renderChange(){
+  var f=pwFields("ch",true);
+  return el("form",{class:"card login",onsubmit:function(ev){ev.preventDefault();submitPw(f,function(){S.msg="パスワードを変えました。";S.msgErr=false;return load();});}},
+    el("h1",{class:"ttl",text:"はじめに、パスワードを決めてください"}),
+    el("p",{class:"hint",text:(S.user?S.user.name+" さん（ID："+S.user.login_id+"）。":"")+"仮パスワードのままでは使えません。自分だけが知っているパスワードに変えてください。"}),
+    f.nodes,
+    el("div",{class:"row",style:"margin-top:12px"},el("button",{class:"btn primary big",type:"submit",text:"パスワードを変えて はじめる"}),el("button",{class:"btn",type:"button",text:"ログアウト",onclick:logout})));
 }
 
 /* ---------- 新人の道（本人・指導役・園長の詳細） ---------- */
@@ -363,19 +483,19 @@ function renderLearner(d,role){
   var badge=d.dayNo>=1?el("div",{class:"daybadge"},el("small",{text:"入社"}),el("b",{text:String(d.dayNo)}),el("small",{text:"日目"})):el("div",{class:"daybadge"},el("small",{text:"入社まで"}),el("b",{text:String(1-d.dayNo)}),el("small",{text:"日"}));
   var status={active:"",completed:"（修了）",left:"（退職）"}[L.status]||"";
   var head=el("div",{class:"card"},
-    role==="nursery"?el("p",{style:"margin:0 0 8px"},el("a",{href:"#list",text:"← 新人の一覧へ"})):null,
+    role!=="self"?el("p",{style:"margin:0 0 8px"},el("a",{href:"#list",text:"← 新人の一覧へ"})):null,
     el("div",{class:"hero"},badge,el("div",{class:"hero-text"},
       el("h1",{text:L.display_name+" さん"+status}),
-      el("p",null,L.nursery_name+"・指導役 "+(L.mentor_name||"未定"),el("span",{class:"role",text:ROLE_LABEL[role]+"の画面"})),
+      el("p",null,L.nursery_name+"・指導役 "+(L.mentor_name||"未定"),el("span",{class:"role",text:(role==="self"?"新人":S.me.user.role_label)+"の画面"})),
       el("p",{text:v.current?"いま："+v.current.title+"「"+v.current.theme+"」":"全段階を達成しました"}))),
     el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:buddyMsg(d,role)})),
     el("div",{class:"stars"},el("span",{class:"muted",text:"指導役の確認（★）"}),el("b",{text:"★ "+v.ok+" / "+v.total})),
     el("div",{class:"bar",role:"progressbar","aria-valuemin":"0","aria-valuemax":String(v.total),"aria-valuenow":String(v.ok),"aria-label":"確認済みの項目"},el("i",{style:"width:"+(v.total?Math.round(v.ok/v.total*100):0)+"%"})),
     v.next.length?el("div",{class:"next"},el("h3",{text:"次にやること（"+(v.current?v.current.title:"")+"）"}),el("ol",null,v.next.map(function(t){return el("li",{text:t});}))):null,
     v.current&&v.current.needsReview?el("p",{class:"notice",text:"この段階の項目はすべて確認済みです。振り返り面談をして、面談日を入れると達成になります。"}):null,
-    el("div",{class:"row",style:"margin-top:12px"},el("button",{class:"btn",type:"button",onclick:function(){printLearner(d);},text:"🖨 印刷する"})));
+    exportBar("learner",L.id));
   out.push(head);
-  if(d.moodAlert&&role!=="self")out.push(el("div",{class:"card alert"},el("b",{text:"😢「つらい」が2週続いています。"}),el("p",{style:"margin:4px 0 0",text:"今週中に、指導役か園長が話を聞く時間をとってください。"})));
+  if(d.moodAlert&&role!=="self")out.push(el("div",{class:"card alert"},el("b",{text:"😢「つらい」が"+((S.me.settings&&S.me.settings.alert_weeks)||2)+"週続いています。"}),el("p",{style:"margin:4px 0 0",text:"今週中に、指導役か園長が話を聞く時間をとってください。"})));
   var fut=renderFuture(d,role);if(fut)out.push(fut);
   if(role==="self"&&L.status==="active")out.push(renderMood(d));
   if(role!=="self"&&d.moods&&d.moods.length)out.push(el("p",{class:"hint",text:"最近の気分："+d.moods.slice(0,4).map(function(x){return md(x.week)+"週 "+["","😊順調","😅ちょっと大変","😢つらい"][x.level];}).join("　")}));
@@ -476,28 +596,46 @@ function renderMood(d){
   var opts=[[1,"順調","😊"],[2,"ちょっと大変","😅"],[3,"つらい","😢"]];
   return el("div",{class:"card"},el("b",{style:"font-family:var(--display)",text:"今週の気分は？（"+md(d.thisWeek)+"の週）"}),
     el("div",{class:"mood",role:"group","aria-label":"今週の気分"},opts.map(function(o){return el("button",{type:"button",class:"m"+o[0],"aria-pressed":d.myMood===o[0]?"true":"false",onclick:function(){api("POST","/mood",{level:o[0]}).then(function(){S.msg=o[0]===3?"教えてくれてありがとう。指導役と園長に伝わります。":"ありがとう。";S.msgErr=false;return refresh();}).catch(function(e){flash(errText(e),true);});}},el("span",{class:"em","aria-hidden":"true",text:o[2]}),o[1]);})),
-    el("p",{class:"hint",text:"週に1回えらんでください。「つらい」が2週続くと、指導役と園長の画面に知らせが出ます。"}));
+    el("p",{class:"hint",text:"週に1回えらんでください。「つらい」が"+((S.me.settings&&S.me.settings.alert_weeks)||2)+"週続くと、指導役と園長の画面に知らせが出ます。"}));
 }
 
 /* ---------- 園長：新人の管理 ---------- */
+function mentorSelect(id,value){
+  var opts=(S.me.mentors||[]).map(function(m){return el("option",{value:m.id,text:m.name+(m.role==="director"?"（園長）":"")});});
+  var sel=el("select",{id:id},el("option",{value:"",text:"未定"}),opts);sel.value=value||"";
+  return sel;
+}
 function renderManage(d){
   var L=d.learner;
   var name=el("input",{type:"text",id:"mg-name",maxlength:"20"});name.value=L.display_name;
-  var mentor=el("input",{type:"text",id:"mg-mentor",maxlength:"20"});mentor.value=L.mentor_name;
+  var mentor=mentorSelect("mg-mentor",L.mentor_user_id);
   var start=el("input",{type:"date",id:"mg-start"});start.value=L.start_date;
   var emp=el("select",{id:"mg-emp"},el("option",{value:"fulltime",text:"常勤"}),el("option",{value:"parttime",text:"パート"}));emp.value=L.employment;
   var box=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"この新人の管理"}),
     el("div",{class:"grid2",style:"margin-top:8px"},el("label",{class:"f",for:"mg-name"},"名前",name),el("label",{class:"f",for:"mg-mentor"},"指導役",mentor),el("label",{class:"f",for:"mg-start"},"入社日",start),el("label",{class:"f",for:"mg-emp"},"雇用形態",emp)),
-    el("div",{class:"row",style:"margin-top:10px"},el("button",{class:"btn primary",type:"button",text:"情報を保存",onclick:function(){patch(L.id,{display_name:name.value,mentor_name:mentor.value,start_date:start.value,employment:emp.value},"保存しました。");}})));
+    !L.mentor_user_id&&L.mentor_name?el("p",{class:"hint",text:"前に入れた指導役：「"+L.mentor_name+"」。指導役のIDを作ってから、ここでえらび直してください。"}):null,
+    el("div",{class:"row",style:"margin-top:10px"},el("button",{class:"btn primary",type:"button",text:"情報を保存",onclick:function(){var b={display_name:name.value,start_date:start.value,employment:emp.value};if(mentor.value||L.mentor_user_id)b.mentor_user_id=mentor.value||null;patch(L.id,b,"保存しました。");}})));
+  // ログインID
+  var A=d.account;
+  var acct=el("div",{class:"acctbox"},el("h3",{class:"sub",style:"margin-top:0",text:"🔑 本人のログインID"}));
+  if(A){
+    acct.append(el("p",{style:"margin:4px 0"},"ID：",el("code",{text:A.login_id}),A.disabled?el("span",{class:"chip late",text:"使えない（退職）"}):(A.must_change?el("span",{class:"chip rev",text:"まだ最初のログイン前"}):el("span",{class:"chip done",text:"使用中"}))),
+      L.status!=="left"?el("button",{class:"btn small",type:"button",text:"仮パスワードを出す（パスワードを忘れたとき）",onclick:function(){if(!window.confirm(L.display_name+" さんの今のパスワードは使えなくなります。よろしいですか？"))return;api("POST","/accounts/"+A.id+"/reset").then(function(j){S.cred={name:L.display_name,login_id:j.account.login_id,temp_password:j.account.temp_password};render();window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}}):null);
+  }else{
+    var lid=el("input",{type:"text",id:"mg-login",maxlength:"30",placeholder:"空なら自動で決めます",autocapitalize:"none"});
+    acct.append(el("p",{class:"hint",text:"この新人にはまだログインIDがありません。"}),el("label",{class:"f",for:"mg-login"},"ログインID（任意）",lid),
+      el("div",{class:"row",style:"margin-top:6px"},el("button",{class:"btn small primary",type:"button",text:"ログインIDを作る",onclick:function(){api("POST","/learners/"+L.id+"/account",{login_id:lid.value.trim()||undefined}).then(function(j){S.cred={name:L.display_name,login_id:j.account.login_id,temp_password:j.account.temp_password};return refresh();}).then(function(){window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}})));
+  }
+  box.append(acct);
   var R=S.me.leftReasons||{};
   function leftForm(isNew){
     var dt=el("input",{type:"date",id:"lf-date",max:S.me.today});dt.value=L.left_date||S.me.today;
-    var rs=el("select",{id:"lf-reason"},el("option",{value:"",text:"えらんでください"}),Object.keys(R).map(function(k){return el("option",{value:k,text:R[k]});}));rs.value=L.left_reason||"";
+    var rs=el("select",{id:"lf-reason"},el("option",{value:"",text:"えらんでください"}),(S.me.settings.reasons||[]).filter(function(r){return r.active||r.key===L.left_reason;}).map(function(r){return el("option",{value:r.key,text:r.label});}));rs.value=L.left_reason||"";
     var nt=el("textarea",{id:"lf-note",maxlength:"100",placeholder:"例：早番が続いて体力的にきつかった"});nt.value=L.left_note||"";
     return el("div",{class:"leftform"},
       el("div",{class:"grid2"},el("label",{class:"f",for:"lf-date"},"退職日",dt),el("label",{class:"f",for:"lf-reason"},"いちばん大きな理由",rs)),
       el("label",{class:"f",for:"lf-note",style:"margin-top:8px"},"ひとこと（任意・100字まで）",nt),
-      el("p",{class:"hint",text:"本人や子どもが特定できること、病名は書かないでください。"}),
+      el("p",{class:"hint",text:"本人や子どもが特定できること、病名は書かないでください。退職を記録すると、本人のIDは使えなくなります。"}),
       el("div",{class:"row",style:"margin-top:6px"},el("button",{class:isNew?"btn warn":"btn primary",type:"button",text:isNew?"この内容で退職を記録":"退職の記録を直す",onclick:function(){
         if(!rs.value){flash("退職の理由をえらんでください。",true);return;}
         var body={left_date:dt.value||S.me.today,left_reason:rs.value,left_note:nt.value};if(isNew)body.status="left";
@@ -505,47 +643,49 @@ function renderManage(d){
   }
   if(L.status==="active"){
     box.append(el("div",{class:"row",style:"margin-top:12px"},
-      el("button",{class:"btn",type:"button",text:"リンクを作り直す",onclick:function(){if(!window.confirm("本人と指導役のリンクを作り直します。今のリンクは使えなくなります。"))return;api("POST","/learners/"+L.id+"/links").then(function(j){S.issued={name:L.display_name,links:j.links};render();window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}}),
-      el("button",{class:"btn",type:"button",text:"修了（クラス担任）にする",onclick:function(){if(window.confirm("修了にします。本人と指導役のリンクは使えなくなります。"))patch(L.id,{status:"completed"},"修了にしました。");}})),
+      el("button",{class:"btn",type:"button",text:"修了（クラス担任）にする",onclick:function(){if(window.confirm("修了にします。本人はこれまでの記録を見ることはできますが、チェックはできなくなります。"))patch(L.id,{status:"completed"},"修了にしました。");}})),
       el("details",{class:"retire"},el("summary",{text:"退職を記録"}),leftForm(true)));
   }else{
     if(L.status==="left")box.append(el("h3",{class:"sub",text:"退職の記録"}),leftForm(false));
-    box.append(el("div",{class:"row",style:"margin-top:12px"},el("button",{class:"btn",type:"button",text:"受け入れ中に戻す",onclick:function(){if(!window.confirm("受け入れ中に戻します。退職の記録は消えます。"))return;patch(L.id,{status:"active"},"受け入れ中に戻しました。リンクを作り直してください。");}})));
+    box.append(el("div",{class:"row",style:"margin-top:12px"},el("button",{class:"btn",type:"button",text:"受け入れ中に戻す",onclick:function(){if(!window.confirm("受け入れ中に戻します。退職の記録は消え、本人のIDはまた使えるようになります。"))return;patch(L.id,{status:"active"},"受け入れ中に戻しました。");}})));
   }
   if(L.checklist_version<L.latest_version)box.append(el("div",{class:"row",style:"margin-top:12px"},el("span",{class:"hint",style:"margin:0",text:"この新人は前の版の項目を使っています（版"+L.checklist_version+"／最新 版"+L.latest_version+"）。"}),el("button",{class:"btn small",type:"button",text:"最新の項目にする",onclick:function(){api("POST","/learners/"+L.id+"/upgrade").then(function(){S.msg="最新の項目にしました。";S.msgErr=false;return refresh();}).catch(function(e){flash(errText(e),true);});}})));
-  if(S.issued&&S.issued.name===L.display_name)box.prepend(renderIssued());
   return box;
 }
 function patch(id,body,okMsg){api("PATCH","/learners/"+id,body).then(function(){S.msg=okMsg;S.msgErr=false;return refresh();}).catch(function(e){flash(errText(e),true);});}
 
-function renderIssued(){
-  var I=S.issued;
-  function box(label,obj){return el("div",{class:"linkbox"},el("b",{text:label}),el("code",{text:obj.url}),el("div",{class:"row"},
-    el("button",{class:"btn small",type:"button",text:"リンクをコピー",onclick:function(ev){var b=ev.currentTarget;(navigator.clipboard?navigator.clipboard.writeText(obj.url):Promise.reject()).then(function(){b.textContent="コピーしました";},function(){b.textContent="長押しでコピーしてください";});}}),
-    navigator.share?el("button",{class:"btn small",type:"button",text:"LINEなどで送る",onclick:function(){navigator.share({title:"保育ステップアップ表（"+label+"）",url:obj.url}).catch(function(){});}}):null));}
-  return el("div",{class:"card",style:"border-color:var(--brand)"},el("b",{text:I.name+" さんのリンクができました"}),
-    el("p",{class:"hint",text:"この画面を離れると、もう表示されません。本人と指導役に、それぞれのリンクを送ってください（なくした場合は作り直せます）。"}),
-    el("div",{class:"links"},box("本人用",I.links.self),box("指導役用",I.links.mentor)),
-    el("div",{class:"row",style:"margin-top:8px"},el("button",{class:"btn",type:"button",text:"リンクを印刷",onclick:function(){printLinks(I);}}),el("button",{class:"btn",type:"button",text:"閉じる",onclick:function(){S.issued=null;render();}})));
+/* ---------- ID と仮パスワードのカード ---------- */
+function loginUrl(){return location.origin+"/step/";}
+function credText(C){return "トリオランド ステップアップ表\n"+loginUrl()+"\nログインID："+C.login_id+"\n仮パスワード："+C.temp_password+"\n（はじめてログインしたときに、自分のパスワードに変えてください）";}
+function renderCred(){
+  var C=S.cred;
+  return el("div",{class:"card cred"},el("b",{text:"🔑 "+C.name+" さんのログインIDができました"}),
+    el("div",{class:"credbox"},el("div",null,el("small",{text:"ログインの画面"}),el("code",{text:loginUrl()})),el("div",null,el("small",{text:"ログインID"}),el("code",{class:"big",text:C.login_id})),el("div",null,el("small",{text:"仮パスワード"}),el("code",{class:"big",text:C.temp_password}))),
+    el("p",{class:"hint",text:"この画面を離れると、仮パスワードはもう表示されません（忘れたら、また出し直せます）。本人だけに渡してください。はじめてログインしたときに、自分のパスワードに変えてもらいます。"}),
+    el("div",{class:"row",style:"margin-top:8px"},
+      el("button",{class:"btn small",type:"button",text:"まとめてコピー",onclick:function(ev){var b=ev.currentTarget;(navigator.clipboard?navigator.clipboard.writeText(credText(C)):Promise.reject()).then(function(){b.textContent="コピーしました";},function(){b.textContent="長押しでコピーしてください";});}}),
+      navigator.share?el("button",{class:"btn small",type:"button",text:"LINEなどで送る",onclick:function(){navigator.share({title:"ステップアップ表のログイン",text:credText(C)}).catch(function(){});}}):null,
+      el("button",{class:"btn small",type:"button",text:"🖨 印刷して渡す",onclick:function(){printCred(C);}}),
+      el("button",{class:"btn small",type:"button",text:"閉じる",onclick:function(){S.cred=null;render();}})));
 }
 
-/* ---------- 園長：一覧・登録 ---------- */
+/* ---------- 一覧・登録（園長・本部・指導役） ---------- */
 function renderList(){
-  var me=S.me,out=[];
-  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:me.nursery_name+"の新人さん"}),
-    el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:"印のついた人（遅れ・面談待ち・つらい）を上に出しているよ。"}))));
-  if(S.issued)out.push(renderIssued());
+  var me=S.me,out=[],staff=me.role==="nursery";
+  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:staff?me.nursery_name+"の新人さん":"担当している新人さん"}),
+    el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:staff?"印のついた人（遅れ・面談待ち・つらい）を上に出しているよ。":"名前をタップすると、ステップアップ表が開くよ。できたら ★ をつけてね！"}))));
+  if(S.cred)out.push(renderCred());
   var stages=(me.checklist&&me.checklist.stages)||[];
   var ms=stages.filter(function(s){return s.milestone;});if(!ms.length&&stages.length)ms=[stages[stages.length-1]];
   var T=ms.length?ms[ms.length-1].days:180;
   var ls=me.learners.slice().sort(function(a,b){var fa=a.status==="active"&&(a.late||a.moodAlert||a.needsReview)?0:1,fb=b.status==="active"&&(b.late||b.moodAlert||b.needsReview)?0:1;return fa-fb;});
   var list=el("div",{class:"list"});
-  if(!ls.length)list.append(el("p",{class:"muted",text:"まだ新人さんは登録されていません。下のフォームから登録してください。"}));
+  if(!ls.length)list.append(el("p",{class:"muted",text:staff?"まだ新人さんは登録されていません。下のフォームから登録してください。":"まだ担当の新人さんはいません。園長が登録すると、ここに出ます。"}));
   ls.forEach(function(l,i){
     var flags=[];if(l.status==="active"){if(l.moodAlert)flags.push("😢つらい");if(l.late)flags.push("遅れ");if(l.needsReview)flags.push("面談待ち");}
     var st={active:"",completed:"修了",left:"退職"}[l.status];
     var mini=null;
-    if(l.status==="active"){
+    if(l.status==="active"&&ms.length){
       var p=l.dayNo<1?0:Math.min(1,(l.dayNo-1)/(T-1||1));
       mini=el("div",{class:"mini","aria-hidden":"true"},el("div",{class:"rail"},el("i",{style:"width:"+(p*100).toFixed(1)+"%"})),
         ms.map(function(m,j){return el("div",{class:"f",style:"left:calc(7px + (100% - 14px) * "+((m.days-1)/(T-1||1)).toFixed(3)+")"},["🌷","🌳","🌟"][j]||"🌟",el("b",{text:m.title}));}),
@@ -553,19 +693,24 @@ function renderList(){
     }
     list.append(el("a",{class:"lrow"+(flags.length?" flagged":""),href:"#l-"+l.id},
       el("div",{class:"avatar c"+(i%3),"aria-hidden":"true",text:(l.display_name||"？").trim().charAt(0)}),
-      el("div",{style:"min-width:0"},el("div",{class:"nm",text:l.display_name+" さん"}),el("div",{class:"meta",text:(l.status==="active"?"入社"+l.dayNo+"日目・"+(l.current_title||"全段階達成"):st+(l.left_stage?"（"+l.left_stage+"で退職"+(l.left_reason&&S.me.leftReasons&&S.me.leftReasons[l.left_reason]?"・"+S.me.leftReasons[l.left_reason]:"")+"）":""))+"・指導役 "+(l.mentor_name||"未定")}),mini),
+      el("div",{style:"min-width:0"},el("div",{class:"nm",text:l.display_name+" さん"}),el("div",{class:"meta",text:(l.status==="active"?"入社"+l.dayNo+"日目・"+(l.current_title||"全段階達成"):st+(l.left_stage?"（"+l.left_stage+"で退職"+(l.left_reason&&me.leftReasons&&me.leftReasons[l.left_reason]?"・"+me.leftReasons[l.left_reason]:"")+"）":""))+"・指導役 "+(l.mentor_name||"未定")}),mini),
       el("div",{style:"text-align:right"},flags.map(function(f){return el("div",null,el("span",{class:"chip late",text:f}));}),el("div",{class:"meta",style:"font-weight:800",text:"★"+l.ok+"/"+l.total}))));
   });
   out.push(list);
+  if(!staff)return out;
   var name=el("input",{type:"text",id:"nw-name",maxlength:"20",required:true});
   var start=el("input",{type:"date",id:"nw-start",required:true});start.value=me.today;
-  var mentor=el("input",{type:"text",id:"nw-mentor",maxlength:"20"});
+  var mentor=mentorSelect("nw-mentor","");
   var emp=el("select",{id:"nw-emp"},el("option",{value:"fulltime",text:"常勤"}),el("option",{value:"parttime",text:"パート"}));
-  out.push(el("form",{class:"card",onsubmit:function(ev){ev.preventDefault();api("POST","/learners",{display_name:name.value,start_date:start.value,mentor_name:mentor.value,employment:emp.value}).then(function(j){S.issued={name:name.value.trim(),links:j.links};S.msg="";return refresh();}).then(function(){window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}},
+  var lid=el("input",{type:"text",id:"nw-login",maxlength:"30",placeholder:"空なら自動（例：komazawa-001）",autocapitalize:"none"});
+  var past=el("input",{type:"checkbox",id:"nw-past"});
+  out.push(el("form",{class:"card",onsubmit:function(ev){ev.preventDefault();var nm=name.value.trim();
+      api("POST","/learners",{nursery:me.nursery,display_name:nm,start_date:start.value,mentor_user_id:mentor.value||null,employment:emp.value,login_id:lid.value.trim()||undefined,no_account:past.checked}).then(function(j){S.cred=j.account?{name:nm,login_id:j.account.login_id,temp_password:j.account.temp_password}:null;S.msg=j.account?"":"登録しました（ログインIDは作っていません）。";S.msgErr=false;return refresh();}).then(function(){window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}},
     el("h2",{class:"sec",style:"margin:0",text:"🌱 新人さんを登録"}),
-    el("div",{class:"grid2",style:"margin-top:8px"},el("label",{class:"f",for:"nw-name"},"名前（名字だけでも可）",name),el("label",{class:"f",for:"nw-start"},"入社日",start),el("label",{class:"f",for:"nw-mentor"},"指導役",mentor),el("label",{class:"f",for:"nw-emp"},"雇用形態",emp)),
-    el("p",{class:"hint",text:"登録すると、本人用と指導役用のリンクができます。"}),
-    el("div",{class:"row"},el("button",{class:"btn primary",type:"submit",text:"登録してリンクを作る"}))));
+    el("div",{class:"grid2",style:"margin-top:8px"},el("label",{class:"f",for:"nw-name"},"名前（名字だけでも可）",name),el("label",{class:"f",for:"nw-start"},"入社日",start),el("label",{class:"f",for:"nw-mentor"},"指導役",mentor),el("label",{class:"f",for:"nw-emp"},"雇用形態",emp),el("label",{class:"f",for:"nw-login"},"ログインID（任意）",lid)),
+    el("label",{class:"check",for:"nw-past"},past,"過去に辞めた人の記録として登録する（ログインIDを作らない）"),
+    el("p",{class:"hint",text:"登録すると、本人のログインIDと仮パスワードができます。指導役が「未定」のときは、あとで「⚙️ 設定」で指導役のIDを作ってから、えらんでください。"}),
+    el("div",{class:"row"},el("button",{class:"btn primary",type:"submit",text:"登録してIDを作る"}))));
   return out;
 }
 
@@ -575,7 +720,7 @@ function renderStats(){
   var today=S.me.today,fyNow=Number(today.slice(5,7))>=4?Number(today.slice(0,4)):Number(today.slice(0,4))-1;
   var cur=A.yearly.filter(function(y){return y.fy===fyNow;})[0]||{rate:null,left:0,atStart:0,joined:0};
   var thisMonth=A.monthly[A.monthly.length-1];
-  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:"📊 分析（"+S.me.nursery_name+"）"}),
+  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:"📊 分析（"+S.me.nursery_name+"）"}),exportBar("analytics"),
     el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:"いつ・なぜ辞めているかを見て、受け入れ方を直していこう。"})),
     el("div",{class:"kpis"},
       tile("受け入れ中",A.active+"人",""),
@@ -725,7 +870,8 @@ function endDrag(ev){
 function renderEditor(){
   var out=[];
   out.push(el("div",{class:"card"},el("p",{style:"margin:0",text:"左の「☰」をつかんでドラッグすると、順番の入れ替えや、別の段階への移動ができます（▲▼でも動かせます）。文言もここで直せます。最後に「保存」を押すと、これから登録する新人に使われます。"}),
-    el("p",{class:"hint",text:"いま受け入れ中の新人は前の版のまま進みます。最新にするときは、新人の画面の「最新の項目にする」を押してください。"})));
+    el("p",{class:"hint",text:"いま受け入れ中の新人は前の版のまま進みます。最新にするときは、新人の画面の「最新の項目にする」を押してください。"}),
+    el("div",{class:"row",style:"margin-top:8px"},el("span",{class:"hint",style:"margin:0",text:"保存ずみの項目（版"+S.me.checklist.version+"）を書き出す："}),exportBar("checklist"))));
   S.draft.forEach(function(st){
     var title=el("input",{type:"text",class:"f-title",maxlength:"12","aria-label":"段階の名前"});title.value=st.title;
     var days=el("input",{type:"number",class:"f-days",min:"1",max:"400","aria-label":"入社何日目"});days.value=st.days;
@@ -743,7 +889,210 @@ function renderEditor(){
   return out;
 }
 
-/* ---------- 印刷 ---------- */
+/* ---------- 設定 ---------- */
+var ROLE_NAME={hq:"本部",director:"園長",mentor:"指導役",learner:"新人"};
+function loadAccounts(){
+  var q=S.me.user.role==="hq"?"":"";
+  return api("GET","/accounts"+q).then(function(j){S.accounts=j.accounts;render();}).catch(function(e){S.accounts=[];flash(errText(e),true);});
+}
+function renderSettings(){
+  var me=S.me,u=me.user,out=[];
+  if(S.cred)out.push(renderCred());
+  var f=pwFields("pw",false);
+  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:"⚙️ 設定"}),
+    el("p",{style:"margin:8px 0 0"},el("b",{text:u.name}),"（"+u.role_label+(me.nursery_name&&u.role!=="hq"?"・"+me.nursery_name:"")+"）　ログインID：",el("code",{text:u.login_id}))));
+  out.push(el("form",{class:"card",onsubmit:function(ev){ev.preventDefault();submitPw(f,function(){f.cur.value="";f.nx.value="";f.cf.value="";flash("パスワードを変えました。",false);});}},
+    el("h2",{class:"sec",style:"margin:0",text:"🔒 パスワードを変える"}),f.nodes,
+    el("div",{class:"row",style:"margin-top:10px"},el("button",{class:"btn primary",type:"submit",text:"変える"})),
+    el("p",{class:"hint",text:"変えると、ほかのスマホやパソコンでのログインは切れます。"})));
+  if(u.role==="hq"||u.role==="director"){
+    out.push(renderAccounts());
+    if(S.accounts===null)loadAccounts();
+  }
+  if(u.role==="hq")out=out.concat(renderHqSettings());
+  out.push(el("div",{class:"card"},el("button",{class:"btn",type:"button",text:"ログアウト",onclick:logout})));
+  return out;
+}
+function renderAccounts(){
+  var me=S.me,u=me.user,isHq=u.role==="hq";
+  var box=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"👤 IDの管理"}),
+    el("p",{class:"hint",text:isHq?"本部・園長・指導役のIDを作れます。新人のIDは「新人」タブで登録すると自動でできます。":"指導役のIDを作れます。新人のIDは「新人」タブで登録すると自動でできます。"}));
+  if(S.accounts===null){box.append(el("p",{class:"loading",text:"読み込み中…"}));return box;}
+  var nurseryName={};(me.nurseries||[]).forEach(function(n){nurseryName[n.id]=n.name;});
+  var groups=isHq?["hq","director","mentor","learner"]:["director","mentor","learner"];
+  groups.forEach(function(g){
+    var rows=S.accounts.filter(function(a){return a.role===g;});
+    if(!rows.length)return;
+    var ul=el("ul",{class:"accts"});
+    rows.forEach(function(a){
+      ul.append(el("li",{class:a.disabled?"off":null},
+        el("div",{class:"an"},el("b",{text:a.name}),el("code",{text:a.login_id}),
+          el("span",{class:"meta",text:(a.nursery?(nurseryName[a.nursery]||"")+"・":"")+(a.disabled?"停止中":(a.must_change?"まだ最初のログイン前":(a.last_login_at?"最後のログイン "+ts(a.last_login_at):"")))})),
+        a.manageable?el("div",{class:"row"},
+          !a.disabled?el("button",{class:"btn small",type:"button",text:"仮パスワード",onclick:function(){if(!window.confirm(a.name+" さんの今のパスワードは使えなくなります。仮パスワードを出しますか？"))return;api("POST","/accounts/"+a.id+"/reset").then(function(j){S.cred={name:a.name,login_id:j.account.login_id,temp_password:j.account.temp_password};S.accounts=null;render();window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}}):null,
+          a.role!=="learner"?el("button",{class:"btn small"+(a.disabled?"":" warn"),type:"button",text:a.disabled?"使えるようにする":"止める",onclick:function(){if(!a.disabled&&!window.confirm(a.name+" さんのIDを止めます。ログインできなくなります。"))return;api("PATCH","/accounts/"+a.id,{disabled:!a.disabled}).then(function(){S.accounts=null;flash(a.disabled?"使えるようにしました。":"止めました。",false);}).catch(function(e){flash(errText(e),true);});}}):null):null));
+    });
+    box.append(el("h3",{class:"sub",text:ROLE_NAME[g]+"（"+rows.length+"）"}),ul);
+  });
+  // 追加
+  var role=el("select",{id:"ac-role"},(isHq?[["mentor","指導役"],["director","園長"],["hq","本部"]]:[["mentor","指導役"]]).map(function(r){return el("option",{value:r[0],text:r[1]});}));
+  var nursery=isHq?el("select",{id:"ac-nursery"},(me.nurseries||[]).filter(function(n){return n.active;}).map(function(n){return el("option",{value:n.id,text:n.name});})):null;
+  if(nursery)nursery.value=me.nursery||"";
+  var name=el("input",{type:"text",id:"ac-name",maxlength:"20",required:true});
+  var lid=el("input",{type:"text",id:"ac-login",maxlength:"30",placeholder:"空なら自動",autocapitalize:"none"});
+  if(isHq)role.addEventListener("change",function(){nursery.disabled=role.value==="hq";});
+  box.append(el("form",{class:"addform",onsubmit:function(ev){ev.preventDefault();var nm=name.value.trim();
+      api("POST","/accounts",{role:role.value,nursery:nursery?nursery.value:undefined,name:nm,login_id:lid.value.trim()||undefined}).then(function(j){S.cred={name:nm,login_id:j.account.login_id,temp_password:j.account.temp_password};S.accounts=null;S.msg="";return refresh();}).then(function(){window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}},
+    el("h3",{class:"sub",text:"＋ IDを作る"}),
+    el("div",{class:"grid2"},el("label",{class:"f",for:"ac-role"},"役割",role),nursery?el("label",{class:"f",for:"ac-nursery"},"園",nursery):el("span"),el("label",{class:"f",for:"ac-name"},"名前",name),el("label",{class:"f",for:"ac-login"},"ログインID（任意）",lid)),
+    el("div",{class:"row",style:"margin-top:8px"},el("button",{class:"btn primary",type:"submit",text:"IDを作る"}))));
+  return box;
+}
+function renderHqSettings(){
+  var me=S.me,out=[];
+  // 園
+  var nb=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"🏫 園の情報"}));
+  var ul=el("ul",{class:"accts"});
+  (me.nurseries||[]).forEach(function(n){
+    var inp=el("input",{type:"text",maxlength:"20","aria-label":"園の名前"});inp.value=n.name;
+    ul.append(el("li",{class:n.active?null:"off"},el("div",{class:"an",style:"flex:1"},inp),el("div",{class:"row"},
+      el("button",{class:"btn small",type:"button",text:"名前を保存",onclick:function(){api("PATCH","/nurseries/"+n.id,{name:inp.value}).then(function(){S.msg="園の名前を保存しました。";S.msgErr=false;return load();}).catch(function(e){flash(errText(e),true);});}}),
+      el("button",{class:"btn small"+(n.active?" warn":""),type:"button",text:n.active?"止める":"使う",onclick:function(){if(n.active&&!window.confirm(n.name+" を止めます（記録は消えません）。"))return;api("PATCH","/nurseries/"+n.id,{active:!n.active}).then(function(){return load();}).catch(function(e){flash(errText(e),true);});}}))));
+  });
+  var nn=el("input",{type:"text",id:"nn-name",maxlength:"20",placeholder:"例：○○園",required:true});
+  nb.append(ul,el("form",{class:"row",style:"margin-top:8px",onsubmit:function(ev){ev.preventDefault();api("POST","/nurseries",{name:nn.value}).then(function(){S.msg="園を追加しました。";S.msgErr=false;return load();}).catch(function(e){flash(errText(e),true);});}},el("label",{class:"f",for:"nn-name",style:"flex:1"},"園を追加",nn),el("button",{class:"btn",type:"submit",style:"align-self:flex-end",text:"追加"})));
+  out.push(nb);
+  // 退職理由
+  var rs=clone(me.settings.reasons||[]);
+  var rb=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"📝 退職理由のえらびかた"}),el("p",{class:"hint",text:"退職を記録するときに出る選択肢です。使わない理由はチェックを外すと、選択肢から消えます（これまでの記録は残ります）。"}));
+  var list=el("ul",{class:"reasons"});
+  function row(r){
+    var lab=el("input",{type:"text",maxlength:"30","aria-label":"理由の名前"});lab.value=r.label;
+    var on=el("input",{type:"checkbox","aria-label":"使う"});on.checked=r.active!==false;
+    var li=el("li",{"data-key":r.key||""},el("label",{class:"check"},on,"使う"),lab);
+    li._get=function(){return {key:li.dataset.key||undefined,label:lab.value.trim(),active:on.checked};};
+    return li;
+  }
+  rs.forEach(function(r){list.append(row(r));});
+  rb.append(list,el("div",{class:"row",style:"margin-top:8px"},
+    el("button",{class:"btn small",type:"button",text:"＋ 理由を追加",onclick:function(){var li=row({key:"",label:"",active:true});list.append(li);li.querySelector("input[type=text]").focus();}}),
+    el("button",{class:"btn primary",type:"button",text:"理由を保存",onclick:function(){var v=[];Array.prototype.forEach.call(list.children,function(li){var g=li._get();if(g.label)v.push(g);});api("PUT","/settings",{reasons:v}).then(function(){S.msg="退職理由を保存しました。";S.msgErr=false;return load();}).catch(function(e){flash(errText(e),true);});}})));
+  out.push(rb);
+  // 知らせの条件
+  var wk=el("select",{id:"set-weeks"},[1,2,3,4].map(function(n){return el("option",{value:String(n),text:n+"週"});}));wk.value=String(me.settings.alert_weeks||2);
+  out.push(el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"🔔 知らせの条件"}),
+    el("div",{class:"row",style:"margin-top:8px"},el("label",{class:"f",for:"set-weeks"},"「つらい」が何週続いたら知らせるか",wk),
+      el("button",{class:"btn primary",type:"button",style:"align-self:flex-end",text:"保存",onclick:function(){api("PUT","/settings",{alert_weeks:Number(wk.value)}).then(function(){S.msg="知らせの条件を保存しました。";S.msgErr=false;return load();}).catch(function(e){flash(errText(e),true);});}})),
+    el("p",{class:"hint",text:"新人が週に1回えらぶ気分で「つらい」が続くと、指導役と園長の画面に知らせが出ます。"})));
+  return out;
+}
+
+/* ---------- 自己研修 ---------- */
+var GUIDE=[
+  [1,"第1章 総則","保育所の役割、養護（生命の保持・情緒の安定）、保育の計画と評価"],
+  [2,"第2章 保育の内容","乳児・1歳以上3歳未満児・3歳以上児の保育の「ねらい」と「内容」"],
+  [3,"第3章 健康及び安全","子どもの健康支援、食育、環境と衛生、事故防止と災害への備え"],
+  [4,"第4章 子育て支援","保護者との関わり、地域の子育て家庭への支援"],
+  [5,"第5章 職員の資質向上","研修や学び合いで、保育の専門性を高める"]];
+var GUIDE_URL="https://www.mhlw.go.jp/content/12401000/000800750.pdf";
+var GUIDE_KAISETSU="https://www.cfa.go.jp/policies/hoiku/shishin-h30-bunkatsu";
+function loadStudy(){return api("GET","/study"+qs()).then(function(j){S.study=j;render();}).catch(function(e){S.study={items:[],progress:{},categories:{}};flash(errText(e),true);});}
+function isNew(iso){if(!iso)return false;return (Date.now()-new Date(iso).getTime())<14*864e5;}
+function saveProgress(key,done,memo){return api("POST","/study/progress",{key:key,done:done,memo:memo}).then(function(){S.study.progress[key]={done_at:done?new Date().toISOString():null,memo:memo};render();}).catch(function(e){flash(errText(e),true);});}
+function memoBox(key,P){
+  var p=P[key]||{};
+  var ta=el("textarea",{maxlength:"200",rows:"2",placeholder:"学んだこと・やってみたいこと（自分だけが見られます）","aria-label":"学びメモ"});ta.value=p.memo||"";
+  var done=!!p.done_at;
+  return el("div",{class:"sp"},
+    el("div",{class:"row"},el("button",{class:"tog"+(done?"":" m"),type:"button","aria-pressed":done?"true":"false",text:"見た・読んだ",onclick:function(){saveProgress(key,!done,ta.value);}}),done?el("span",{class:"when",text:ts(p.done_at)}):null),
+    el("details",null,el("summary",{text:p.memo?"📝 学びメモ（書いてあります）":"📝 学びメモ"}),ta,el("div",{class:"row",style:"margin-top:6px"},el("button",{class:"btn small",type:"button",text:"メモを保存",onclick:function(){saveProgress(key,done,ta.value).then(function(){S.msg="メモを保存しました。";S.msgErr=false;render();});}}))));
+}
+function renderStudy(){
+  var me=S.me,out=[],self=me.role==="self",staff=me.user.role==="hq"||me.user.role==="director";
+  if(S.study===null){loadStudy();return [el("p",{class:"loading",text:"読み込み中…"})];}
+  var D=S.study,P=D.progress||{},C=D.categories||{};
+  var newN=D.items.filter(function(i){return isNew(i.updated_at);}).length;
+  var doneN=Object.keys(P).filter(function(k){return P[k].done_at;}).length;
+  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:self?"📚 自己研修":"📚 研修の動画と資料"}),
+    el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:self?(newN?"新しい動画や資料が "+newN+"件 あるよ！ すきま時間に見てみよう。":"すきま時間に、動画や保育指針で学んでみよう！"):"保育スキルの動画や資料のURLを登録すると、新人さんの「自己研修」に出ます。"})),
+    self?el("p",{class:"hint",text:"見たもの・読んだもの："+doneN+"件"}):null));
+  // 保育所保育指針
+  var g=el("div",{class:"card guide"},el("h2",{class:"sec",style:"margin:0",text:"📖 保育所保育指針"}),
+    el("p",{class:"hint",text:"国が決めた、保育所の保育の基本です。章ごとに読んで、読んだらチェックしましょう。"}),
+    el("div",{class:"row",style:"margin-top:6px"},el("a",{class:"btn small",href:GUIDE_URL,target:"_blank",rel:"noopener noreferrer",text:"指針の本文（PDF）を開く"}),el("a",{class:"btn small",href:GUIDE_KAISETSU,target:"_blank",rel:"noopener noreferrer",text:"指針の解説を開く"})));
+  var gl=el("ol",{class:"chapters"});
+  GUIDE.forEach(function(c){var key="guide:"+c[0];gl.append(el("li",{class:P[key]&&P[key].done_at?"ok":null},el("b",{text:c[1]}),el("div",{class:"muted",style:"font-size:13px",text:c[2]}),self?memoBox(key,P):null));});
+  g.append(gl);out.push(g);
+  // テーマで YouTube を探す（検索結果のページが開く）
+  var themes=["手遊び歌","絵本の読み聞かせ","午睡チェック","おむつ替え","食物アレルギー対応","心肺蘇生 子ども","保護者対応","製作あそび","リトミック","連絡帳の書き方"];
+  out.push(el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"🔎 テーマで YouTube を探す"}),
+    el("p",{class:"hint",text:"テーマを押すと、YouTube の検索結果が別のタブで開きます。よかった動画は、園長に教えてね。"}),
+    el("div",{class:"themes"},themes.map(function(t){return el("a",{class:"theme",href:"https://www.youtube.com/results?search_query="+encodeURIComponent("保育 "+t),target:"_blank",rel:"noopener noreferrer",text:"▶ "+t});}))));
+  // 登録された動画・資料
+  var order=["skill","guideline","news","other"];
+  order.forEach(function(cat){
+    var items=D.items.filter(function(i){return i.category===cat;});
+    if(!items.length)return;
+    var icon={skill:"🎬",guideline:"📄",news:"📰",other:"🔗"}[cat];
+    var box=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:icon+" "+(C[cat]||cat)}));
+    var ul=el("ul",{class:"study"});
+    items.forEach(function(it){
+      var key="item:"+it.id,done=P[key]&&P[key].done_at;
+      var thumb=it.video_id?el("a",{class:"thumb",href:it.url,target:"_blank",rel:"noopener noreferrer","aria-label":it.title+"（YouTubeで開く）"},el("img",{src:"https://i.ytimg.com/vi/"+it.video_id+"/mqdefault.jpg",alt:"",loading:"lazy",width:"160",height:"90",onerror:function(ev){ev.currentTarget.style.visibility="hidden";}}),el("span",{class:"play","aria-hidden":"true",text:"▶"})):null;
+      var li=el("li",{class:"si"+(done?" ok":"")},thumb,el("div",{class:"sb"},
+        el("div",null,isNew(it.updated_at)?el("span",{class:"chip new",text:it.created_at===it.updated_at?"新着":"更新"}):null,it.scope==="all"?el("span",{class:"chip",text:"本部から"}):el("span",{class:"chip",text:"園から"})),
+        el("a",{class:"st",href:it.url,target:"_blank",rel:"noopener noreferrer",text:it.title}),
+        it.note?el("p",{class:"hint",style:"margin:2px 0 0",text:it.note}):null,
+        el("p",{class:"hint",style:"margin:2px 0 0",text:(it.video_id?"YouTube":hostOf(it.url))+"・"+ts(it.updated_at)}),
+        self?memoBox(key,P):null,
+        staff&&it.editable?studyEditor(it):null));
+      ul.append(li);
+    });
+    box.append(ul);out.push(box);
+  });
+  if(!D.items.length)out.push(el("div",{class:"card"},el("p",{class:"muted",text:"まだ動画や資料は登録されていません。"})));
+  if(staff)out.push(studyForm());
+  out.push(el("p",{class:"hint",text:"動画や資料は、別のタブで開きます。お子さまや保護者の情報は、メモに書かないでください。"}));
+  return out;
+}
+function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,"");}catch(e){return "";}}
+function catSelect(id,v){var s=el("select",{id:id},Object.keys(S.study.categories||{}).map(function(k){return el("option",{value:k,text:S.study.categories[k]});}));if(v)s.value=v;return s;}
+function studyForm(){
+  var isHq=S.me.user.role==="hq";
+  var url=el("input",{type:"text",id:"sf-url",inputmode:"url",placeholder:"https://www.youtube.com/watch?v=…",required:true,autocapitalize:"none"});
+  var title=el("input",{type:"text",id:"sf-title",maxlength:"80",required:true});
+  var cat=catSelect("sf-cat","skill");
+  var note=el("input",{type:"text",id:"sf-note",maxlength:"200",placeholder:"例：午睡の見守りで大切なこと（5分）"});
+  var scope=isHq?el("select",{id:"sf-scope"},el("option",{value:"all",text:"全部の園"}),el("option",{value:"nursery",text:"いま見ている園だけ"})):null;
+  url.addEventListener("input",function(){if(/youtu/.test(url.value))cat.value="skill";});
+  return el("form",{class:"card",onsubmit:function(ev){ev.preventDefault();api("POST","/study/items",{url:url.value.trim(),title:title.value,category:cat.value,note:note.value,scope:scope?scope.value:"nursery",nursery:S.me.nursery}).then(function(){S.study=null;S.msg="登録しました。新人さんの「自己研修」に出ます。";S.msgErr=false;render();}).catch(function(e){flash(errText(e),true);});}},
+    el("h2",{class:"sec",style:"margin:0",text:"＋ 動画や資料のURLを登録"}),
+    el("div",{class:"grid2",style:"margin-top:8px"},el("label",{class:"f",for:"sf-url"},"URL（YouTube・ホームページ・PDF）",url),el("label",{class:"f",for:"sf-title"},"題名",title),el("label",{class:"f",for:"sf-cat"},"分類",cat),scope?el("label",{class:"f",for:"sf-scope"},"見せる園",scope):el("span"),el("label",{class:"f",for:"sf-note"},"ひとこと（任意）",note)),
+    el("p",{class:"hint",text:"YouTubeのURLは、サムネイル付きで表示されます。"}),
+    el("div",{class:"row"},el("button",{class:"btn primary",type:"submit",text:"登録する"})));
+}
+function studyEditor(it){
+  var url=el("input",{type:"text",maxlength:"500","aria-label":"URL"});url.value=it.url;
+  var title=el("input",{type:"text",maxlength:"80","aria-label":"題名"});title.value=it.title;
+  var cat=catSelect(null,it.category);cat.setAttribute("aria-label","分類");
+  var note=el("input",{type:"text",maxlength:"200","aria-label":"ひとこと"});note.value=it.note||"";
+  return el("details",{class:"sedit"},el("summary",{text:"直す・消す"}),
+    el("div",{class:"grid2"},url,title,cat,note),
+    el("div",{class:"row",style:"margin-top:6px"},
+      el("button",{class:"btn small primary",type:"button",text:"保存（更新として知らせる）",onclick:function(){api("PATCH","/study/items/"+it.id,{url:url.value.trim(),title:title.value,category:cat.value,note:note.value}).then(function(){S.study=null;S.msg="保存しました。";S.msgErr=false;render();}).catch(function(e){flash(errText(e),true);});}}),
+      el("button",{class:"btn small warn",type:"button",text:"消す",onclick:function(){if(!window.confirm("「"+it.title+"」を消します。"))return;api("DELETE","/study/items/"+it.id).then(function(){S.study=null;S.msg="消しました。";S.msgErr=false;render();}).catch(function(e){flash(errText(e),true);});}})));
+}
+
+/* ---------- 書き出し ---------- */
+function exportBar(kind,id){
+  var base=kind==="learner"?"/step/api/export/learner/"+id:(kind==="checklist"?"/step/api/export/checklist":"/step/api/export/analytics");
+  var q=kind==="analytics"&&S.me.user.role==="hq"?"?nursery="+encodeURIComponent(S.me.nursery):"";
+  return el("div",{class:"exp"},
+    kind!=="analytics"?el("button",{class:"btn small",type:"button",text:"🖨 印刷・PDF",onclick:function(){if(kind==="learner")printLearner(S.me.role==="self"?S.me:S.detail);else printChecklist();}}):null,
+    el("a",{class:"btn small",href:base+".xlsx"+q,text:"📗 Excel"}),
+    kind!=="analytics"?el("a",{class:"btn small",href:base+".docx",text:"📘 Word"}):null);
+}
+/* ---------- 印刷（PDF は印刷の画面で「PDFに保存」） ---------- */
 function printLearner(d){
   var L=d.learner;
   var root=el("div",{class:"pr"},el("div",{class:"ph"},el("img",{src:"/step/logo.webp",alt:"トリオランド"}),el("h1",{text:"ステップアップ表"})),el("p",{class:"meta",text:"名前："+L.display_name+"　園："+L.nursery_name+"　入社日："+L.start_date+"　指導役："+(L.mentor_name||"")+"　（指導役の確認で☑）"}));
@@ -755,9 +1104,22 @@ function printLearner(d){
   root.append(el("p",{style:"text-align:center;font-weight:bold",text:"🏁 6ヶ月でクラス担任"}));
   printBox.replaceChildren(root);window.print();
 }
-function printLinks(I){
-  function card(label,obj){return el("div",{class:"card-print"},el("b",{text:I.name+" さん　"+label}),el("div",{style:"font-size:11pt;word-break:break-all;margin:6px 0",text:obj.url}),el("div",{style:"font-size:9pt",text:"スマホのブラウザでこのアドレスを開き、ホーム画面に追加してください。他の人に渡さないでください。"}));}
-  printBox.replaceChildren(el("div",{class:"pr"},card("本人用",I.links.self),card("指導役用",I.links.mentor)));window.print();
+function printChecklist(){
+  var stages=S.me.checklist.stages;
+  var root=el("div",{class:"pr"},el("div",{class:"ph"},el("img",{src:"/step/logo.webp",alt:"トリオランド"}),el("h1",{text:"ステップアップ表（項目一覧）"})),el("p",{class:"meta",text:"版"+S.me.checklist.version+"　名前＿＿＿＿＿＿＿＿　入社日＿＿＿＿＿＿　指導役＿＿＿＿＿＿"}));
+  stages.forEach(function(st){
+    var tb=el("tbody");st.items.forEach(function(it){tb.append(el("tr",null,el("td",{class:"b",text:"□"}),el("td",null,it.text,it.detail?el("div",{class:"det",text:it.detail}):null),el("td",{class:"d",text:"確認＿／＿"})));});
+    root.append(el("div",{class:"st"},el("h2",{text:st.title+"（入社"+st.days+"日目まで）　"+(st.theme||"")}),el("table",null,tb),el("div",{class:"sign",text:"面談日 ＿＿／＿＿　本人サイン ＿＿＿＿＿＿　指導役サイン ＿＿＿＿＿＿"})));
+  });
+  printBox.replaceChildren(root);window.print();
+}
+function printCred(C){
+  printBox.replaceChildren(el("div",{class:"pr"},el("div",{class:"card-print"},
+    el("div",{class:"ph"},el("img",{src:"/step/logo.webp",alt:"トリオランド"}),el("h1",{text:"ステップアップ表のログイン"})),
+    el("p",{style:"font-size:12pt;margin:6px 0"},C.name+" さん"),
+    el("table",null,el("tbody",null,el("tr",null,el("td",{text:"ログインの画面"}),el("td",{text:loginUrl()})),el("tr",null,el("td",{text:"ログインID"}),el("td",{style:"font-size:14pt;font-weight:bold",text:C.login_id})),el("tr",null,el("td",{text:"仮パスワード"}),el("td",{style:"font-size:14pt;font-weight:bold;font-family:monospace",text:C.temp_password})))),
+    el("p",{style:"font-size:9.5pt",text:"スマホのブラウザでログインの画面を開き、IDと仮パスワードを入れてください。はじめに自分のパスワードに変えます。ホーム画面に追加すると便利です。この紙は他の人に見せず、ログインできたら捨ててください。"}))));
+  window.print();
 }
 
 load();
