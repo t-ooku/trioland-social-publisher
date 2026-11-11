@@ -144,3 +144,151 @@ export function cleanNote(value) {
 export function cleanName(value) {
   return cleanText(value, 20);
 }
+
+/* ---------- 退職の分析（園長のダッシュボード） ---------- */
+
+/** 退職理由の選択肢（園長が退職を記録するときに選ぶ）。 */
+export const LEFT_REASONS = {
+  workload: "業務量・忙しさ",
+  relations: "職場の人間関係",
+  fit: "仕事内容・保育の考え方が合わない",
+  pay: "給与・待遇",
+  hours: "勤務時間・シフト",
+  health: "体調・家庭の事情",
+  move: "転居・転職・進学",
+  other: "その他・わからない",
+};
+
+/** 年度（4月はじまり）。2026-03-31 → 2025、2026-04-01 → 2026。 */
+export function fiscalYearOf(date) {
+  const y = Number(date.slice(0, 4));
+  const m = Number(date.slice(5, 7));
+  return m >= 4 ? y : y - 1;
+}
+
+function monthStart(ym) {
+  return ym + "-01";
+}
+
+function nextMonth(ym) {
+  let [y, m] = ym.split("-").map(Number);
+  m += 1;
+  if (m > 12) { m = 1; y += 1; }
+  return `${y}-${String(m).padStart(2, "0")}`;
+}
+
+/**
+ * 一人ぶんの「辞める前のサイン」。退職者は退職日の時点、それ以外は今日の時点で見る。
+ * moods は {week, level}、reviews は {stage_id: {met_on}}。
+ */
+export function learnerSignals(checklist, checks, reviews, moods, learner, today) {
+  const end = learner.status === "left" && learner.left_date ? learner.left_date : today;
+  const v = computeStages(checklist, checks, reviews, learner.start_date, end);
+  const due = v.stages.filter((s) => s.target && s.target < end);
+  const held = due.filter((s) => reviews[s.id] && reviews[s.id].met_on && reviews[s.id].met_on <= end);
+  return {
+    // あとから登録した過去の退職者など、アプリで何も記録していない人は「ちがい」の比較に入れない
+    tracked: Object.keys(checks).length > 0 || Object.keys(reviews).length > 0 || moods.length > 0,
+    tsurai: moods.some((m) => Number(m.level) === 3 && m.week <= end),
+    late: v.stages.some((s) => s.late),
+    reviewsDue: due.length,
+    reviewsHeld: held.length,
+  };
+}
+
+/**
+ * 退職の集計。people は {start_date, status, left_date, left_stage, left_reason, employment, mentor_name, signals}。
+ * 月次の退職率＝その月の退職者 ÷ 月初に在籍していた人。年度の退職率＝年度内の退職者 ÷（年度初めの在籍＋年度内の入社）。
+ * 修了（クラス担任になった人）は在籍として数える。
+ * stages（{title, days} の配列）を渡すと、「どの段階の時期に辞めたか」を退職日の入社何日目で数える
+ * （過去の退職者をあとから登録した場合も時期で分けられるように）。渡さなければ記録した left_stage で数える。
+ */
+export function turnoverAnalytics(people, today, months = 12, stages = null) {
+  const left = people.filter((p) => p.status === "left" && p.left_date);
+  const inPlaceOn = (p, date) => p.start_date < date && !(p.status === "left" && p.left_date && p.left_date < date);
+  const thisYm = today.slice(0, 7);
+  const yms = [];
+  let ym = thisYm;
+  for (let i = 0; i < months; i += 1) {
+    yms.unshift(ym);
+    let [y, m] = ym.split("-").map(Number);
+    m -= 1;
+    if (m < 1) { m = 12; y -= 1; }
+    ym = `${y}-${String(m).padStart(2, "0")}`;
+  }
+  const monthly = yms.map((k) => {
+    const from = monthStart(k);
+    const to = monthStart(nextMonth(k));
+    const headcount = people.filter((p) => inPlaceOn(p, from)).length;
+    const joined = people.filter((p) => p.start_date >= from && p.start_date < to).length;
+    const leftN = left.filter((p) => p.left_date >= from && p.left_date < to).length;
+    return { ym: k, headcount, joined, left: leftN, rate: headcount ? leftN / headcount : null };
+  });
+
+  const years = new Set([fiscalYearOf(today)]);
+  for (const p of people) years.add(fiscalYearOf(p.start_date));
+  for (const p of left) years.add(fiscalYearOf(p.left_date));
+  const windowsOf = (group) => [30, 90, 180].map((days) => {
+    const eligible = group.filter((p) => dayNumber(p.start_date, today) > days);
+    const gone = eligible.filter((p) => p.status === "left" && p.left_date && dayNumber(p.start_date, p.left_date) <= days);
+    return { days, eligible: eligible.length, left: gone.length, rate: eligible.length ? gone.length / eligible.length : null };
+  });
+  const yearly = [...years].sort((a, b) => b - a).map((fy) => {
+    const from = `${fy}-04-01`;
+    const to = `${fy + 1}-04-01`;
+    const atStart = people.filter((p) => inPlaceOn(p, from)).length;
+    const cohort = people.filter((p) => p.start_date >= from && p.start_date < to);
+    const leftN = left.filter((p) => p.left_date >= from && p.left_date < to).length;
+    const base = atStart + cohort.length;
+    return { fy, atStart, joined: cohort.length, left: leftN, rate: base ? leftN / base : null, early: windowsOf(cohort) };
+  });
+
+  const count = (arr, keyOf) => {
+    const out = {};
+    for (const p of arr) { const k = keyOf(p); out[k] = (out[k] || 0) + 1; }
+    return out;
+  };
+  const tenure = [["〜30日", 1, 30], ["31〜90日", 31, 90], ["91〜180日", 91, 180], ["181日〜", 181, Infinity]].map(([label, lo, hi]) => ({
+    label, n: left.filter((p) => { const d = dayNumber(p.start_date, p.left_date); return d >= lo && d <= hi; }).length,
+  }));
+  const calMonths = Array.from({ length: 12 }, (_, i) => left.filter((p) => Number(p.left_date.slice(5, 7)) === i + 1).length);
+
+  const stayedGroup = people.filter((p) => p.status !== "left" && dayNumber(p.start_date, today) > 30);
+  const profile = (group) => {
+    const withSig = group.filter((p) => p.signals && p.signals.tracked !== false);
+    const due = withSig.reduce((a, p) => a + p.signals.reviewsDue, 0);
+    const held = withSig.reduce((a, p) => a + p.signals.reviewsHeld, 0);
+    return {
+      n: withSig.length,
+      tsurai: withSig.filter((p) => p.signals.tsurai).length,
+      late: withSig.filter((p) => p.signals.late).length,
+      reviewRate: due ? held / due : null,
+    };
+  };
+  const groupRows = (keyOf) => {
+    const keys = [...new Set(people.map(keyOf))];
+    return keys.map((k) => {
+      const all = people.filter((p) => keyOf(p) === k);
+      const gone = all.filter((p) => p.status === "left").length;
+      return { key: k, total: all.length, left: gone };
+    }).sort((a, b) => b.total - a.total);
+  };
+
+  return {
+    total: people.length,
+    active: people.filter((p) => p.status === "active").length,
+    leftTotal: left.length,
+    monthly,
+    yearly,
+    early: windowsOf(people),
+    byStage: stages && stages.length
+      ? count(left, (p) => { const d = dayNumber(p.start_date, p.left_date); const st = [...stages].sort((a, b) => a.days - b.days).find((x) => d <= x.days); return st ? st.title : "それ以降"; })
+      : count(left, (p) => p.left_stage || "不明"),
+    byReason: count(left, (p) => (p.left_reason && LEFT_REASONS[p.left_reason] ? p.left_reason : "unknown")),
+    tenure,
+    calMonths,
+    compare: { left: profile(left), stayed: profile(stayedGroup) },
+    byMentor: groupRows((p) => p.mentor_name || "未定"),
+    byEmployment: groupRows((p) => (p.employment === "parttime" ? "パート" : "常勤")),
+  };
+}
