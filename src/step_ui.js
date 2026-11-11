@@ -91,7 +91,7 @@ h2.sec{font-family:var(--display);font-size:17px;margin:20px 0 0}
 .stars{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-top:14px}
 .stars b{font-family:var(--display);font-size:16px}
 .bar{height:14px;border-radius:999px;background:#F6EEE3;overflow:hidden;margin-top:4px;box-shadow:inset 0 2px 0 rgba(0,0,0,.04)}
-.bar i{display:block;height:100%;border-radius:999px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 10px,#F5CF85 10px 20px);min-width:14px}
+.bar i{display:block;height:100%;border-radius:999px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 10px,#F5CF85 10px 20px)}
 .next{margin-top:12px;background:var(--blue-soft);border-radius:16px;padding:10px 12px}
 .next h3{margin:0 0 6px;font-size:13px;font-family:var(--display);color:var(--blue-d)}
 .next ol{margin:0;padding:0;list-style:none;counter-reset:n;display:grid;gap:4px}
@@ -264,14 +264,14 @@ function el(tag,attrs){var n=document.createElement(tag);if(attrs){for(var k in 
 function md(s){if(!s)return "";var p=s.split("-");return Number(p[1])+"/"+Number(p[2]);}
 function ts(iso){if(!iso)return "";var d=new Date(iso);return (d.getMonth()+1)+"/"+d.getDate();}
 
-var ERR={LINK_INVALID:"このリンクは使えません。園長に新しいリンクをもらってください。",LEARNER_NOT_ACTIVE:"この新人は修了または退職になっているため、変更できません。",CHECKLIST_CHANGED:"ほかの人が先に項目を保存しました。画面を開き直してから、もう一度編集してください。",BAD_DATE:"日付が正しくありません。",NAME_REQUIRED:"名前を入れてください。",FORBIDDEN:"この操作はできません。",STEP_DB_NOT_CONFIGURED:"準備中です。しばらくしてから開いてください。"};
+var ERR={LINK_INVALID:"このリンクは使えません。園長に新しいリンクをもらってください。",LEARNER_NOT_ACTIVE:"この新人は修了または退職になっているため、変更できません。",CHECKLIST_CHANGED:"ほかの人が先に項目を保存しました。画面を開き直してから、もう一度編集してください。",BAD_DATE:"日付が正しくありません。",NAME_REQUIRED:"名前を入れてください。",FORBIDDEN:"この操作はできません。",NOT_FOUND:"この新人さんは見つかりませんでした。一覧から選び直してください。",STEP_DB_NOT_CONFIGURED:"準備中です。しばらくしてから開いてください。"};
 function api(method,path,body){return fetch("/step/api"+path,{method:method,headers:Object.assign({"authorization":"Bearer "+TOKEN},body?{"content-type":"application/json"}:{}),body:body?JSON.stringify(body):undefined,cache:"no-store"}).then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok){var e=new Error(j.error||("HTTP "+r.status));e.code=j.error;e.status=r.status;throw e;}return j;});});}
 function errText(e){return ERR[e&&e.code]||"うまくいきませんでした。通信を確認して、もう一度お試しください。";}
 function flash(text,isErr){S.msg=text;S.msgErr=!!isErr;render();}
 
 function load(){
   if(!TOKEN||document.body.dataset.notfound){app.replaceChildren(el("div",{class:"card"},el("h1",{text:"ページが見つかりません"}),el("p",{text:"園長からもらったリンクを開いてください。"})));return Promise.resolve();}
-  return api("GET","/me").then(function(j){S.me=j;if(j.role==="nursery"&&!S.dirty){S.draft=clone(j.checklist.stages);S.baseVersion=j.checklist.version;}return S.detailId?loadDetail(S.detailId):null;}).then(render).catch(function(e){app.replaceChildren(el("div",{class:"card"},el("h1",{text:"開けませんでした"}),el("p",{text:errText(e)})));});
+  return api("GET","/me").then(function(j){S.me=j;if(j.role==="nursery"){if(!S.dirty){S.draft=clone(j.checklist.stages);S.baseVersion=j.checklist.version;}var lm=route().match(/^l-([0-9a-f]{20})$/);if(lm&&!S.detailId)S.detailId=lm[1];}return S.detailId?loadDetail(S.detailId):null;}).then(render).catch(function(e){app.replaceChildren(el("div",{class:"card"},el("h1",{text:"開けませんでした"}),el("p",{text:errText(e)})));});
 }
 function loadDetail(id){return api("GET","/learners/"+id).then(function(j){S.detail=j;S.detailId=id;}).catch(function(e){S.detail=null;S.detailId=null;flash(errText(e),true);});}
 function clone(o){return JSON.parse(JSON.stringify(o));}
@@ -291,7 +291,7 @@ function render(){
     var tabDefs=[["list","👥 新人"],["edit","✏️ 項目の編集"],["stats","📊 集計"]];
     var cur=/^l-/.test(r)?"list":(["list","edit","stats"].indexOf(r)>=0?r:"list");
     tabs.replaceChildren.apply(tabs,tabDefs.map(function(t){return el("a",{href:"#"+t[0],"aria-current":t[0]===cur?"page":null,text:t[1]});}));
-    if(/^l-/.test(r)){nodes=nodes.concat(S.detail?renderLearner(S.detail,"nursery"):[el("p",{class:"loading",text:"読み込み中…"})]);}
+    if(/^l-/.test(r)&&(S.detail||S.detailId)){nodes=nodes.concat(S.detail?renderLearner(S.detail,"nursery"):[el("p",{class:"loading",text:"読み込み中…"})]);}
     else if(r==="edit")nodes=nodes.concat(renderEditor());
     else if(r==="stats")nodes=nodes.concat(renderStats());
     else nodes=nodes.concat(renderList());
