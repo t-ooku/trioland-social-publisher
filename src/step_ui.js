@@ -227,6 +227,43 @@ h2.sec{font-family:var(--display);font-size:17px;margin:20px 0 0}
 .savebar{position:sticky;bottom:12px;margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
 .savebar .st{margin-right:auto;font-size:13px;color:var(--muted)}
 .savebar .st.dirty{color:var(--pink-d);font-weight:800}
+/* 分析 */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.tile{background:var(--bg);border-radius:16px;padding:10px 12px;display:grid;gap:0}
+.tile .tl{font-size:12px;color:var(--muted);font-weight:700}
+.tile b{font-family:var(--display);font-size:24px;line-height:1.25}
+.tile small{font-size:11px;color:var(--muted)}
+.tile:nth-child(3) b{color:var(--pink-d)}
+.hb{display:grid;grid-template-columns:minmax(64px,34%) 1fr auto;gap:8px;align-items:center;margin-top:8px;font-size:13px}
+.hb .hl{font-weight:700;overflow-wrap:anywhere}
+.hb .ht{height:12px;border-radius:999px;background:#F2E8DA;overflow:hidden}
+.hb .ht i{display:block;height:100%;border-radius:999px}
+.hb .ht i.pink{background:var(--pink)}
+.hb .ht i.yellow{background:var(--yellow)}
+.hb .ht i.blue{background:var(--blue)}
+.hb .hv{font-weight:800;font-size:12px;white-space:nowrap}
+h3.sub{font-family:var(--display);font-size:14px;margin:16px 0 0;color:var(--ink)}
+.chart{width:100%;height:auto;display:block;margin-top:8px}
+.chart .grid{stroke:#F2E8DA;stroke-width:1}
+.chart .ax{font-size:9px;fill:var(--muted)}
+.chart .vl{font-size:10px;font-weight:700;fill:var(--pink-d)}
+.chart .bj{fill:var(--blue)}
+.chart .bl{fill:var(--pink)}
+.chart .bm{fill:#F2D3DE}
+.legend{display:flex;gap:12px;margin-top:6px;font-size:12px;font-weight:700}
+.lg::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.lg.blue::before{background:var(--blue)}
+.lg.pink::before{background:var(--pink)}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl table.stats{font-size:13px;white-space:nowrap}
+.tbl table.stats th:first-child{white-space:normal;min-width:6.5em}
+.tbl table.stats td,.tbl table.stats th{padding:8px 6px 8px 0}
+.card details>summary{cursor:pointer;font-weight:700;color:var(--blue-d);margin-top:10px;font-size:13px}
+.ins ul{margin:8px 0 0;padding-left:20px;display:grid;gap:4px;font-size:14px}
+.ins{background:var(--yellow-soft);border-color:var(--yellow)}
+details.retire{margin-top:14px;border-top:2px dashed var(--line);padding-top:8px}
+details.retire>summary{color:var(--danger);font-weight:800;cursor:pointer;font-size:14px}
+.leftform{margin-top:8px}
 table.stats{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
 table.stats td,table.stats th{border-bottom:2px solid var(--line);padding:8px 4px;text-align:left}
 @media (prefers-reduced-motion:reduce){.stage.current .node::after,.here img,.track .me img,.mark.pop,.mark.pop::after{animation:none}}
@@ -288,7 +325,7 @@ function render(){
   if(me.role==="nursery"){
     var r=route();
     tabs.hidden=false;
-    var tabDefs=[["list","👥 新人"],["edit","✏️ 項目の編集"],["stats","📊 集計"]];
+    var tabDefs=[["list","👥 新人"],["edit","✏️ 項目の編集"],["stats","📊 分析"]];
     var cur=/^l-/.test(r)?"list":(["list","edit","stats"].indexOf(r)>=0?r:"list");
     tabs.replaceChildren.apply(tabs,tabDefs.map(function(t){return el("a",{href:"#"+t[0],"aria-current":t[0]===cur?"page":null,text:t[1]});}));
     if(/^l-/.test(r)&&(S.detail||S.detailId)){nodes=nodes.concat(S.detail?renderLearner(S.detail,"nursery"):[el("p",{class:"loading",text:"読み込み中…"})]);}
@@ -452,13 +489,28 @@ function renderManage(d){
   var box=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"この新人の管理"}),
     el("div",{class:"grid2",style:"margin-top:8px"},el("label",{class:"f",for:"mg-name"},"名前",name),el("label",{class:"f",for:"mg-mentor"},"指導役",mentor),el("label",{class:"f",for:"mg-start"},"入社日",start),el("label",{class:"f",for:"mg-emp"},"雇用形態",emp)),
     el("div",{class:"row",style:"margin-top:10px"},el("button",{class:"btn primary",type:"button",text:"情報を保存",onclick:function(){patch(L.id,{display_name:name.value,mentor_name:mentor.value,start_date:start.value,employment:emp.value},"保存しました。");}})));
+  var R=S.me.leftReasons||{};
+  function leftForm(isNew){
+    var dt=el("input",{type:"date",id:"lf-date",max:S.me.today});dt.value=L.left_date||S.me.today;
+    var rs=el("select",{id:"lf-reason"},el("option",{value:"",text:"えらんでください"}),Object.keys(R).map(function(k){return el("option",{value:k,text:R[k]});}));rs.value=L.left_reason||"";
+    var nt=el("textarea",{id:"lf-note",maxlength:"100",placeholder:"例：早番が続いて体力的にきつかった"});nt.value=L.left_note||"";
+    return el("div",{class:"leftform"},
+      el("div",{class:"grid2"},el("label",{class:"f",for:"lf-date"},"退職日",dt),el("label",{class:"f",for:"lf-reason"},"いちばん大きな理由",rs)),
+      el("label",{class:"f",for:"lf-note",style:"margin-top:8px"},"ひとこと（任意・100字まで）",nt),
+      el("p",{class:"hint",text:"本人や子どもが特定できること、病名は書かないでください。"}),
+      el("div",{class:"row",style:"margin-top:6px"},el("button",{class:isNew?"btn warn":"btn primary",type:"button",text:isNew?"この内容で退職を記録":"退職の記録を直す",onclick:function(){
+        if(!rs.value){flash("退職の理由をえらんでください。",true);return;}
+        var body={left_date:dt.value||S.me.today,left_reason:rs.value,left_note:nt.value};if(isNew)body.status="left";
+        patch(L.id,body,isNew?"退職を記録しました。":"退職の記録を直しました。");}})));
+  }
   if(L.status==="active"){
     box.append(el("div",{class:"row",style:"margin-top:12px"},
       el("button",{class:"btn",type:"button",text:"リンクを作り直す",onclick:function(){if(!window.confirm("本人と指導役のリンクを作り直します。今のリンクは使えなくなります。"))return;api("POST","/learners/"+L.id+"/links").then(function(j){S.issued={name:L.display_name,links:j.links};render();window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}}),
-      el("button",{class:"btn",type:"button",text:"修了（クラス担任）にする",onclick:function(){if(window.confirm("修了にします。本人と指導役のリンクは使えなくなります。"))patch(L.id,{status:"completed"},"修了にしました。");}}),
-      el("button",{class:"btn warn",type:"button",text:"退職を記録",onclick:function(){var dt=window.prompt("退職日（例 2026-11-30）",S.me.today);if(dt===null)return;patch(L.id,{status:"left",left_date:dt||S.me.today},"退職を記録しました。");}})));
+      el("button",{class:"btn",type:"button",text:"修了（クラス担任）にする",onclick:function(){if(window.confirm("修了にします。本人と指導役のリンクは使えなくなります。"))patch(L.id,{status:"completed"},"修了にしました。");}})),
+      el("details",{class:"retire"},el("summary",{text:"退職を記録"}),leftForm(true)));
   }else{
-    box.append(el("div",{class:"row",style:"margin-top:12px"},el("button",{class:"btn",type:"button",text:"受け入れ中に戻す",onclick:function(){patch(L.id,{status:"active"},"受け入れ中に戻しました。リンクを作り直してください。");}})));
+    if(L.status==="left")box.append(el("h3",{class:"sub",text:"退職の記録"}),leftForm(false));
+    box.append(el("div",{class:"row",style:"margin-top:12px"},el("button",{class:"btn",type:"button",text:"受け入れ中に戻す",onclick:function(){if(!window.confirm("受け入れ中に戻します。退職の記録は消えます。"))return;patch(L.id,{status:"active"},"受け入れ中に戻しました。リンクを作り直してください。");}})));
   }
   if(L.checklist_version<L.latest_version)box.append(el("div",{class:"row",style:"margin-top:12px"},el("span",{class:"hint",style:"margin:0",text:"この新人は前の版の項目を使っています（版"+L.checklist_version+"／最新 版"+L.latest_version+"）。"}),el("button",{class:"btn small",type:"button",text:"最新の項目にする",onclick:function(){api("POST","/learners/"+L.id+"/upgrade").then(function(){S.msg="最新の項目にしました。";S.msgErr=false;return refresh();}).catch(function(e){flash(errText(e),true);});}})));
   if(S.issued&&S.issued.name===L.display_name)box.prepend(renderIssued());
@@ -501,7 +553,7 @@ function renderList(){
     }
     list.append(el("a",{class:"lrow"+(flags.length?" flagged":""),href:"#l-"+l.id},
       el("div",{class:"avatar c"+(i%3),"aria-hidden":"true",text:(l.display_name||"？").trim().charAt(0)}),
-      el("div",{style:"min-width:0"},el("div",{class:"nm",text:l.display_name+" さん"}),el("div",{class:"meta",text:(l.status==="active"?"入社"+l.dayNo+"日目・"+(l.current_title||"全段階達成"):st+(l.left_stage?"（"+l.left_stage+"で退職）":""))+"・指導役 "+(l.mentor_name||"未定")}),mini),
+      el("div",{style:"min-width:0"},el("div",{class:"nm",text:l.display_name+" さん"}),el("div",{class:"meta",text:(l.status==="active"?"入社"+l.dayNo+"日目・"+(l.current_title||"全段階達成"):st+(l.left_stage?"（"+l.left_stage+"で退職"+(l.left_reason&&S.me.leftReasons&&S.me.leftReasons[l.left_reason]?"・"+S.me.leftReasons[l.left_reason]:"")+"）":""))+"・指導役 "+(l.mentor_name||"未定")}),mini),
       el("div",{style:"text-align:right"},flags.map(function(f){return el("div",null,el("span",{class:"chip late",text:f}));}),el("div",{class:"meta",style:"font-weight:800",text:"★"+l.ok+"/"+l.total}))));
   });
   out.push(list);
@@ -518,15 +570,107 @@ function renderList(){
 }
 
 function renderStats(){
-  var s=S.me.stats,out=[];
-  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:"📊 集計（"+S.me.nursery_name+"）"}),
-    el("table",{class:"stats"},el("tbody",null,
-      el("tr",null,el("th",{text:"登録した新人"}),el("td",{text:s.total+"人"})),
-      el("tr",null,el("th",{text:"受け入れ中／修了／退職"}),el("td",{text:s.active+"／"+s.completed+"／"+s.left+"人"})),
-      s.windows.map(function(w){return el("tr",null,el("th",{text:w.days+"日たっても残った人"}),el("td",{text:w.eligible?(w.stayed+"/"+w.eligible+"人（"+Math.round(w.stayed/w.eligible*100)+"%）"):"対象者なし"}));}))),
-    el("h2",{class:"sec",text:"どの段階で辞めたか"}),
-    Object.keys(s.leftStages).length?el("ul",null,Object.keys(s.leftStages).map(function(k){return el("li",{text:k+"："+s.leftStages[k]+"人"});})):el("p",{class:"muted",text:"まだありません。"})));
+  var A=S.me.analytics,R=S.me.leftReasons||{},out=[];
+  if(!A)return [el("p",{class:"loading",text:"読み込み中…"})];
+  var today=S.me.today,fyNow=Number(today.slice(5,7))>=4?Number(today.slice(0,4)):Number(today.slice(0,4))-1;
+  var cur=A.yearly.filter(function(y){return y.fy===fyNow;})[0]||{rate:null,left:0,atStart:0,joined:0};
+  var thisMonth=A.monthly[A.monthly.length-1];
+  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:"📊 分析（"+S.me.nursery_name+"）"}),
+    el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:"いつ・なぜ辞めているかを見て、受け入れ方を直していこう。"})),
+    el("div",{class:"kpis"},
+      tile("受け入れ中",A.active+"人",""),
+      tile("今月の退職",thisMonth.left+"人",thisMonth.rate===null?"":"退職率 "+pctTxt(thisMonth.rate)),
+      tile(fyNow+"年度の退職率",pctTxt(cur.rate),cur.left+"人／"+(cur.atStart+cur.joined)+"人"),
+      tile("これまでの退職",A.leftTotal+"人","登録 "+A.total+"人"))));
+  // 早期退職率
+  var early=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"入社してから辞めた人の割合"}),el("p",{class:"hint",text:"その期間を過ぎた人のうち、期間内に辞めた人の割合です。"}));
+  [["1か月以内",0],["3か月以内",1],["6か月以内",2]].forEach(function(x){var w=A.early[x[1]];early.append(hbar(x[0],w.rate===null?0:w.rate,w.eligible?pctTxt(w.rate)+"（"+w.left+"/"+w.eligible+"人）":"対象者なし","pink"));});
+  out.push(early);
+  out.push(insights(A,R));
+  // 月次
+  var mc=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"月ごとの入社と退職（直近12か月）"}),
+    el("div",{class:"legend"},el("span",{class:"lg blue",text:"入社"}),el("span",{class:"lg pink",text:"退職"})),monthChart(A.monthly));
+  var mt=el("tbody");A.monthly.slice().reverse().forEach(function(m){mt.append(el("tr",null,el("td",{text:Number(m.ym.slice(0,4))+"/"+Number(m.ym.slice(5))}),el("td",{text:m.headcount}),el("td",{text:m.joined}),el("td",{text:m.left}),el("td",{text:pctTxt(m.rate)})));});
+  mc.append(el("details",null,el("summary",{text:"数字で見る"}),el("div",{class:"tbl"},el("table",{class:"stats"},el("thead",null,el("tr",null,el("th",{text:"月"}),el("th",{text:"月初の在籍"}),el("th",{text:"入社"}),el("th",{text:"退職"}),el("th",{text:"退職率"}))),mt))));
+  out.push(mc);
+  // 年度
+  var yt=el("tbody");A.yearly.forEach(function(y){yt.append(el("tr",null,el("td",{text:y.fy+"年度"}),el("td",{text:y.joined}),el("td",{text:y.left}),el("td",{text:pctTxt(y.rate)}),y.early.map(function(w){return el("td",{text:w.eligible?pctTxt(w.rate):"—"});})));});
+  out.push(el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"年度ごと（4月〜3月）"}),
+    el("div",{class:"tbl"},el("table",{class:"stats"},el("thead",null,el("tr",null,el("th",{text:"年度"}),el("th",{text:"入社"}),el("th",{text:"退職"}),el("th",{text:"退職率"}),el("th",{text:"〜1か月"}),el("th",{text:"〜3か月"}),el("th",{text:"〜6か月"}))),yt)),
+    el("p",{class:"hint",text:"退職率＝その年度に辞めた人 ÷（年度初めにいた人＋年度内に入社した人）。〜1か月・〜3か月・〜6か月は、その年度に入社した人のうち、入社からその期間内に辞めた割合です。"})));
+  // いつ
+  var stages=(S.me.checklist&&S.me.checklist.stages)||[];var maxSt=1;var stKeys=stages.map(function(s){return s.title;}).concat(["それ以降"]);
+  stKeys.forEach(function(k){maxSt=Math.max(maxSt,A.byStage[k]||0);});
+  var when=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"いつ辞めているか"}),el("h3",{class:"sub",text:"どの段階の時期に（入社からの日数で分けています）"}));
+  stKeys.forEach(function(k){if(k==="それ以降"&&!A.byStage[k])return;var n=A.byStage[k]||0;when.append(hbar(k,n/maxSt,n+"人","pink"));});
+  when.append(el("h3",{class:"sub",text:"辞めた月（1月〜12月）"}),calChart(A.calMonths));
+  out.push(when);
+  // なぜ
+  var why=el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"なぜ辞めているか"}));
+  var rk=Object.keys(A.byReason).sort(function(a,b){return A.byReason[b]-A.byReason[a];});var maxR=1;rk.forEach(function(k){maxR=Math.max(maxR,A.byReason[k]);});
+  if(!rk.length)why.append(el("p",{class:"muted",text:"まだ退職者はいません。"}));
+  rk.forEach(function(k){why.append(hbar(R[k]||"理由の記録なし",A.byReason[k]/maxR,A.byReason[k]+"人","yellow"));});
+  var C=A.compare;
+  why.append(el("h3",{class:"sub",text:"辞めた人と、続いている人のちがい"}),el("div",{class:"tbl"},el("table",{class:"stats"},
+    el("thead",null,el("tr",null,el("th",{text:""}),el("th",{text:"辞めた人"}),el("th",{text:"続いている人"}))),
+    el("tbody",null,
+      el("tr",null,el("th",{text:"比べた人数"}),el("td",{text:C.left.n+"人"}),el("td",{text:C.stayed.n+"人"})),
+      el("tr",null,el("th",{text:"「つらい」が出ていた"}),el("td",{text:ratio(C.left.tsurai,C.left.n)}),el("td",{text:ratio(C.stayed.tsurai,C.stayed.n)})),
+      el("tr",null,el("th",{text:"目標日をすぎた段階があった"}),el("td",{text:ratio(C.left.late,C.left.n)}),el("td",{text:ratio(C.stayed.late,C.stayed.n)})),
+      el("tr",null,el("th",{text:"振り返り面談の実施率"}),el("td",{text:pctTxt(C.left.reviewRate)}),el("td",{text:pctTxt(C.stayed.reviewRate)}))))),
+    el("p",{class:"hint",text:"このアプリで記録がある人だけで比べています。辞めた人は退職日の時点、続いている人（入社31日以上）は今日の時点で見ています。"}));
+  out.push(why);
+  // 指導役・雇用形態
+  function grp(title,rows){var tb=el("tbody");rows.forEach(function(r){tb.append(el("tr",null,el("th",{text:r.key}),el("td",{text:r.total+"人"}),el("td",{text:r.left+"人"}),el("td",{text:r.total?pctTxt(r.left/r.total):"—"})));});
+    return [el("h3",{class:"sub",text:title}),el("div",{class:"tbl"},el("table",{class:"stats"},el("thead",null,el("tr",null,el("th",{text:""}),el("th",{text:"担当・人数"}),el("th",{text:"退職"}),el("th",{text:"割合"}))),tb))];}
+  out.push(el("div",{class:"card"},el("h2",{class:"sec",style:"margin:0",text:"指導役・雇用形態ごと"}),grp("指導役ごと",A.byMentor),grp("雇用形態ごと",A.byEmployment),
+    el("p",{class:"hint",text:"人数が少ないうちは、1人で割合が大きく変わります。人を責めるためではなく、受け入れ方を見直すために使ってください。"})));
+  out.push(el("div",{class:"card"},el("b",{text:"過去に辞めた人も分析に入れられます"}),el("p",{class:"hint",text:"「新人」タブで入社日を入れて登録し、その人の画面の「退職を記録」で退職日と理由を入れてください。"}),
+    el("p",{class:"hint",text:"このアプリに登録した人だけを数えています（園全体の退職率ではありません）。"})));
   return out;
+}
+function pctTxt(r){return r===null||r===undefined?"—":Math.round(r*100)+"%";}
+function ratio(a,n){return n?pctTxt(a/n)+"（"+a+"人）":"—";}
+function tile(label,big,small){return el("div",{class:"tile"},el("span",{class:"tl",text:label}),el("b",{text:big}),small?el("small",{text:small}):null);}
+function hbar(label,p,val,color){return el("div",{class:"hb"},el("span",{class:"hl",text:label}),el("span",{class:"ht"},el("i",{class:color||"pink",style:"width:"+Math.round(Math.max(0,Math.min(1,p))*100)+"%"})),el("span",{class:"hv",text:val}));}
+function sv(tag,attrs){var n=document.createElementNS("http://www.w3.org/2000/svg",tag);for(var k in attrs)n.setAttribute(k,attrs[k]);for(var i=2;i<arguments.length;i++){var c=arguments[i];if(c)n.append(c.nodeType?c:document.createTextNode(String(c)));}return n;}
+function monthChart(ms){
+  var W=340,H=150,top=16,bot=22,max=1;ms.forEach(function(m){max=Math.max(max,m.joined,m.left);});
+  var g=sv("svg",{viewBox:"0 0 "+W+" "+H,class:"chart",role:"img","aria-label":"月ごとの入社と退職"});
+  var cw=W/ms.length,bh=H-top-bot;
+  for(var t=0;t<=max;t+=Math.max(1,Math.ceil(max/3))){var y=top+bh-bh*t/max;g.append(sv("line",{x1:0,x2:W,y1:y,y2:y,class:"grid"}),sv("text",{x:2,y:y-2,class:"ax"},t));}
+  ms.forEach(function(m,i){var x=i*cw;var bw=Math.min(10,cw/2-3);
+    var hj=bh*m.joined/max,hl=bh*m.left/max;
+    g.append(sv("rect",{x:x+cw/2-bw-1,y:top+bh-hj,width:bw,height:Math.max(hj,0),rx:3,class:"bj"}),sv("rect",{x:x+cw/2+1,y:top+bh-hl,width:bw,height:Math.max(hl,0),rx:3,class:"bl"}));
+    if(m.left)g.append(sv("text",{x:x+cw/2+1+bw/2,y:top+bh-hl-3,class:"vl","text-anchor":"middle"},m.left));
+    g.append(sv("text",{x:x+cw/2,y:H-6,class:"ax","text-anchor":"middle"},Number(m.ym.slice(5))+"月"));});
+  return g;
+}
+function calChart(cm){
+  var W=340,H=110,top=14,bot=20,max=1;cm.forEach(function(n){max=Math.max(max,n);});
+  var g=sv("svg",{viewBox:"0 0 "+W+" "+H,class:"chart",role:"img","aria-label":"辞めた月"});var cw=W/12,bh=H-top-bot;
+  cm.forEach(function(n,i){var h=bh*n/max,bw=cw-8;g.append(sv("rect",{x:i*cw+4,y:top+bh-h,width:bw,height:Math.max(h,0),rx:4,class:n===max&&n>0?"bl":"bm"}));
+    if(n)g.append(sv("text",{x:i*cw+cw/2,y:top+bh-h-3,class:"vl","text-anchor":"middle"},n));
+    g.append(sv("text",{x:i*cw+cw/2,y:H-5,class:"ax","text-anchor":"middle"},(i+1)+"月"));});
+  return g;
+}
+function insights(A,R){
+  var box=el("div",{class:"card ins"},el("h2",{class:"sec",style:"margin:0",text:"💡 わかったこと"}));var ul=el("ul");
+  if(!A.leftTotal){ul.append(el("li",{text:"まだ退職者はいません。退職を記録すると、ここに辞めた時期や理由が出ます。"}));box.append(ul);return box;}
+  function top(obj){var best=null;Object.keys(obj).forEach(function(k){if(best===null||obj[k]>obj[best])best=k;});return best;}
+  var st=top(A.byStage);if(st)ul.append(el("li",{text:"辞めた人がいちばん多いのは「"+st+"」の時期です（"+A.byStage[st]+"人）。"}));
+  var known={};Object.keys(A.byReason).forEach(function(k){if(R[k])known[k]=A.byReason[k];});
+  var rs=top(known);if(rs)ul.append(el("li",{text:"いちばん多い理由は「"+R[rs]+"」です（"+known[rs]+"人）。"}));
+  if(A.byReason.unknown)ul.append(el("li",{text:"理由が記録されていない人が"+A.byReason.unknown+"人います。退職の記録から理由を入れると、分析が正確になります。"}));
+  var mx=Math.max.apply(null,A.calMonths);if(mx>=2)ul.append(el("li",{text:(A.calMonths.indexOf(mx)+1)+"月に辞める人が多くなっています（"+mx+"人）。"}));
+  var C=A.compare;
+  if(C.left.n&&C.stayed.n){
+    ul.append(el("li",{text:"辞めた人の"+pctTxt(C.left.tsurai/C.left.n)+"に「つらい」が出ていました（続いている人は"+pctTxt(C.stayed.tsurai/C.stayed.n)+"）。"}));
+    if(C.left.reviewRate!==null&&C.stayed.reviewRate!==null)ul.append(el("li",{text:"振り返り面談の実施率は、辞めた人が"+pctTxt(C.left.reviewRate)+"、続いている人が"+pctTxt(C.stayed.reviewRate)+"です。"}));
+  }
+  box.append(ul);
+  if(A.leftTotal<5)box.append(el("p",{class:"hint",text:"※まだ人数が少ないので、傾向は参考程度に見てください。"}));
+  return box;
 }
 
 /* ---------- 園長：項目の編集（ドラッグ） ---------- */
