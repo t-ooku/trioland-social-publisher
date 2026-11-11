@@ -54,3 +54,9 @@ GSC：3 URLプレフィックス、`include_fresh_data=false`。最新確定11/0
 ## 公開禁止
 
 Secret、管理コード、WebhookのURL、氏名、メール、電話、学校名、子ども・相談本文はこの公開GitHubに入れない。Codex/Coworkの受領を推測しない。
+
+## 5. 2026-11-11 朝：GitHubデータ更新・CIの検証結果（追記）
+
+- `dashboard/latest.json` の更新コミット：[77aa5c1](https://github.com/t-ooku/trioland-social-publisher/commit/77aa5c156e3d292bbbfa922325adcffb64dad9dd)。後続のGitHub再取得で `updatedAt=2026-11-11`、`ga4Date=2026-11-10`、`gscDate=2026-11-08`、GA4日別8行・PDCA7施策を確認。実問い合わせはnullのまま。
+- [KPI dashboard safety and publish check #42931490216](https://github.com/t-ooku/trioland-social-publisher/actions/runs/42931490216) **success**。構造・公開禁止データ検査と未ログインのKPIルート保護がPASS。これはログイン後の画面表示、GitHub OAuth 404解消、Make配送の本番稼働や実問い合わせ増を確認するものではない。
+- [Issue #15](https://github.com/t-ooku/trioland-social-publisher/issues/15) に今回のKPI/未完了課題を匿名で追記済み。Cowork指示書の受領はなお未確認。
