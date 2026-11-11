@@ -6,7 +6,7 @@ import defaultChecklist from "../content/step_checklist.json";
 import { STEP_HTML, STEP_CSS, STEP_JS } from "./step_ui.js";
 import {
   NURSERIES, isDate, todayJst, dayNumber, mondayOf, computeStages, moodAlert, retentionStats,
-  validateChecklist, cleanNote, cleanName,
+  validateChecklist, cleanNote, cleanName, LEFT_REASONS, learnerSignals, turnoverAnalytics,
 } from "./step_logic.js";
 
 const MAX_BODY = 64 * 1024;
@@ -16,7 +16,8 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS learners (
     id TEXT PRIMARY KEY, nursery TEXT NOT NULL, display_name TEXT NOT NULL, employment TEXT NOT NULL,
     start_date TEXT NOT NULL, mentor_name TEXT, checklist_version INTEGER NOT NULL,
-    status TEXT NOT NULL DEFAULT 'active', left_date TEXT, left_stage TEXT, created_at TEXT NOT NULL)`,
+    status TEXT NOT NULL DEFAULT 'active', left_date TEXT, left_stage TEXT, created_at TEXT NOT NULL,
+    left_reason TEXT, left_note TEXT)`,
   `CREATE TABLE IF NOT EXISTS tokens (
     token_hash TEXT PRIMARY KEY, kind TEXT NOT NULL, learner_id TEXT, nursery TEXT,
     revoked_at TEXT, created_at TEXT NOT NULL)`,
@@ -88,6 +89,17 @@ async function ensureSchema(env) {
   if (!env.STEP_DB) throw stepError("STEP_DB_NOT_CONFIGURED", 503);
   if (schemaReady) return;
   await env.STEP_DB.batch(SCHEMA.map((sql) => env.STEP_DB.prepare(sql)));
+  // 2026-11-11 追加の列（退職理由）。既存の D1 には列を足す（migrations/0002_left_reason.sql と同じ）。
+  const cols = (await env.STEP_DB.prepare("PRAGMA table_info(learners)").all()).results.map((c) => c.name);
+  for (const col of ["left_reason", "left_note"]) {
+    if (!cols.includes(col)) {
+      try {
+        await env.STEP_DB.prepare(`ALTER TABLE learners ADD COLUMN ${col} TEXT`).run();
+      } catch (error) {
+        if (!/duplicate column/i.test(String(error?.message))) throw error; // 別のリクエストが先に足した
+      }
+    }
+  }
   const row = await env.STEP_DB.prepare("SELECT MAX(version) AS v FROM checklists").first();
   if (!row || row.v === null) {
     const clean = validateChecklist(defaultChecklist);
@@ -161,6 +173,7 @@ async function learnerView(env, learner, today) {
       id: learner.id, display_name: learner.display_name, nursery: learner.nursery, nursery_name: NURSERIES[learner.nursery] || "",
       employment: learner.employment, start_date: learner.start_date, mentor_name: learner.mentor_name || "",
       status: learner.status, left_date: learner.left_date, checklist_version: checklist.version, latest_version: latest.v,
+      left_reason: learner.left_reason || null, left_note: learner.left_note || "",
     },
     dayNo: dayNumber(learner.start_date, today),
     view,
@@ -169,12 +182,14 @@ async function learnerView(env, learner, today) {
     thisWeek,
     myMood: (moodRows.find((m) => m.week === thisWeek) || {}).level || null,
     moodAlert: moodAlert(moodRows, today),
+    signals: learnerSignals(checklist, checks, reviews, moodRows, learner, today),
   };
 }
 
 async function nurseryOverview(env, nursery, today) {
   const rows = (await env.STEP_DB.prepare("SELECT * FROM learners WHERE nursery = ? ORDER BY CASE status WHEN 'active' THEN 0 WHEN 'completed' THEN 1 ELSE 2 END, start_date DESC").bind(nursery).all()).results;
   const learners = [];
+  const people = [];
   for (const l of rows) {
     const v = await learnerView(env, l, today);
     learners.push({
@@ -182,12 +197,13 @@ async function nurseryOverview(env, nursery, today) {
       left_date: l.left_date, left_stage: l.left_stage, dayNo: v.dayNo,
       current_title: v.view.current ? v.view.current.title : "", ok: v.view.ok, total: v.view.total,
       late: v.view.stages.some((s) => s.late && s.state !== "done"), needsReview: v.view.stages.some((s) => s.needsReview),
-      moodAlert: v.moodAlert, lastMood: v.moods[0] ? v.moods[0].level : null,
+      moodAlert: v.moodAlert, lastMood: v.moods[0] ? v.moods[0].level : null, left_reason: l.left_reason || null,
     });
+    people.push({ ...l, signals: v.signals });
   }
   const leftStages = {};
   for (const l of rows) if (l.status === "left") leftStages[l.left_stage || "不明"] = (leftStages[l.left_stage || "不明"] || 0) + 1;
-  return { learners, stats: { ...retentionStats(rows, today), leftStages } };
+  return { learners, stats: { ...retentionStats(rows, today), leftStages }, analytics: turnoverAnalytics(people, today, 12, (await latestChecklist(env)).stages), leftReasons: LEFT_REASONS };
 }
 
 async function currentStageTitle(env, learner, today) {
@@ -336,14 +352,27 @@ async function handleStepApi(request, env, url) {
         const leftDate = body.left_date ? String(body.left_date) : today;
         if (!isDate(leftDate)) throw stepError("BAD_DATE", 400);
         next.left_date = leftDate;
-        next.left_stage = l.status === "left" && l.left_stage ? l.left_stage : await currentStageTitle(env, l, today);
+        next.left_stage = l.status === "left" && l.left_stage ? l.left_stage : await currentStageTitle(env, l, leftDate < today ? leftDate : today);
       } else {
         next.left_date = null;
         next.left_stage = null;
+        next.left_reason = null;
+        next.left_note = null;
       }
     }
-    await env.STEP_DB.prepare("UPDATE learners SET display_name = ?, mentor_name = ?, start_date = ?, employment = ?, status = ?, left_date = ?, left_stage = ? WHERE id = ?")
-      .bind(next.display_name, next.mentor_name, next.start_date, next.employment, next.status, next.left_date, next.left_stage, l.id).run();
+    if (next.status === "left") {
+      if (body.left_reason !== undefined) {
+        if (body.left_reason !== null && !LEFT_REASONS[body.left_reason]) throw stepError("BAD_REASON", 400);
+        next.left_reason = body.left_reason;
+      }
+      if (body.left_note !== undefined) next.left_note = cleanNote(body.left_note).slice(0, 100);
+      if (body.status === undefined && body.left_date !== undefined) {
+        if (!isDate(body.left_date)) throw stepError("BAD_DATE", 400);
+        next.left_date = body.left_date;
+      }
+    }
+    await env.STEP_DB.prepare("UPDATE learners SET display_name = ?, mentor_name = ?, start_date = ?, employment = ?, status = ?, left_date = ?, left_stage = ?, left_reason = ?, left_note = ? WHERE id = ?")
+      .bind(next.display_name, next.mentor_name, next.start_date, next.employment, next.status, next.left_date, next.left_stage, next.left_reason || null, next.left_note || null, l.id).run();
     if (next.status !== "active") {
       await env.STEP_DB.prepare("UPDATE tokens SET revoked_at = ? WHERE learner_id = ? AND revoked_at IS NULL").bind(nowIso(), l.id).run();
     }
