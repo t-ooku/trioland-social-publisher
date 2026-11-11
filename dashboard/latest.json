@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-10",
-  "ga4Date": "2026-11-09",
+  "updatedAt": "2026-11-11",
+  "ga4Date": "2026-11-10",
   "gscDate": "2026-11-08",
   "ga4Timezone": "Asia/Tokyo",
   "gscTimezone": "America/Los_Angeles",
@@ -165,27 +165,48 @@
         7,
         13
       ]
+    },
+    {
+      "date": "2026-11-10",
+      "corp": [
+        15,
+        15,
+        18,
+        32
+      ],
+      "hoiku": [
+        5,
+        4,
+        5,
+        11
+      ],
+      "after": [
+        3,
+        1,
+        3,
+        3
+      ]
     }
   ],
   "ga4Seven": {
-    "period": "2026-11-03〜11-09（11/3部分日）",
+    "period": "2026-11-04〜11-10（放デイ11/6・7日別取得行なし）",
     "corp": [
-      156,
-      155,
-      190,
-      332
+      162,
+      160,
+      197,
+      352
     ],
     "hoiku": [
-      39,
-      27,
-      44,
-      63
+      40,
+      29,
+      43,
+      68
     ],
     "after": [
-      13,
-      6,
+      14,
+      7,
       19,
-      33
+      34
     ]
   },
   "gscSeries": [
@@ -335,23 +356,23 @@
     }
   ],
   "events": {
-    "date": "2026-11-09",
+    "date": "2026-11-10",
     "corp": [
-      13,
-      5,
-      4,
+      null,
+      1,
+      1,
       null
     ],
     "hoiku": [
-      2,
-      null,
-      null,
+      3,
+      1,
+      1,
       null
     ],
     "after": [
-      1,
-      5,
-      5,
+      null,
+      null,
+      null,
       null
     ]
   },
@@ -366,19 +387,31 @@
   },
   "make": {
     "status": "unknown",
-    "detail": "Make監視ロジック6ケースPASS。読取専用APIトークン未設定のため現在稼働は未確認。",
+    "detail": "11/9の滞留11件復旧は記録済み。11/11のMakeライブ稼働・現在キューは読取API未設定で未取得。CI成功≠配送正常。",
     "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/42723829749"
   },
   "pdca": [
+    {
+      "id": "KPI-AUTH-404",
+      "site": "all",
+      "priority": "P0",
+      "stage": "Plan",
+      "status": "原因調査・修正未確認",
+      "title": "管理KPIのGitHubログイン404",
+      "detail": "11/11ユーザーのiPhone実画面でgithub.comの404を確認。原因確定・本番修正・認証後の閲覧は未確認。",
+      "next": "CodexがOAuthアプリ設定・redirect・ログイン後のKPI復帰を診断し、実機確認",
+      "owner": "Codex",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-11-codex-kpi-github-login-404.md"
+    },
     {
       "id": "MAIL-P0",
       "site": "all",
       "priority": "P0",
       "stage": "Check",
-      "status": "未完了",
+      "status": "ライブ未確認・監視未完成",
       "title": "問い合わせメールの配送を監視",
-      "detail": "11/1〜9に通知11件が滞留。11/9復旧済みだが最新のライブ状態は未取得。",
-      "next": "Make read-only APIの稼働・キューを確認",
+      "detail": "11/1〜9の滞留11件は11/9に配送復旧したが、11/11のMakeライブ稼働・キューは未取得。GA4送信成功と通知到達を混同しない。",
+      "next": "Make既存の正規管理画面・read-only APIで稼働とキュー・直近正常配送を確認",
       "owner": "Codex / Cowork",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-10-inquiry-pdca.md"
     },
@@ -411,9 +444,9 @@
       "site": "corp",
       "priority": "P1",
       "stage": "Plan",
-      "status": "要確認",
+      "status": "現行表示確認・業務要件確認待ち",
       "title": "個人相談時の「御社名」必須欄",
-      "detail": "見学・利用相談での入力負担を減らせる可能性。受付仕様が未確認。",
+      "detail": "会社の公開問い合わせフォームで『御社名（必須）』が実際に表示される。見学希望者が使えるかは運用確認が必要。",
       "next": "WordPress CF7と受信要件を照合して改善案を決定",
       "owner": "Cowork",
       "link": "https://github.com/t-ooku/trioland-social-publisher/issues/15"
@@ -429,9 +462,33 @@
       "next": "11/16・11/23にGSCで比較",
       "owner": "Codex",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-09-indexing-notifications-pdca.md"
+    },
+    {
+      "id": "CORP-KOMAZAWA-CV",
+      "site": "corp",
+      "priority": "P1",
+      "stage": "Plan",
+      "status": "UX監査依頼保存・未着手",
+      "title": "駒沢大学園の検索流入を見学相談へ",
+      "detail": "11/2〜8のGSCで該当施設ページ212表示24クリック、11/10 GA4で11PV。個人見学相談の導線を確認し、職員確認後に1施策を選ぶ。",
+      "next": "会社WordPressの施設ページ→見学申込CTAと御社名必須の受付条件を確認",
+      "owner": "Cowork（UX）／Codex（実装検証）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-11-cowork-corporate-inquiry-ux.md"
     }
   ],
   "history": [
+    {
+      "date": "11/11",
+      "title": "3サイトKPIとPDCAデータを更新",
+      "result": "GA4 11/10実測、GSC 11/08確定、実問い合わせ未照合、GitHubログイン404を明示。サイト本番改修はなし。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-11-inquiry-pdca.md"
+    },
+    {
+      "date": "11/11",
+      "title": "駒沢大学園の見学相談導線を優先監査に追加",
+      "result": "GSC 24クリック／212表示、GA4 11PVを根拠にUX案を指示書化。Cowork受領・実装未確認。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-11-cowork-corporate-inquiry-ux.md"
+    },
     {
       "date": "11/10",
       "title": "Makeの読み取り監視コードを追加",
@@ -458,11 +515,13 @@
     }
   ],
   "warnings": [
-    "実問い合わせはGA4送信成功イベントと未照合。11/9のイベントを真正な受付件数にしません。",
-    "11/1〜9の滞留復旧6件は11/9単独の新規数ではありません。",
-    "GA4の11/3は部分日、11/1〜2は計測欠測。7日集計は参考値です。",
-    "GSCは米国太平洋時間。GA4のJST日付と直接比較しません。",
-    "3ホストのアクティブユーザーを合算して全体ユニークとは呼びません。",
-    "アフタースクール11/6・7はGA4日別取得行なし。0人に置き換えません。"
+    "11/10：会社HP・保育HPのGA4送信成功各1回は実受付・メール配送との照合前。真正な外部問い合わせは未取得。",
+    "11/11：KPI管理画面GitHubログインはiPhoneで404報告あり。Codexの修正・実機復旧は未確認。",
+    "Make：11/09の滞留通知11件の配送復旧を確認した記録はあるが、今朝のライブ稼働・キューは未取得。",
+    "GA4 11/03は計測開始部分日、11/01〜02欠測。放デイ11/06・07の日別行なしは0とは補完しない。",
+    "GA4 11/10の会社HP流入元別sessions合計21はホスト別18と不一致。保育も6対5。流入元の割合は未確定。",
+    "GSC最新確定11/08 PT。11/09・10は速報・途中日のため確定値と合算しない。",
+    "11/09復旧の外部実問い合わせ6件（保育5・放デイ1）は11/09単独の新規数ではない。",
+    "3サイト横断アクティブユーザーは重複不明で合算不可。フォームの成功イベントも契約・入園・採用実績ではない。"
   ]
 }
