@@ -154,4 +154,50 @@ for (const [path, type, magic] of [["/step/logo.webp", "image/webp", "RIFF"], ["
 }
 assert.equal(assetBody("/step/nothing.png"), null);
 
+// ログイン・設定・自己研修の入力チェック
+const { cleanLoginId, passwordProblem, cleanReasons, parseStudyUrl } = await import("../src/step_logic.js");
+assert.equal(cleanLoginId(" Komazawa-001 "), "komazawa-001");
+assert.equal(cleanLoginId("ab"), "");
+assert.equal(cleanLoginId("-abc"), "");
+assert.equal(cleanLoginId("a b c"), "");
+assert.equal(passwordProblem("abc12", "x"), "PW_TOO_SHORT");
+assert.equal(passwordProblem("abcdefgh", "x"), "PW_NEEDS_MIX");
+assert.equal(passwordProblem("12345678", "x"), "PW_NEEDS_MIX");
+assert.equal(passwordProblem("komazawa-0019", "komazawa-001"), "PW_HAS_ID");
+assert.equal(passwordProblem("Yamada2026z", "komazawa-001"), "");
+const rs = cleanReasons([{ key: "workload", label: "業務量" }, { label: "新しい理由" }, { label: "もう1つ", active: false }]);
+assert.deepEqual(rs.map((r) => r.key), ["workload", "c1", "c2"]);
+assert.equal(rs[2].active, false);
+assert.throws(() => cleanReasons([]));
+assert.throws(() => cleanReasons([{ key: "a", label: "x" }, { key: "a", label: "y" }]));
+assert.throws(() => cleanReasons([{ key: "a", label: "" }]));
+assert.equal(parseStudyUrl("https://youtu.be/dQw4w9WgXcQ?t=10").videoId, "dQw4w9WgXcQ");
+assert.equal(parseStudyUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=x").videoId, "dQw4w9WgXcQ");
+assert.equal(parseStudyUrl("https://m.youtube.com/shorts/abcDEF12345").videoId, "abcDEF12345");
+assert.equal(parseStudyUrl("https://www.cfa.go.jp/policies/hoiku/").videoId, "");
+assert.equal(parseStudyUrl("javascript:alert(1)"), null);
+assert.equal(parseStudyUrl("https://user:pw@example.com/"), null);
+assert.equal(parseStudyUrl("not a url"), null);
+
+// パスワードのハッシュと仮パスワード
+const auth = await import("../src/step_auth.js");
+const h = await auth.hashPassword("Yamada2026z", null, 1000);
+assert.equal(await auth.verifyPassword("Yamada2026z", { pw_hash: h.hash, pw_salt: h.salt, pw_iter: h.iterations }), true);
+assert.equal(await auth.verifyPassword("Yamada2026Z", { pw_hash: h.hash, pw_salt: h.salt, pw_iter: h.iterations }), false);
+for (let i = 0; i < 50; i += 1) {
+  const t = auth.tempPassword();
+  assert.match(t, /^[a-hjkmnp-z2-9]{10}$/);
+  assert.match(t, /[a-z]/);
+  assert.match(t, /[0-9]/);
+}
+assert.match(auth.sessionCookie("tok", 60), /^__Host-STEP_SESSION=tok; Path=\/; HttpOnly; Secure; SameSite=Lax; Max-Age=60$/);
+
+// Excel・Word の書き出し（zip として開けること）
+const ex = await import("../src/step_export.js");
+const clv = { version: 1, ...validateChecklist(checklist) };
+for (const bytes of [ex.checklistXlsx(clv), ex.checklistDocx(clv)]) {
+  assert.equal(String.fromCharCode(...bytes.slice(0, 2)), "PK");
+  assert.ok(bytes.length > 2000);
+}
+
 console.log("step tests passed");
