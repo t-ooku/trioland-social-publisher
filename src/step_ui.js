@@ -8,13 +8,16 @@ export const STEP_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
-<title>保育ステップアップ表</title>
-<link rel="stylesheet" href="/step/app.css">
-<script src="/step/app.js" defer></script>
+<meta name="theme-color" content="#FFF9F0">
+<title>トリオランド ステップアップ表</title>
+<link rel="icon" type="image/png" href="/step/icon.png">
+<link rel="apple-touch-icon" href="/step/icon.png">
+<link rel="stylesheet" href="/step/app.css?v=2">
+<script src="/step/app.js?v=2" defer></script>
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <div class="brand">保育ステップアップ表</div>
+  <div class="brand"><img src="/step/logo.webp" width="280" height="84" alt="トリオランド"><span class="app-name">ステップアップ表</span></div>
   <nav class="tabs" id="tabs" aria-label="画面の切り替え" hidden></nav>
 </div></header>
 <main class="wrap" id="app"><p class="loading">読み込み中…</p></main>
@@ -25,132 +28,217 @@ export const STEP_HTML = `<!doctype html>
 
 export const STEP_CSS = String.raw`
 :root{
-  --bg:#F4F7F6;--surface:#FFFFFF;--ink:#1C2B30;--muted:#5E7177;--line:#D7E3E1;
-  --brand:#1F8A85;--brand-ink:#FFFFFF;--brand-soft:#E3F2F0;
-  --accent:#F2A541;--accent-ink:#7A4A06;--accent-soft:#FDF0DD;
-  --late:#C7701F;--late-soft:#FCEBDD;--done:#2E9E6A;--done-soft:#E2F4EA;--idle:#B9C6C8;--danger:#C2452D;
-  --display:"Hiragino Maru Gothic ProN","Hiragino Maru Gothic Pro","M PLUS Rounded 1c","BIZ UDPGothic","Yu Gothic",sans-serif;
+  --bg:#FFF9F0;--surface:#FFFFFF;--ink:#3B3346;--muted:#6F6578;--line:#EFE3D3;
+  --blue:#84C5D9;--blue-d:#1F7A99;--blue-soft:#E4F3F8;
+  --yellow:#F0C26A;--yellow-d:#C99231;--yellow-soft:#FFF1D6;--yellow-ink:#6B4A0E;
+  --pink:#DA7499;--pink-d:#B8456B;--pink-soft:#FBE6EE;
+  --brand:var(--blue-d);--brand-ink:#FFFFFF;--brand-soft:var(--blue-soft);
+  --done:var(--yellow);--late:var(--pink-d);--late-soft:var(--pink-soft);--idle:#D9CFC2;--danger:#C0392B;
+  --display:"Hiragino Maru Gothic ProN","Hiragino Maru Gothic Pro","M PLUS Rounded 1c","Zen Maru Gothic","BIZ UDPGothic","Yu Gothic",sans-serif;
   --body:"Hiragino Sans","Hiragino Kaku Gothic ProN","BIZ UDPGothic","Yu Gothic","Meiryo",sans-serif;
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root{
-  --bg:#0F1A1C;--surface:#172427;--ink:#E6EFEE;--muted:#9AB0B3;--line:#2A3B3F;
-  --brand:#3FB0A9;--brand-ink:#08201F;--brand-soft:#1C3533;--accent:#F2B45E;--accent-ink:#F7D9A8;--accent-soft:#3A2E1C;
-  --late:#E9A05A;--late-soft:#3A2A1C;--done:#4CC08A;--done-soft:#17322A;--idle:#4A5C60;--danger:#F08A73;color-scheme:dark}}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;-webkit-text-size-adjust:100%}
+body{background-color:var(--bg);background-image:radial-gradient(circle at 12px 12px,rgba(132,197,217,.18) 3px,transparent 4px),radial-gradient(circle at 40px 36px,rgba(240,194,106,.20) 3px,transparent 4px),radial-gradient(circle at 64px 10px,rgba(218,116,153,.14) 3px,transparent 4px);background-size:76px 52px;color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65;-webkit-text-size-adjust:100%}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 [hidden]{display:none!important}
-.wrap{max-width:720px;margin:0 auto;padding:0 16px 56px}
-header.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;align-items:center;gap:10px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
-.brand{font-family:var(--display);font-weight:800;font-size:18px;margin-right:auto}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 64px}
+header.top{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.96);border-bottom:3px solid transparent;border-image:linear-gradient(90deg,var(--yellow) 0 33%,var(--blue) 33% 66%,var(--pink) 66% 100%) 1;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.top .wrap{display:flex;align-items:center;gap:8px 10px;padding-top:8px;padding-bottom:8px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:8px;margin-right:auto;min-width:0}
+.brand img{height:34px;width:auto;display:block}
+.app-name{font-family:var(--display);font-weight:800;font-size:13px;color:var(--pink-d);background:var(--pink-soft);padding:3px 10px;border-radius:999px;white-space:nowrap}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
-.tabs a{font-family:var(--display);font-weight:700;font-size:14px;text-decoration:none;color:var(--muted);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
-.tabs a[aria-current="page"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.tabs a{font-family:var(--display);font-weight:700;font-size:14px;text-decoration:none;color:var(--muted);padding:6px 12px;border-radius:999px;border:2px solid var(--line);background:var(--surface)}
+.tabs a[aria-current="page"]{background:var(--blue-d);color:#fff;border-color:var(--blue-d)}
 .loading{padding:24px 0;color:var(--muted)}
-.notice{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--accent-soft);font-size:14px}
-.notice.err{background:var(--late-soft);color:var(--ink)}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.notice{margin:12px 0 0;padding:10px 14px;border-radius:14px;background:var(--yellow-soft);font-size:14px;font-weight:600}
+.notice.err{background:var(--pink-soft)}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:16px;margin-top:14px;box-shadow:0 4px 0 rgba(59,51,70,.05)}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (max-width:460px){.grid2{grid-template-columns:1fr}}
-label.f{display:grid;gap:4px;font-size:13px;color:var(--muted);font-weight:600}
-input[type=text],input[type=date],input[type=number],select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
+label.f{display:grid;gap:4px;font-size:13px;color:var(--muted);font-weight:700}
+input[type=text],input[type=date],input[type=number],select,textarea{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 10px;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
 textarea{resize:vertical;min-height:52px}
-.btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px}
-.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
-.btn.warn{color:var(--danger);border-color:var(--danger)}
-.btn.small{padding:4px 10px;font-size:12px}
+.btn{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 16px;font-family:var(--display);font-weight:800;font-size:14px;box-shadow:0 3px 0 var(--line)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.btn.primary{background:var(--blue-d);border-color:var(--blue-d);color:#fff;box-shadow:0 3px 0 #145A72}
+.btn.warn{color:var(--danger);border-color:#F2C5BE;box-shadow:0 3px 0 #F2C5BE}
+.btn.small{padding:4px 12px;font-size:12px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .hint{font-size:12px;color:var(--muted);margin:6px 0 0}
 .muted{color:var(--muted)}
+h1.ttl{margin:0;font-family:var(--display);font-size:20px}
 h2.sec{font-family:var(--display);font-size:17px;margin:20px 0 0}
-.now-head{display:flex;gap:14px;align-items:center}
-.daybadge{flex:none;width:76px;height:76px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-content:center;text-align:center;font-family:var(--display);line-height:1.1}
-.daybadge b{font-size:26px;display:block}
-.daybadge small{font-size:11px}
-.now-text h1{margin:0;font-family:var(--display);font-size:19px}
-.now-text p{margin:2px 0 0;color:var(--muted);font-size:13px}
-.bar{height:10px;border-radius:999px;background:var(--brand-soft);overflow:hidden;margin-top:4px}
-.bar i{display:block;height:100%;background:var(--brand);border-radius:999px}
-.next h3{margin:12px 0 4px;font-size:13px;color:var(--muted)}
-.next ol{margin:0;padding-left:20px}
+/* ヒーロー */
+.hero{display:flex;gap:14px;align-items:center}
+.daybadge{flex:none;width:80px;height:80px;border-radius:26px;background:var(--blue);color:#fff;display:grid;place-content:center;text-align:center;font-family:var(--display);line-height:1.1;box-shadow:0 4px 0 #5FA6BC;transform:rotate(-4deg)}
+.daybadge b{font-size:28px;display:block;text-shadow:0 1px 0 rgba(0,0,0,.12)}
+.daybadge small{font-size:11px;font-weight:800}
+.hero-text{min-width:0}
+.hero-text h1{margin:0;font-family:var(--display);font-size:21px;line-height:1.3}
+.hero-text p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.role{display:inline-block;font-size:11px;font-weight:800;padding:1px 8px;border-radius:999px;background:var(--yellow-soft);color:var(--yellow-ink);margin-left:4px;vertical-align:2px}
+.buddy{display:flex;align-items:flex-end;gap:8px;margin-top:12px}
+.buddy img{width:58px;height:auto;flex:none}
+.bubble{position:relative;background:var(--yellow-soft);border-radius:16px;padding:8px 12px;font-family:var(--display);font-weight:800;font-size:14px;line-height:1.45}
+.bubble::before{content:"";position:absolute;left:-8px;bottom:12px;border:8px solid transparent;border-right-color:var(--yellow-soft);border-left:0}
+.stars{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-top:14px}
+.stars b{font-family:var(--display);font-size:16px}
+.bar{height:14px;border-radius:999px;background:#F6EEE3;overflow:hidden;margin-top:4px;box-shadow:inset 0 2px 0 rgba(0,0,0,.04)}
+.bar i{display:block;height:100%;border-radius:999px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 10px,#F5CF85 10px 20px);min-width:14px}
+.next{margin-top:12px;background:var(--blue-soft);border-radius:16px;padding:10px 12px}
+.next h3{margin:0 0 6px;font-size:13px;font-family:var(--display);color:var(--blue-d)}
+.next ol{margin:0;padding:0;list-style:none;counter-reset:n;display:grid;gap:4px}
+.next li{counter-increment:n;display:flex;gap:8px;font-size:14px}
+.next li::before{content:counter(n);flex:none;width:22px;height:22px;border-radius:50%;background:#fff;color:var(--blue-d);font-weight:800;font-size:12px;display:grid;place-content:center;margin-top:1px}
+/* 未来カード（3ヶ月・6ヶ月のすがた） */
+.future h2{margin:0;font-family:var(--display);font-size:17px}
+.track{position:relative;margin:58px 6px 4px;height:62px}
+.track .rail{position:absolute;left:0;right:0;top:27px;height:8px;border-radius:999px;background:#F2E8DA}
+.track .rail i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,var(--yellow),var(--blue),var(--pink))}
+.track .pt{position:absolute;top:0;transform:translateX(-50%);display:grid;justify-items:center;width:84px;text-align:center}
+.track .pt .ic{width:44px;height:44px;border-radius:50%;background:#fff;border:3px solid var(--line);display:grid;place-content:center;font-size:22px;margin-top:9px}
+.track .pt.reached .ic{border-color:var(--yellow);background:var(--yellow-soft)}
+.track .pt .lb{font-size:11px;font-weight:800;color:var(--muted);margin-top:2px;white-space:nowrap}
+.track .me{position:absolute;bottom:calc(100% - 22px);transform:translateX(-50%);z-index:2;display:grid;justify-items:center}
+.track .me::after{content:"";width:0;height:0;border:6px solid transparent;border-top-color:var(--pink-d);border-bottom:0}
+.track .me img{width:42px;height:auto;animation:hop 2.4s ease-in-out infinite;order:-1}
+.track .me span{font-size:11px;font-weight:800;color:#fff;background:var(--pink-d);border-radius:999px;padding:1px 8px;margin-top:-2px;white-space:nowrap}
+@keyframes hop{0%,70%,100%{transform:translateY(0)}80%{transform:translateY(-6px)}90%{transform:translateY(0)}}
+.goals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+@media (max-width:420px){.goals{grid-template-columns:1fr}}
+.goalcard{border-radius:18px;padding:12px;display:grid;gap:6px;align-content:start}
+.goalcard.g3{background:var(--blue-soft)}
+.goalcard.g6{background:var(--pink-soft)}
+.goalcard .gh{display:flex;align-items:center;gap:8px}
+.goalcard .gi{font-size:30px;line-height:1}
+.goalcard .gt{font-family:var(--display);font-weight:800;font-size:16px;line-height:1.25}
+.goalcard .gt small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+.goalcard .left{font-family:var(--display);font-weight:800;font-size:13px}
+.goalcard.g3 .left{color:var(--blue-d)}
+.goalcard.g6 .left{color:var(--pink-d)}
+.goalcard ul{margin:0;padding:0;list-style:none;display:grid;gap:3px;font-size:13px}
+.goalcard li{display:flex;gap:6px}
+.goalcard li::before{content:"✿";flex:none;color:var(--yellow-d)}
+.goalcard li.ok::before{content:"★";color:var(--yellow-d)}
+.gauge{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:700}
+.gauge .bar{flex:1;height:10px;margin:0}
+.pace{display:inline-block;margin-top:12px;font-family:var(--display);font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px}
+.pace.good{background:var(--yellow-soft);color:var(--yellow-ink)}
+.pace.slow{background:var(--pink-soft);color:var(--pink-d)}
+/* 気分 */
 .mood{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.mood button{flex:1 1 90px;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 6px;font-weight:700}
-.mood button[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
-.alert{border-left:6px solid var(--late);background:var(--late-soft)}
-.path{position:relative;margin:24px 0 0;padding:0;list-style:none}
-.path::before{content:"";position:absolute;left:50%;top:20px;bottom:30px;width:6px;margin-left:-3px;background:repeating-linear-gradient(to bottom,var(--line) 0 10px,transparent 10px 18px)}
-.stage{position:relative;display:grid;justify-items:center;margin-bottom:22px}
-.node{position:relative;width:84px;height:84px;border-radius:50%;border:none;background:var(--surface);display:grid;place-content:center;font-family:var(--display);font-weight:800;font-size:15px;color:var(--ink);box-shadow:0 5px 0 var(--line);text-align:center;line-height:1.1}
-.node small{display:block;font-size:11px;color:var(--muted)}
-.stage.done .node{background:var(--done);color:#fff;box-shadow:0 5px 0 #1f7a50}
-.stage.current .node{background:var(--brand);color:var(--brand-ink);box-shadow:0 5px 0 #146a66}
-.stage.late .node{background:var(--late);color:#fff;box-shadow:0 5px 0 #8f4f15}
-.stage.done .node small,.stage.current .node small,.stage.late .node small{color:inherit;opacity:.85}
-.stage.current .node::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:3px solid var(--brand);opacity:.5;animation:pulse 1.8s ease-out infinite}
-@keyframes pulse{0%{transform:scale(.92);opacity:.6}100%{transform:scale(1.12);opacity:0}}
-@media (prefers-reduced-motion:reduce){.stage.current .node::after{animation:none;opacity:.4}}
-.cap{margin-top:10px;text-align:center;font-size:13px;color:var(--muted)}
-.cap b{color:var(--ink);font-size:14px}
-.chip{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;margin-left:4px}
-.chip.late{background:var(--late-soft);color:var(--late)}
-.chip.done{background:var(--done-soft);color:var(--done)}
-.chip.ms{background:var(--accent-soft);color:var(--accent-ink)}
-.chip.rev{background:var(--brand-soft);color:var(--brand)}
-.panel{width:100%;margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;z-index:1}
+.mood button{flex:1 1 90px;border:2px solid var(--line);background:var(--surface);border-radius:18px;padding:8px 6px;font-family:var(--display);font-weight:800;font-size:13px;display:grid;justify-items:center;gap:2px}
+.mood button .em{font-size:28px;line-height:1.1}
+.mood button[aria-pressed="true"]{border-color:var(--blue-d);background:var(--blue-soft);transform:scale(1.04)}
+.mood button.m3[aria-pressed="true"]{border-color:var(--pink-d);background:var(--pink-soft)}
+.alert{border-color:var(--pink);background:var(--pink-soft)}
+/* すごろくの道 */
+.path{position:relative;margin:26px 0 0;padding:0;list-style:none}
+.stage{position:relative;display:grid;justify-items:center;margin-bottom:26px}
+.stage .spot{display:grid;justify-items:center;transform:translateX(var(--x,0))}
+.stage+.stage::before{content:"";position:absolute;top:-24px;left:50%;width:6px;height:20px;margin-left:-3px;background:radial-gradient(circle,var(--idle) 2.5px,transparent 3px) 0 0/6px 7px repeat-y;transform:translateX(var(--mx,0))}
+.node{position:relative;width:88px;height:88px;border-radius:50%;border:none;background:#fff;display:grid;place-content:center;font-family:var(--display);font-weight:800;font-size:16px;color:var(--ink);box-shadow:0 6px 0 var(--idle),inset 0 0 0 3px var(--line);text-align:center;line-height:1.15}
+.stage:nth-child(3n+2) .node{border-radius:28px}
+.stage:nth-child(3n) .node{border-radius:50% 50% 42% 42%/58% 58% 42% 42%}
+.node small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.node .badge{position:absolute;top:-6px;right:-6px;width:28px;height:28px;border-radius:50%;display:grid;place-content:center;font-size:15px;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.stage.done .node{background:var(--yellow);color:var(--yellow-ink);box-shadow:0 6px 0 var(--yellow-d)}
+.stage.done .node .badge{background:#fff;color:var(--yellow-d)}
+.stage.current .node{background:var(--blue-d);color:#fff;box-shadow:0 6px 0 #145A72;width:100px;height:100px;font-size:18px}
+.stage.late .node{background:var(--pink-d);color:#fff;box-shadow:0 6px 0 #8C2F4F}
+.stage.late .node .badge{background:#fff;color:var(--pink-d)}
+.stage.done .node small,.stage.current .node small,.stage.late .node small{color:inherit;opacity:.9}
+.stage.current .node::after{content:"";position:absolute;inset:-10px;border-radius:inherit;border:4px solid var(--blue);opacity:.6;animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.92);opacity:.7}100%{transform:scale(1.14);opacity:0}}
+.here{position:absolute;top:8px;display:grid;justify-items:center;width:76px}
+.here img{width:60px;height:auto;animation:hop 2.4s ease-in-out infinite}
+.here span{font-family:var(--display);font-size:11px;font-weight:800;background:var(--pink-d);color:#fff;border-radius:999px;padding:1px 8px;margin-top:-4px;white-space:nowrap}
+.cap{margin-top:12px;text-align:center;font-size:13px;color:var(--muted);max-width:230px}
+.cap b{color:var(--ink);font-size:14px;font-family:var(--display)}
+.chip{display:inline-block;font-size:11px;font-weight:800;padding:1px 8px;border-radius:999px;margin:0 2px}
+.chip.late{background:var(--pink-soft);color:var(--pink-d)}
+.chip.done{background:var(--yellow-soft);color:var(--yellow-ink)}
+.chip.ms{background:var(--blue-soft);color:var(--blue-d)}
+.chip.rev{background:var(--blue-soft);color:var(--blue-d)}
+.panel{width:100%;margin-top:14px;background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:12px;z-index:1}
 .items{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:6px}
-.item.ok{border-color:var(--done);background:var(--done-soft)}
+.item{border:2px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:6px;background:#fff}
+.item.ok{border-color:var(--yellow);background:var(--yellow-soft)}
 .item .t{font-weight:700;display:flex;gap:8px}
-.mark{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--idle);display:grid;place-content:center;font-size:13px;margin-top:1px}
-.item.ok .mark{background:var(--done);border-color:var(--done);color:#fff}
-.item details summary{font-size:12px;color:var(--brand);cursor:pointer}
+.mark{flex:none;width:26px;height:26px;border-radius:50%;border:2px dashed var(--idle);display:grid;place-content:center;font-size:15px;margin-top:-1px;position:relative}
+.item.self .mark{border:2px solid var(--blue);color:var(--blue-d)}
+.item.ok .mark{background:var(--yellow);border:none;color:#fff;text-shadow:0 1px 0 var(--yellow-d)}
+.mark.pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.3) rotate(-30deg)}100%{transform:scale(1) rotate(0)}}
+.mark.pop::after{content:"";position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,var(--pink) 2px,transparent 3px) 0 0/10px 10px,radial-gradient(circle,var(--blue) 2px,transparent 3px) 5px 5px/10px 10px;opacity:0;animation:burst .7s ease-out}
+@keyframes burst{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
+.item details summary{font-size:12px;color:var(--blue-d);cursor:pointer;font-weight:700}
 .item details p{margin:4px 0 0;font-size:13px;color:var(--muted)}
 .acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.tog{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--muted)}
-.tog[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
-.tog.m[aria-pressed="true"]{background:var(--done);border-color:var(--done);color:#fff}
+.tog{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800;color:var(--muted);font-family:var(--display)}
+.tog[aria-pressed="true"]{background:var(--blue-d);border-color:var(--blue-d);color:#fff}
+.tog[aria-pressed="true"]::before{content:"✓ "}
+.tog.m[aria-pressed="true"]{background:var(--yellow);border-color:var(--yellow);color:var(--yellow-ink)}
+.tog.m[aria-pressed="true"]::before{content:"★ "}
 .when{font-size:11px;color:var(--muted)}
-.review{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;display:grid;gap:8px}
-.goal{display:grid;justify-items:center;gap:6px}
-.flag{background:var(--accent);color:#3B2604;font-family:var(--display);font-weight:800;font-size:18px;padding:12px 22px;border-radius:14px;box-shadow:0 5px 0 #c9852f}
-.list{display:grid;gap:8px;margin-top:12px}
-.lrow{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
-.lrow.flagged{border-left:6px solid var(--late)}
-.lrow .nm{font-weight:700}
+.review{margin-top:12px;border-top:2px dashed var(--line);padding-top:12px;display:grid;gap:8px}
+.review>b{font-family:var(--display)}
+.goal{display:grid;justify-items:center;gap:6px;margin-top:4px}
+.goal img{width:84px;height:auto}
+.flag{background:linear-gradient(90deg,var(--yellow),#F5CF85);color:var(--yellow-ink);font-family:var(--display);font-weight:800;font-size:19px;padding:12px 24px;border-radius:18px;box-shadow:0 5px 0 var(--yellow-d)}
+/* 園長：一覧 */
+.list{display:grid;gap:10px;margin-top:12px}
+.lrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;width:100%;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:12px;text-decoration:none;color:inherit;box-shadow:0 4px 0 rgba(59,51,70,.05)}
+.lrow.flagged{border-color:var(--pink)}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-content:center;font-family:var(--display);font-weight:800;font-size:18px;color:#fff}
+.avatar.c0{background:var(--yellow);color:var(--yellow-ink)}
+.avatar.c1{background:var(--blue-d);border-radius:14px}
+.avatar.c2{background:var(--pink-d);border-radius:50% 50% 40% 40%/60% 60% 40% 40%}
+.lrow .nm{font-weight:800;font-family:var(--display)}
 .lrow .meta{font-size:12px;color:var(--muted)}
+.mini{position:relative;height:32px;margin-top:6px}
+.mini .rail{position:absolute;left:0;right:0;top:14px;height:5px;border-radius:999px;background:#F2E8DA}
+.mini .rail i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,var(--yellow),var(--blue),var(--pink))}
+.mini .f{position:absolute;top:0;transform:translateX(-50%);font-size:11px;line-height:1;display:grid;justify-items:center;row-gap:9px}
+.mini .f b{display:block;font-size:9px;color:var(--muted);white-space:nowrap}
+.mini .dot{position:absolute;top:9px;z-index:1;width:14px;height:14px;border-radius:50%;background:var(--pink-d);border:2px solid #fff;transform:translateX(-50%);box-shadow:0 1px 2px rgba(0,0,0,.2)}
 .links{display:grid;gap:12px;grid-template-columns:1fr 1fr}
 @media (max-width:520px){.links{grid-template-columns:1fr}}
-.linkbox{border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:6px;justify-items:start}
+.linkbox{border:2px solid var(--line);border-radius:16px;padding:10px;display:grid;gap:6px;justify-items:start}
 .linkbox code{font-size:11px;word-break:break-all}
 .ed-stage .ed-head{display:grid;grid-template-columns:1fr 96px;gap:8px}
 .ed-stage .ed-head .theme{grid-column:1/-1}
 .ed-items{list-style:none;margin:12px 0 8px;padding:0;display:grid;gap:8px;min-height:40px}
-.ed-items:empty::before{content:"ここに項目をドラッグ";display:block;padding:8px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed var(--line);border-radius:10px}
-.ed-item{display:grid;grid-template-columns:38px 1fr 34px;gap:8px;align-items:start;border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--surface)}
-.ed-item.dragging{opacity:.55;border-style:dashed;border-color:var(--brand)}
-.handle{width:38px;height:38px;border-radius:8px;border:1px solid var(--line);background:var(--bg);display:grid;place-content:center;cursor:grab;touch-action:none;font-size:17px;color:var(--muted);user-select:none;-webkit-user-select:none}
+.ed-items:empty::before{content:"ここに項目をドラッグ";display:block;padding:8px;text-align:center;color:var(--muted);font-size:13px;border:2px dashed var(--line);border-radius:12px}
+.ed-item{display:grid;grid-template-columns:38px 1fr 34px;gap:8px;align-items:start;border:2px solid var(--line);border-radius:16px;padding:8px;background:var(--surface)}
+.ed-item.dragging{opacity:.6;border-style:dashed;border-color:var(--blue-d);background:var(--blue-soft)}
+.handle{width:38px;height:38px;border-radius:10px;border:2px solid var(--line);background:var(--yellow-soft);display:grid;place-content:center;cursor:grab;touch-action:none;font-size:17px;color:var(--yellow-ink);user-select:none;-webkit-user-select:none}
 .ed-item .fields{display:grid;gap:6px}
 .ed-item .side{display:grid;gap:4px}
-.ed-item .side button{width:34px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:13px;line-height:1}
+.ed-item .side button{width:34px;height:30px;border-radius:10px;border:2px solid var(--line);background:var(--surface);font-size:13px;line-height:1}
 .ed-item .side .del{color:var(--danger)}
-.savebar{position:sticky;bottom:12px;margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.savebar{position:sticky;bottom:12px;margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
 .savebar .st{margin-right:auto;font-size:13px;color:var(--muted)}
-.savebar .st.dirty{color:var(--late);font-weight:700}
+.savebar .st.dirty{color:var(--pink-d);font-weight:800}
 table.stats{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
-table.stats td,table.stats th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+table.stats td,table.stats th{border-bottom:2px solid var(--line);padding:8px 4px;text-align:left}
+@media (prefers-reduced-motion:reduce){.stage.current .node::after,.here img,.track .me img,.mark.pop,.mark.pop::after{animation:none}}
 #print{display:none}
 @media print{
   @page{size:A4;margin:12mm}
   body{background:#fff;color:#000;font-size:10.5pt}
   header.top,#app{display:none!important}
   #print{display:block}
-  .pr h1{font-size:15pt;margin:0 0 4px}
+  .pr .ph{display:flex;align-items:center;gap:10px;margin:0 0 4px}
+  .pr .ph img{height:28px;width:auto}
+  .pr h1{font-size:15pt;margin:0}
   .pr .meta{font-size:9.5pt;margin:0 0 8px}
   .pr .st{break-inside:avoid;border:1px solid #888;border-radius:6px;padding:6px 8px;margin:0 0 6px}
   .pr .st h2{font-size:11pt;margin:0 0 4px}
@@ -200,7 +288,7 @@ function render(){
   if(me.role==="nursery"){
     var r=route();
     tabs.hidden=false;
-    var tabDefs=[["list","新人の一覧"],["edit","項目の編集"],["stats","集計"]];
+    var tabDefs=[["list","👥 新人"],["edit","✏️ 項目の編集"],["stats","📊 集計"]];
     var cur=/^l-/.test(r)?"list":(["list","edit","stats"].indexOf(r)>=0?r:"list");
     tabs.replaceChildren.apply(tabs,tabDefs.map(function(t){return el("a",{href:"#"+t[0],"aria-current":t[0]===cur?"page":null,text:t[1]});}));
     if(/^l-/.test(r)){nodes=nodes.concat(S.detail?renderLearner(S.detail,"nursery"):[el("p",{class:"loading",text:"読み込み中…"})]);}
@@ -212,10 +300,25 @@ function render(){
     nodes=nodes.concat(renderLearner(me,me.role));
   }
   app.replaceChildren.apply(app,nodes);
+  S.pop=null;
   if(S.afterRender){var f=S.afterRender;S.afterRender=null;f();}
 }
 
 /* ---------- 新人の道（本人・指導役・園長の詳細） ---------- */
+function dd(a,b){if(!a||!b)return 0;var p=a.split("-"),q=b.split("-");return Math.round((Date.UTC(+q[0],q[1]-1,+q[2])-Date.UTC(+p[0],p[1]-1,+p[2]))/864e5);}
+function mascot(cls){return el("img",{src:"/step/mascot.webp",alt:"",width:"153",height:"134",class:cls||null,"aria-hidden":"true"});}
+function pct(p){p=Math.max(0,Math.min(1,p));return "calc(28px + (100% - 56px) * "+p.toFixed(3)+")";}
+function buddyMsg(d,role){
+  var L=d.learner,v=d.view,c=v.current;
+  if(L.status==="completed")return "クラス担任、おめでとう！ 🎉";
+  if(L.status==="left")return "おつかれさまでした。";
+  if(d.dayNo<1)return "入社まで あと"+(1-d.dayNo)+"日。たのしみに待ってるね！";
+  if(!c)return "ぜんぶの段階を達成！ すごい！";
+  if(c.needsReview)return "★がぜんぶそろったよ！ あとは振り返り面談だけ！";
+  var late=v.stages.some(function(s){return s.late;});
+  if(role==="self")return late?"あせらなくて大丈夫。ひとつずつ、いっしょにやろう！":"いまは「"+c.theme+"」。きょうも いっしょに がんばろう！";
+  return late?"目標日をすぎた段階があります。次の1つを、いっしょにやってみよう。":"できたら「指導役 確認」で ★ をつけてね！";
+}
 function renderLearner(d,role){
   var L=d.learner,v=d.view,out=[];
   var canSelf=role==="self"&&L.status==="active";
@@ -224,36 +327,74 @@ function renderLearner(d,role){
   var status={active:"",completed:"（修了）",left:"（退職）"}[L.status]||"";
   var head=el("div",{class:"card"},
     role==="nursery"?el("p",{style:"margin:0 0 8px"},el("a",{href:"#list",text:"← 新人の一覧へ"})):null,
-    el("div",{class:"now-head"},badge,el("div",{class:"now-text"},
+    el("div",{class:"hero"},badge,el("div",{class:"hero-text"},
       el("h1",{text:L.display_name+" さん"+status}),
-      el("p",{text:L.nursery_name+"　指導役："+(L.mentor_name||"未定")+"　（"+ROLE_LABEL[role]+"の画面）"}),
-      el("p",{text:v.current?"いまの段階："+v.current.title+"「"+v.current.theme+"」":"全段階を達成しました"}))),
-    el("div",{style:"margin-top:12px"},el("div",{class:"row",style:"justify-content:space-between;font-size:13px"},el("span",{class:"muted",text:"指導役の確認が済んだ項目"}),el("b",{text:v.ok+" / "+v.total})),
-      el("div",{class:"bar",role:"progressbar","aria-valuemin":"0","aria-valuemax":String(v.total),"aria-valuenow":String(v.ok),"aria-label":"確認済みの項目"},el("i",{style:"width:"+(v.total?Math.round(v.ok/v.total*100):0)+"%"}))),
+      el("p",null,L.nursery_name+"・指導役 "+(L.mentor_name||"未定"),el("span",{class:"role",text:ROLE_LABEL[role]+"の画面"})),
+      el("p",{text:v.current?"いま："+v.current.title+"「"+v.current.theme+"」":"全段階を達成しました"}))),
+    el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:buddyMsg(d,role)})),
+    el("div",{class:"stars"},el("span",{class:"muted",text:"指導役の確認（★）"}),el("b",{text:"★ "+v.ok+" / "+v.total})),
+    el("div",{class:"bar",role:"progressbar","aria-valuemin":"0","aria-valuemax":String(v.total),"aria-valuenow":String(v.ok),"aria-label":"確認済みの項目"},el("i",{style:"width:"+(v.total?Math.round(v.ok/v.total*100):0)+"%"})),
     v.next.length?el("div",{class:"next"},el("h3",{text:"次にやること（"+(v.current?v.current.title:"")+"）"}),el("ol",null,v.next.map(function(t){return el("li",{text:t});}))):null,
     v.current&&v.current.needsReview?el("p",{class:"notice",text:"この段階の項目はすべて確認済みです。振り返り面談をして、面談日を入れると達成になります。"}):null,
-    el("div",{class:"row",style:"margin-top:12px"},el("button",{class:"btn",type:"button",onclick:function(){printLearner(d);},text:"印刷する"})));
+    el("div",{class:"row",style:"margin-top:12px"},el("button",{class:"btn",type:"button",onclick:function(){printLearner(d);},text:"🖨 印刷する"})));
   out.push(head);
-  if(d.moodAlert&&role!=="self")out.push(el("div",{class:"card alert"},el("b",{text:"「つらい」が2週続いています。"}),el("p",{style:"margin:4px 0 0",text:"今週中に、指導役か園長が話を聞く時間をとってください。"})));
+  if(d.moodAlert&&role!=="self")out.push(el("div",{class:"card alert"},el("b",{text:"😢「つらい」が2週続いています。"}),el("p",{style:"margin:4px 0 0",text:"今週中に、指導役か園長が話を聞く時間をとってください。"})));
+  var fut=renderFuture(d,role);if(fut)out.push(fut);
   if(role==="self"&&L.status==="active")out.push(renderMood(d));
-  if(role!=="self"&&d.moods&&d.moods.length)out.push(el("p",{class:"hint",text:"最近の気分："+d.moods.slice(0,4).map(function(x){return md(x.week)+"週 "+["","順調","ちょっと大変","つらい"][x.level];}).join("　")}));
-  var path=el("ol",{class:"path"});
-  v.stages.forEach(function(st){
+  if(role!=="self"&&d.moods&&d.moods.length)out.push(el("p",{class:"hint",text:"最近の気分："+d.moods.slice(0,4).map(function(x){return md(x.week)+"週 "+["","😊順調","😅ちょっと大変","😢つらい"][x.level];}).join("　")}));
+  out.push(el("h2",{class:"sec",text:"🗺 すごろくマップ"}),el("p",{class:"hint",style:"margin-top:2px",text:"段階をタップすると、覚えることが開きます。"}));
+  var path=el("ol",{class:"path"}),prevK=0;
+  v.stages.forEach(function(st,i){
+    var k=Math.round(Math.sin(i*0.9)*100)/100;
     var cls="stage "+st.state+(st.late?" late":"");
-    var li=el("li",{class:cls});
+    var li=el("li",{class:cls,style:"--x:calc("+k+" * min(56px,14vw));--mx:calc("+((k+prevK)/2)+" * min(56px,14vw))"});prevK=k;
     var open=S.open===st.id;
-    li.append(el("button",{class:"node",type:"button","aria-expanded":open?"true":"false",onclick:function(){S.open=open?null:st.id;render();}},st.title,el("small",{text:st.ok+"/"+st.total})));
-    li.append(el("div",{class:"cap"},el("b",{text:st.theme}),st.milestone?el("span",{class:"chip ms",text:"節目"}):null,
-      st.state==="done"?el("span",{class:"chip done",text:"達成"}):(st.late?el("span",{class:"chip late",text:"目標日を過ぎています"}):null),
-      st.needsReview?el("span",{class:"chip rev",text:"面談待ち"}):null,
-      el("div",{text:"目標日 "+md(st.target)+"（"+st.days+"日目）"})));
+    var badgeTxt=st.state==="done"?"★":(st.late?"!":"");
+    var node=el("button",{class:"node",type:"button","aria-expanded":open?"true":"false",onclick:function(){S.open=open?null:st.id;render();}},st.title,el("small",{text:"★"+st.ok+"/"+st.total}),badgeTxt?el("span",{class:"badge","aria-hidden":"true",text:badgeTxt}):null);
+    var spot=el("div",{class:"spot"},el("div",{style:"position:relative"},node,
+      st.state==="current"&&L.status==="active"?el("div",{class:"here",style:k>0?"right:calc(100% + 8px)":"left:calc(100% + 8px)"},mascot(),el("span",{text:"いまここ！"})):null),
+      el("div",{class:"cap"},el("b",{text:st.theme}),el("div",null,st.milestone?el("span",{class:"chip ms",text:"節目"}):null,
+        st.state==="done"?el("span",{class:"chip done",text:"達成"}):(st.late?el("span",{class:"chip late",text:"目標日をすぎています"}):null),
+        st.needsReview?el("span",{class:"chip rev",text:"面談待ち"}):null),
+        el("div",{text:"目標日 "+md(st.target)+"（"+st.days+"日目）"})));
+    li.append(spot);
     if(open)li.append(renderStagePanel(d,st,role,canSelf,canMentor));
     path.append(li);
   });
   out.push(path);
-  out.push(el("div",{class:"goal"},el("div",{class:"flag",text:"🏁 クラス担任"}),el("p",{class:"muted",style:"margin:0",text:"入社6ヶ月で、クラス担任として一人立ち"})));
+  out.push(el("div",{class:"goal"},mascot(),el("div",{class:"flag",text:"🎓 クラス担任"}),el("p",{class:"muted",style:"margin:0",text:"入社6ヶ月で、クラス担任として一人立ち"})));
   if(role==="nursery")out.push(renderManage(d));
   return out;
+}
+
+/* ---------- 3ヶ月後・6ヶ月後のすがた ---------- */
+function renderFuture(d,role){
+  var L=d.learner,v=d.view,today=d.today||S.me.today;
+  var ms=v.stages.filter(function(s){return s.milestone;});
+  if(!ms.length)ms=[v.stages[v.stages.length-1]];
+  var T=Math.max(ms[ms.length-1].days,1);
+  var icons=["🌷","🌳","🌟"];
+  var dayP=d.dayNo<1?0:Math.min(1,(d.dayNo-1)/(T-1||1));
+  var track=el("div",{class:"track","aria-hidden":"true"},el("div",{class:"rail"},el("i",{style:"width:"+(dayP*100).toFixed(1)+"%"})));
+  track.append(el("div",{class:"pt reached",style:"left:"+pct(0)},el("div",{class:"ic",text:"🌱"}),el("div",{class:"lb",text:"入社 "+md(L.start_date)})));
+  ms.forEach(function(s,i){track.append(el("div",{class:"pt"+(s.state==="done"?" reached":""),style:"left:"+pct((s.days-1)/(T-1||1))},el("div",{class:"ic",text:icons[i]||"🌟"}),el("div",{class:"lb",text:s.title+" "+md(s.target)})));});
+  if(L.status==="active")track.append(el("div",{class:"me",style:"left:"+pct(dayP)},mascot(),el("span",{text:d.dayNo>=1?"いま "+d.dayNo+"日目":"入社前"})));
+  var goals=el("div",{class:"goals"});
+  ms.forEach(function(s,i){
+    var upto=v.stages.filter(function(x){return x.days<=s.days;});
+    var ok=upto.reduce(function(a,x){return a+x.ok;},0),tot=upto.reduce(function(a,x){return a+x.total;},0);
+    var left=dd(today,s.target);
+    var when=s.state==="done"?"達成しました ★":(left>=0?"あと "+left+" 日（"+md(s.target)+"）":"目標日 "+md(s.target)+" をすぎています");
+    goals.append(el("div",{class:"goalcard "+(i===0?"g3":"g6")},
+      el("div",{class:"gh"},el("span",{class:"gi","aria-hidden":"true",text:icons[i]||"🌟"}),el("div",{class:"gt"},el("small",{text:s.title+"後の"+(role==="self"?"わたし":L.display_name+" さん")}),s.theme)),
+      el("div",{class:"left",text:when}),
+      el("div",{class:"gauge"},el("span",{text:"★"+ok+"/"+tot}),el("div",{class:"bar"},el("i",{style:"width:"+(tot?Math.round(ok/tot*100):0)+"%"}))),
+      el("div",{style:"font-size:12px;font-weight:700;color:var(--muted)",text:"そのころには、こんなことが できる"}),
+      el("ul",null,s.items.slice(0,3).map(function(it){return el("li",{class:it.mentor_at?"ok":null,text:it.text});}))));
+  });
+  var lateN=v.stages.filter(function(s){return s.late;}).length;
+  var pace=L.status!=="active"||d.dayNo<1?null:(lateN?el("span",{class:"pace slow",text:"🐢 ゆっくりペース（目標日すぎ "+lateN+"段階）"}):el("span",{class:"pace good",text:"🐇 順調ペース！"}));
+  return el("div",{class:"card future"},el("h2",{text:role==="self"?"✨ 3ヶ月後・6ヶ月後のわたし":"✨ "+L.display_name+" さんの3ヶ月後・6ヶ月後"}),track,pace,goals);
 }
 
 function renderStagePanel(d,st,role,canSelf,canMentor){
@@ -264,8 +405,8 @@ function renderStagePanel(d,st,role,canSelf,canMentor){
     var b1=el("button",{class:"tog",type:"button","aria-pressed":it.self_at?"true":"false",disabled:!canSelf,text:"本人 できた",onclick:function(){act({learner_id:L.id,item_id:it.id,action:it.self_at?"undo_self":"self"});}});
     var b2=el("button",{class:"tog m",type:"button","aria-pressed":ok?"true":"false",disabled:!canMentor,text:"指導役 確認",onclick:function(){act({learner_id:L.id,item_id:it.id,action:ok?"undo_mentor":"mentor"});}});
     var w=[];if(it.self_at)w.push("本人 "+ts(it.self_at));if(it.mentor_at)w.push("確認 "+ts(it.mentor_at));
-    ul.append(el("li",{class:"item"+(ok?" ok":"")},
-      el("div",{class:"t"},el("span",{class:"mark","aria-hidden":"true",text:ok?"✓":""}),el("span",{text:it.text})),
+    ul.append(el("li",{class:"item"+(ok?" ok":(it.self_at?" self":""))},
+      el("div",{class:"t"},el("span",{class:"mark"+(S.pop===it.id?" pop":""),"aria-hidden":"true",text:ok?"★":(it.self_at?"✓":"")}),el("span",{text:it.text})),
       it.detail?el("details",null,el("summary",{text:"覚えるポイント"}),el("p",{text:it.detail})):null,
       el("div",{class:"acts"},b1,b2,w.length?el("span",{class:"when",text:w.join("・")}):null)));
   });
@@ -290,14 +431,14 @@ function renderStagePanel(d,st,role,canSelf,canMentor){
   return el("div",{class:"panel"},ul,review);
 }
 
-function act(body){if(S.busy)return;S.busy=true;api("POST","/check",body).then(refresh).catch(function(e){flash(errText(e),true);}).then(function(){S.busy=false;});}
+function act(body){if(S.busy)return;S.busy=true;S.pop=(body.action==="self"||body.action==="mentor")?body.item_id:null;api("POST","/check",body).then(refresh).catch(function(e){flash(errText(e),true);}).then(function(){S.busy=false;});}
 function saveReview(body){api("POST","/review",body).then(function(){S.msg="面談の記録を保存しました。";S.msgErr=false;return refresh();}).catch(function(e){flash(errText(e),true);});}
 function refresh(){return S.detailId?loadDetail(S.detailId).then(function(){return api("GET","/me");}).then(function(j){S.me=j;render();}):api("GET","/me").then(function(j){S.me=j;render();});}
 
 function renderMood(d){
-  var opts=[[1,"順調"],[2,"ちょっと大変"],[3,"つらい"]];
-  return el("div",{class:"card"},el("b",{text:"今週の気分（"+md(d.thisWeek)+"の週）"}),
-    el("div",{class:"mood",role:"group","aria-label":"今週の気分"},opts.map(function(o){return el("button",{type:"button","aria-pressed":d.myMood===o[0]?"true":"false",text:o[1],onclick:function(){api("POST","/mood",{level:o[0]}).then(function(){S.msg=o[0]===3?"教えてくれてありがとう。指導役と園長に伝わります。":"ありがとう。";S.msgErr=false;return refresh();}).catch(function(e){flash(errText(e),true);});}});})),
+  var opts=[[1,"順調","😊"],[2,"ちょっと大変","😅"],[3,"つらい","😢"]];
+  return el("div",{class:"card"},el("b",{style:"font-family:var(--display)",text:"今週の気分は？（"+md(d.thisWeek)+"の週）"}),
+    el("div",{class:"mood",role:"group","aria-label":"今週の気分"},opts.map(function(o){return el("button",{type:"button",class:"m"+o[0],"aria-pressed":d.myMood===o[0]?"true":"false",onclick:function(){api("POST","/mood",{level:o[0]}).then(function(){S.msg=o[0]===3?"教えてくれてありがとう。指導役と園長に伝わります。":"ありがとう。";S.msgErr=false;return refresh();}).catch(function(e){flash(errText(e),true);});}},el("span",{class:"em","aria-hidden":"true",text:o[2]}),o[1]);})),
     el("p",{class:"hint",text:"週に1回えらんでください。「つらい」が2週続くと、指導役と園長の画面に知らせが出ます。"}));
 }
 
@@ -339,17 +480,29 @@ function renderIssued(){
 /* ---------- 園長：一覧・登録 ---------- */
 function renderList(){
   var me=S.me,out=[];
-  out.push(el("div",{class:"card"},el("h1",{style:"margin:0;font-family:var(--display);font-size:19px",text:me.nursery_name+"の新人"}),el("p",{class:"hint",text:"印のついた人（遅れ・面談待ち・つらい）を上に出しています。"})));
+  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:me.nursery_name+"の新人さん"}),
+    el("div",{class:"buddy"},mascot(),el("div",{class:"bubble",text:"印のついた人（遅れ・面談待ち・つらい）を上に出しているよ。"}))));
   if(S.issued)out.push(renderIssued());
+  var stages=(me.checklist&&me.checklist.stages)||[];
+  var ms=stages.filter(function(s){return s.milestone;});if(!ms.length&&stages.length)ms=[stages[stages.length-1]];
+  var T=ms.length?ms[ms.length-1].days:180;
   var ls=me.learners.slice().sort(function(a,b){var fa=a.status==="active"&&(a.late||a.moodAlert||a.needsReview)?0:1,fb=b.status==="active"&&(b.late||b.moodAlert||b.needsReview)?0:1;return fa-fb;});
   var list=el("div",{class:"list"});
-  if(!ls.length)list.append(el("p",{class:"muted",text:"まだ新人は登録されていません。下のフォームから登録してください。"}));
-  ls.forEach(function(l){
-    var flags=[];if(l.status==="active"){if(l.moodAlert)flags.push("つらい");if(l.late)flags.push("遅れ");if(l.needsReview)flags.push("面談待ち");}
+  if(!ls.length)list.append(el("p",{class:"muted",text:"まだ新人さんは登録されていません。下のフォームから登録してください。"}));
+  ls.forEach(function(l,i){
+    var flags=[];if(l.status==="active"){if(l.moodAlert)flags.push("😢つらい");if(l.late)flags.push("遅れ");if(l.needsReview)flags.push("面談待ち");}
     var st={active:"",completed:"修了",left:"退職"}[l.status];
-    list.append(el("a",{class:"lrow"+(flags.length?" flagged":""),href:"#l-"+l.id,style:"text-decoration:none;color:inherit"},
-      el("div",null,el("div",{class:"nm",text:l.display_name+" さん"}),el("div",{class:"meta",text:(l.status==="active"?"入社"+l.dayNo+"日目・"+(l.current_title||"全段階達成"):st+(l.left_stage?"（"+l.left_stage+"で退職）":""))+"・指導役 "+(l.mentor_name||"未定")})),
-      el("div",{style:"text-align:right"},flags.map(function(f){return el("span",{class:"chip late",text:f});}),el("div",{class:"meta",text:l.ok+"/"+l.total}))));
+    var mini=null;
+    if(l.status==="active"){
+      var p=l.dayNo<1?0:Math.min(1,(l.dayNo-1)/(T-1||1));
+      mini=el("div",{class:"mini","aria-hidden":"true"},el("div",{class:"rail"},el("i",{style:"width:"+(p*100).toFixed(1)+"%"})),
+        ms.map(function(m,j){return el("div",{class:"f",style:"left:calc(7px + (100% - 14px) * "+((m.days-1)/(T-1||1)).toFixed(3)+")"},["🌷","🌳","🌟"][j]||"🌟",el("b",{text:m.title}));}),
+        el("div",{class:"dot",style:"left:calc(7px + (100% - 14px) * "+p.toFixed(3)+")"}));
+    }
+    list.append(el("a",{class:"lrow"+(flags.length?" flagged":""),href:"#l-"+l.id},
+      el("div",{class:"avatar c"+(i%3),"aria-hidden":"true",text:(l.display_name||"？").trim().charAt(0)}),
+      el("div",{style:"min-width:0"},el("div",{class:"nm",text:l.display_name+" さん"}),el("div",{class:"meta",text:(l.status==="active"?"入社"+l.dayNo+"日目・"+(l.current_title||"全段階達成"):st+(l.left_stage?"（"+l.left_stage+"で退職）":""))+"・指導役 "+(l.mentor_name||"未定")}),mini),
+      el("div",{style:"text-align:right"},flags.map(function(f){return el("div",null,el("span",{class:"chip late",text:f}));}),el("div",{class:"meta",style:"font-weight:800",text:"★"+l.ok+"/"+l.total}))));
   });
   out.push(list);
   var name=el("input",{type:"text",id:"nw-name",maxlength:"20",required:true});
@@ -357,7 +510,7 @@ function renderList(){
   var mentor=el("input",{type:"text",id:"nw-mentor",maxlength:"20"});
   var emp=el("select",{id:"nw-emp"},el("option",{value:"fulltime",text:"常勤"}),el("option",{value:"parttime",text:"パート"}));
   out.push(el("form",{class:"card",onsubmit:function(ev){ev.preventDefault();api("POST","/learners",{display_name:name.value,start_date:start.value,mentor_name:mentor.value,employment:emp.value}).then(function(j){S.issued={name:name.value.trim(),links:j.links};S.msg="";return refresh();}).then(function(){window.scrollTo(0,0);}).catch(function(e){flash(errText(e),true);});}},
-    el("h2",{class:"sec",style:"margin:0",text:"新人を登録"}),
+    el("h2",{class:"sec",style:"margin:0",text:"🌱 新人さんを登録"}),
     el("div",{class:"grid2",style:"margin-top:8px"},el("label",{class:"f",for:"nw-name"},"名前（名字だけでも可）",name),el("label",{class:"f",for:"nw-start"},"入社日",start),el("label",{class:"f",for:"nw-mentor"},"指導役",mentor),el("label",{class:"f",for:"nw-emp"},"雇用形態",emp)),
     el("p",{class:"hint",text:"登録すると、本人用と指導役用のリンクができます。"}),
     el("div",{class:"row"},el("button",{class:"btn primary",type:"submit",text:"登録してリンクを作る"}))));
@@ -366,7 +519,7 @@ function renderList(){
 
 function renderStats(){
   var s=S.me.stats,out=[];
-  out.push(el("div",{class:"card"},el("h1",{style:"margin:0;font-family:var(--display);font-size:19px",text:"集計（"+S.me.nursery_name+"）"}),
+  out.push(el("div",{class:"card"},el("h1",{class:"ttl",text:"📊 集計（"+S.me.nursery_name+"）"}),
     el("table",{class:"stats"},el("tbody",null,
       el("tr",null,el("th",{text:"登録した新人"}),el("td",{text:s.total+"人"})),
       el("tr",null,el("th",{text:"受け入れ中／修了／退職"}),el("td",{text:s.active+"／"+s.completed+"／"+s.left+"人"})),
@@ -449,7 +602,7 @@ function renderEditor(){
 /* ---------- 印刷 ---------- */
 function printLearner(d){
   var L=d.learner;
-  var root=el("div",{class:"pr"},el("h1",{text:"保育ステップアップ表"}),el("p",{class:"meta",text:"名前："+L.display_name+"　園："+L.nursery_name+"　入社日："+L.start_date+"　指導役："+(L.mentor_name||"")+"　（指導役の確認で☑）"}));
+  var root=el("div",{class:"pr"},el("div",{class:"ph"},el("img",{src:"/step/logo.webp",alt:"トリオランド"}),el("h1",{text:"ステップアップ表"})),el("p",{class:"meta",text:"名前："+L.display_name+"　園："+L.nursery_name+"　入社日："+L.start_date+"　指導役："+(L.mentor_name||"")+"　（指導役の確認で☑）"}));
   d.view.stages.forEach(function(st){
     var rv=(d.reviews&&d.reviews[st.id])||{};
     var tb=el("tbody");st.items.forEach(function(it){tb.append(el("tr",null,el("td",{class:"b",text:it.mentor_at?"☑":"□"}),el("td",null,it.text,it.detail?el("div",{class:"det",text:it.detail}):null),el("td",{class:"d",text:it.mentor_at?"確認 "+ts(it.mentor_at):""})));});

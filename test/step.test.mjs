@@ -93,4 +93,13 @@ assert.equal(/\$\{/.test(js), false);
 // 外部の解析タグ・CDN を読まない
 assert.doesNotMatch(ui, /googletagmanager|gtag\(|cdnjs|jsdelivr|unpkg|fonts\.googleapis/);
 
+// ロゴ・キャラクター画像（Worker から返す）
+const { assetBody } = await import("../src/step_assets.js");
+for (const [path, type, magic] of [["/step/logo.webp", "image/webp", "RIFF"], ["/step/mascot.webp", "image/webp", "RIFF"], ["/step/icon.png", "image/png", "\x89PNG"]]) {
+  const a = assetBody(path);
+  assert.equal(a.type, type);
+  assert.equal(String.fromCharCode(...a.body.slice(0, 4)), magic, path);
+}
+assert.equal(assetBody("/step/nothing.png"), null);
+
 console.log("step tests passed");
