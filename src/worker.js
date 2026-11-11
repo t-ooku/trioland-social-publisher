@@ -1,7 +1,7 @@
 // Worker の入口。ステップアップ表（/step/・/admin/step）だけをここで受け、それ以外は従来の src/index.js にそのまま渡す。
 // index.js（Instagram 投稿・問い合わせ API・求人管理・MCP）には手を入れていない。
 import mainWorker from "./index.js";
-import { handleStep, renderStepAdmin, issueNurseryLinkAdmin } from "./step.js";
+import { handleStep, renderStepAdmin, issueHqAdmin } from "./step.js";
 import { assetBody } from "./step_assets.js";
 
 const ADMIN_SESSION_COOKIE = "__Host-TRIOLAND_ADMIN_SESSION";
@@ -66,13 +66,13 @@ async function handleStepAdmin(request, env) {
     if (request.method === "GET" && url.pathname === "/admin/step") {
       return await renderStepAdmin(request, env, session, helpers);
     }
-    if (request.method === "POST" && url.pathname === "/admin/step/nursery-link") {
+    if (request.method === "POST" && url.pathname === "/admin/step/hq") {
       const origin = request.headers.get("origin");
       if (origin && origin !== url.origin) return failure("別のサイトからの送信は受け付けません", 403);
       const form = await request.formData();
       const csrf = String(form.get("csrf") || "");
       if (!csrf || !session.csrf || !constantTimeEqual(csrf, session.csrf)) return failure("画面を開き直してから、もう一度お試しください（CSRF）", 400);
-      return await issueNurseryLinkAdmin(request, form, env, session, helpers);
+      return await issueHqAdmin(request, form, env, session, helpers);
     }
     return failure("ページが見つかりません", 404);
   } catch (error) {
