@@ -167,6 +167,25 @@ jobs:
           done
           echo "Afterschool CTA GET verification: $ok"
           test "$ok" = 1
+      - name: Nursery Komazawa visit CTA and destination preselection (GET only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://hoiku.triocareer.jp'
+          for attempt in $(seq 1 12); do
+            koma=$(curl --max-time 25 -fsSL "$base/komazawa.html") || { sleep 5; continue; }
+            contact=$(curl --max-time 25 -fsSL "$base/contact.html") || { sleep 5; continue; }
+            if grep -Fq 'href="/contact.html?destination=komazawa#form"' <<<"$koma" \
+                && grep -Fq 'requestedNursery === "komazawa" || requestedNursery === "umegaoka"' <<<"$contact" \
+                && grep -Fq 'nurserySelect.value = requestedNursery' <<<"$contact"; then
+              echo 'Komazawa nursery preselection deployed (GET only)'
+              exit 0
+            fi
+            echo "Awaiting Pages update: attempt $attempt"
+            sleep 5
+          done
+          echo 'Nursery preselection not visible on public Pages' >&2
+          exit 1
       - name: GA4 tag in public HTML (GET only; sending and GA4 receipt are checked separately)
         # 2026-11-03：保育HP・放課後デイ・採用ガイドは tools/trio_ga4.py のタグ（G-773Y7ZR3JX）が1つだけあること。
         # 会社HP（WordPress）はカスタマイズ画面の設定しだいなので、無くても失敗にせず警告だけ出す。
