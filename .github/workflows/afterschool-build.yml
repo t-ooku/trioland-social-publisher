@@ -9,6 +9,7 @@
 #   afterschool/tools/assets_manifest.json   … 写真と PDF の Drive ファイル ID と SHA-256
 #   afterschool/tools/fetch_assets.py        … Drive から取得して SHA-256 を照合
 #   afterschool/tools/process_assets.py      … WebP 化（引き伸ばしなし）と PDF 配置、完全デコード検証
+#   afterschool/tools/pretty_urls.py         … URL を .html なしにそろえる（Pages の転送後の形）
 #
 # 前提: Drive の「放課後デイ／画像」フォルダが「リンクを知っている全員（閲覧者）」であること。
 #       非公開だとハッシュ照合で止まる（壊れたファイルは決してコミットされない）。
@@ -49,7 +50,11 @@ jobs:
         run: python3 afterschool/tools/process_assets.py
 
       - name: Generate pages
-        run: python3 afterschool/build_site.py
+        run: |
+          set -euo pipefail
+          python3 afterschool/build_site.py
+          # Pages は /x.html を /x へ転送するので、canonical・サイトマップ・リンクを .html なしにそろえる（2026-11-12）
+          python3 afterschool/tools/pretty_urls.py
 
       - name: Verify pages reference only existing assets
         run: |

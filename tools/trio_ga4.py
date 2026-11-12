@@ -71,7 +71,7 @@ try{u=new URL(h,location.href);}catch(x){return;}
 if(/(^|\.)line\.me$|(^|\.)lin\.ee$/.test(u.hostname))t="line";
 else if(HOSTS.indexOf(u.hostname)>=0){
 if(/\/contact(\.html|\/)?$/.test(u.pathname))t=/[?&]kind=recruit/.test(u.search)?"recruit":"contact";
-else if(/\/recruit\.html$|\/company\/recruit\/?$/.test(u.pathname))t="recruit";
+else if(/\/recruit(\.html)?$|\/company\/recruit\/?$/.test(u.pathname))t="recruit";
 }
 }
 if(!t)return;
