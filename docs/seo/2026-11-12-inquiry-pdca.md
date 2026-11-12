@@ -80,3 +80,10 @@ GSCページ別の11/03〜09 PT（プロパティ集計の内訳合計ではな�
 ## 5. 安全と担当
 Codex＝コード/テスト/公開確認、Cowork＝WordPressの既存権限・保護者UX/画面監査、GPT＝KPI実測取得、優先度、匿名PDCA管理。今回のコード実行者はGPTのGitHub接続であり、Codexが実施したとは呼ばない。Coworkへの書面保存をACK・実装と見なさない。
 本番フォーム送信、課金、権限拡大、Secret開示、メール再送、キュー削除、D1書込、給与・規約変更、URLへの個人情報は行わない。
+
+## 6. 11/12 公開後GET検証の確定結果（追記）
+
+- 保育HP生成ビルド [Actions #43124192061](https://github.com/t-ooku/trioland-social-publisher/actions/runs/43124192061)：**success**。生成スクリプト・canonical検査を実行。
+- 既存サイトsmoke [Actions #43124461211](https://github.com/t-ooku/trioland-social-publisher/actions/runs/43124461211)：**success**。ジョブ内「Nursery Komazawa visit CTA and destination preselection (GET only)」もPASS。ログで公開HTMLの「Komazawa nursery preselection deployed (GET only)」を確認。**本番HTML GET確認日D0=2026-11-12 JST**。7日後=11/19、14日後=11/26に同一定義で評価。実機iPhoneでのJS実動作、フォーム送信、実問い合わせ効果は依然未確認。
+- 同smokeのMake稼働判定ログ（2026-11-12 00:03:52 UTC）：「**UNKNOWN (Read-only Make API token not configured)**」。ステップがsuccessでも本番配送正常は証明されない。引き続きP0。
+- KPI専用LPデータのmain更新コミット [062991d](https://github.com/t-ooku/trioland-social-publisher/commit/062991d718e7e911dd7ec01644dba10d8cd9a7e2)。[KPI dashboard safety and publish check #43124947370](https://github.com/t-ooku/trioland-social-publisher/actions/runs/43124947370) **success**（公開禁止データ検査と未認証ルートの保護）。**管理者本人のログイン成功・GitHub OAuthの404解消は証明されていない**。
