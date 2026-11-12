@@ -212,6 +212,13 @@
         <input id="f-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel"></div>
     </div>
     <p class="hint">メールアドレスと電話番号は、どちらか一方で構いません。</p>
+    <div class="field"><label for="f-license">お持ちの資格 <span class="req">必須</span></label>
+      <select id="f-license" name="license" required>
+        <option value="">選択してください</option>
+        <option value="保育士資格保有">保育士資格保有</option>
+        <option value="子育て支援員研修修了">子育て支援員研修修了</option>
+        <option value="無資格">無資格</option>
+      </select></div>
     <div class="row">
       <div class="field"><label for="f-role">希望職種（未定でも可）</label>
         <select id="f-role" name="jobType">
@@ -261,6 +268,7 @@
     INVALID_EMAIL: "メールアドレスの形式をご確認ください。",
     MESSAGE_REQUIRED: "ご相談内容をご記入ください。",
     INVALID_DESTINATION: "ご希望の園を選択してください。",
+    LICENSE_REQUIRED: "お持ちの資格を選んでください（資格がない方は「無資格」）。",
     TOO_MANY_REQUESTS: "送信が続いています。しばらく時間をおいてからお試しください。"
   };
   var FALLBACK = "送信できませんでした。恐れ入りますが、お電話でご連絡ください。"
@@ -282,7 +290,14 @@
     // The existing Make email mapping always receives 'message'. Include the
     // selected job and nursery there as well as in their dedicated API fields.
     if (data.destination === "recruit") {
+      var licenseField = form.querySelector('[name="license"]');
+      if (licenseField && !data.license) {
+        show(MESSAGES.LICENSE_REQUIRED, "error");
+        licenseField.focus();
+        return;
+      }
       var details = [];
+      if (data.license) details.push("資格：" + data.license);
       if (data.jobType) details.push("希望職種：" + data.jobType);
       if (data.facility) details.push("希望園：" + data.facility);
       if (details.length) data.message = details.join(" ／ ") + " ／ " + data.message;
