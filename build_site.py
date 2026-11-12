@@ -273,6 +273,13 @@ def inquiry_form(mode):
 (function () {{
   var form = document.getElementById("inquiry-form");
   if (!form) return;
+  var nurserySelect = form.querySelector('select[name="destination"]');
+  if (nurserySelect) {{
+    var requestedNursery = new URLSearchParams(window.location.search).get("destination");
+    if (requestedNursery === "komazawa" || requestedNursery === "umegaoka") {{
+      nurserySelect.value = requestedNursery;
+    }}
+  }}
   var status = form.querySelector(".form-status");
   var button = form.querySelector("button[type=submit]");
   var MESSAGES = {{
@@ -686,6 +693,7 @@ def page_index():
 
 def page_nursery(p, path, kicker, h1, intro, features, local_text, active):
     ld = [nursery_ld(p, path), crumbs([("トリオランド", "/"), (p["name"], path)])]
+    visit_href = "/contact.html?destination=komazawa#form" if p is KOMA else "/contact.html"
     feat = "".join(f'<div class="card"><span class="num">{i+1}</span><h3>{t}</h3><p>{d}</p></div>'
                    for i, (t, d) in enumerate(features))
     return head(
@@ -701,7 +709,7 @@ def page_nursery(p, path, kicker, h1, intro, features, local_text, active):
     <h1>{h1}</h1>
     <p class="lead">{intro}</p>
     <div class="actions">
-      <a class="btn pink" href="/contact.html">この園の見学を申し込む</a>
+      <a class="btn pink" href="{visit_href}">この園の見学を申し込む</a>
       <a class="btn outline" href="tel:{p["tel"].replace("-","")}">電話でご相談（{p["tel"]}）</a>
     </div>
   </div>
@@ -756,7 +764,7 @@ def page_nursery(p, path, kicker, h1, intro, features, local_text, active):
   <div class="split">
     <div class="prose">
       <p><b>園児募集：</b>企業主導型保育園のため、自治体を通さず園へ直接お申し込みいただけます。地域枠でのご利用も可能です。空き状況はクラス・月齢により変わりますので、まずはお問い合わせください。</p>
-      <div class="actions"><a class="btn pink" href="/contact.html">入園について相談する</a></div>
+      <div class="actions"><a class="btn pink" href="{visit_href}">入園について相談する</a></div>
     </div>
     <div class="prose">
       <p><b>採用：</b>{p["name"]}でも保育士・保育補助を募集しています。0〜2歳児の少人数保育に関心のある方、応募前に園を見てみたい方もご相談ください。</p>
@@ -773,7 +781,8 @@ def page_nursery(p, path, kicker, h1, intro, features, local_text, active):
 </section>
 
 {cta(f"{p['name']}を、実際に見てみませんか。",
-     "保育室の環境や子どもたちの過ごし方は、見学がいちばん分かりやすくお伝えできます。ご希望の日程をお知らせください。")}
+     "保育室の環境や子どもたちの過ごし方は、見学がいちばん分かりやすくお伝えできます。ご希望の日程をお知らせください。",
+      (visit_href, "見学・入園相談をする"))}
 
 </div>
 </main>
