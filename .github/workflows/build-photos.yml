@@ -23,6 +23,7 @@ on:
       - 'tools/trio_ga4.py'
       - 'tools/normalize_public_urls.py'
       - 'tools/test_normalize_public_urls.py'
+      - 'tools/recruit_license_field.py'
       - 'content/**'
       - 'site/assets/photo-src/**'
       - 'tools/decode_photos.py'
@@ -125,6 +126,10 @@ jobs:
           python3 -m unittest discover -s tools -p 'test_normalize_public_urls.py'
           python3 tools/normalize_public_urls.py site
 
+      # 2026-11-12 馬場さんの依頼：採用フォームに「お持ちの資格」（保育士資格保有／子育て支援員研修修了／無資格）を入れる。
+      - name: Recruit form has the license field
+        run: python3 tools/recruit_license_field.py site
+
       # 2026-10-26: Parent-company recruitment page no longer displays the
       # previously identified sub-minimum wage rates (verified with the live
       # official website). Keep official cross-site links intact; check wages
@@ -155,4 +160,3 @@ jobs:
             sleep $((i * 5))
           done
           echo 'push failed 5 times'; exit 1
-
