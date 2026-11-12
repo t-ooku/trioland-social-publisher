@@ -426,8 +426,8 @@
   },
   "make": {
     "status": "unknown",
-    "detail": "11/9に滞留11件を配送復旧した記録はあるが、11/12のMakeライブ稼働とキューは読取APIトークン未設定で未取得。CI成功≠メール配送正常。",
-    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/42723829749"
+    "detail": "11/12のActionsサイトsmokeログでMake inquiry relay: UNKNOWN (Read-only Make API token not configured)。前回11/9の滞留復旧記録はあるが、今朝の実配送・現在キューは未取得。",
+    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43124461211"
   },
   "pdca": [
     {
@@ -519,12 +519,12 @@
       "site": "hoiku",
       "priority": "P1",
       "stage": "Check",
-      "status": "main反映済み・本番GET確認待ち",
+      "status": "本番公開HTML検証済み・効果検証中",
       "title": "駒沢大学園の見学フォームで希望園を引き継ぐ",
-      "detail": "11/12に保育HPの見学CTA3か所から希望園コードを引き継ぐよう変更。従来の必須項目・送信先は不変。実相談の改善は未判定。",
-      "next": "既存GitHub Actionsの本番GET検査を確認後D0設定、7日/14日で実見学相談とCTA・フォーム開始を照合",
+      "detail": "11/12の本番GETで駒沢大学園のCTA3か所とcontactフォームの希望園初期選択コードを検証。実機JS操作・実相談増は未判定。",
+      "next": "11/19（D+7）と11/26（D+14）に実見学相談と閲覧→CTA→フォーム開始を同定義で比較",
       "owner": "Codex（公開確認）/ GPT（効果検証）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/30a6c75f20627d2db9e9fa42d8bb4396c1cf7eab"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43124461211"
     }
   ],
   "history": [
@@ -537,8 +537,8 @@
     {
       "date": "11/12",
       "title": "駒沢大学園の見学申込リンクとフォーム初期選択を改善",
-      "result": "保育HPの3CTAを希望園=駒沢大学園のフォームに統一。main反映、GET本番検査追加。本番公開HTML・実問い合わせ効果は要確認。",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-12-inquiry-pdca.md"
+      "result": "mainに3CTAとフォームの希望園初期選択を反映。11/12の既存site smokeが本番GET成功、実機操作・問い合わせ効果は未判定。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43124461211"
     },
     {
       "date": "11/11",
@@ -579,9 +579,9 @@
   ],
   "warnings": [
     "11/11：会社HP・保育HPのGA4送信成功イベント各1回は真の顧客問い合わせ・担当者へのメール配送との照合前。外部有効問い合わせ件数は未取得。",
-    "11/12：駒沢大学園の保育見学CTAはmain反映済み。本番公開GET・実ブラウザの施設選択動作は未確認。改善による問い合わせ増加も未判定。",
+    "11/12：保育HP駒沢大学園の新CTAはGitHub Actionsの本番GETで公開確認済み。実ブラウザ動作、見学相談の増加は未確認。11/19・11/26に効果判定する。",
     "GitHub OAuth：iPhoneでKPI管理画面の404報告あり。Codexの修正・本番ログイン成功は未確認。",
-    "Make：11/9の滞留11件配送復旧記録あり。11/12のライブ稼働とキューは読取APIトークン未設定で未取得。CI成功と配送正常は別。",
+    "Make：11/12のサイトsmokeでUNKNOWN（読取APIトークン未設定）。11/9滞留復旧記録はあるが、今日のライブ配送・キューは未取得。",
     "GA4：11/03は計測開始部分日、11/01〜02は欠測。放デイ11/06・07は日別取得行なし（0として補完しない）。部分月間・7日間の解釈に注意。",
     "GA4 11/11：会社の流入元別セッション合計42とホスト単独37が不一致。会社の流入割合は未判定。保育は7対7、放デイは3対3。",
     "GSC：最新確定11/09（America/Los_Angeles）。11/10と11/11は速報で、11/11は途中日。GA4のJST日付と直接照合しない。",
