@@ -246,6 +246,13 @@
 (function () {
   var form = document.getElementById("inquiry-form");
   if (!form) return;
+  var nurserySelect = form.querySelector('select[name="destination"]');
+  if (nurserySelect) {
+    var requestedNursery = new URLSearchParams(window.location.search).get("destination");
+    if (requestedNursery === "komazawa" || requestedNursery === "umegaoka") {
+      nurserySelect.value = requestedNursery;
+    }
+  }
   var status = form.querySelector(".form-status");
   var button = form.querySelector("button[type=submit]");
   var MESSAGES = {
