@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-11",
-  "ga4Date": "2026-11-10",
-  "gscDate": "2026-11-08",
+  "updatedAt": "2026-11-12",
+  "ga4Date": "2026-11-11",
+  "gscDate": "2026-11-09",
   "ga4Timezone": "Asia/Tokyo",
   "gscTimezone": "America/Los_Angeles",
   "sites": [
@@ -186,26 +186,47 @@
         3,
         3
       ]
+    },
+    {
+      "date": "2026-11-11",
+      "corp": [
+        30,
+        29,
+        37,
+        67
+      ],
+      "hoiku": [
+        7,
+        4,
+        7,
+        10
+      ],
+      "after": [
+        2,
+        2,
+        3,
+        2
+      ]
     }
   ],
   "ga4Seven": {
-    "period": "2026-11-04〜11-10（放デイ11/6・7日別取得行なし）",
+    "period": "2026-11-05〜11-11（放デイ11/06・07日別取得行なし）",
     "corp": [
-      162,
-      160,
-      197,
-      352
+      174,
+      170,
+      211,
+      373
     ],
     "hoiku": [
-      40,
+      42,
       29,
-      43,
-      68
+      45,
+      73
     ],
     "after": [
-      14,
-      7,
-      19,
+      16,
+      8,
+      21,
       34
     ]
   },
@@ -353,18 +374,36 @@
         12,
         6.1667
       ]
+    },
+    {
+      "date": "2026-11-09",
+      "corp": [
+        15,
+        358,
+        7.5391
+      ],
+      "hoiku": [
+        2,
+        65,
+        7.3077
+      ],
+      "after": [
+        1,
+        20,
+        8.9
+      ]
     }
   ],
   "events": {
-    "date": "2026-11-10",
+    "date": "2026-11-11",
     "corp": [
-      null,
+      9,
       1,
       1,
       null
     ],
     "hoiku": [
-      3,
+      2,
       1,
       1,
       null
@@ -387,7 +426,7 @@
   },
   "make": {
     "status": "unknown",
-    "detail": "11/9の滞留11件復旧は記録済み。11/11のMakeライブ稼働・現在キューは読取API未設定で未取得。CI成功≠配送正常。",
+    "detail": "11/9に滞留11件を配送復旧した記録はあるが、11/12のMakeライブ稼働とキューは読取APIトークン未設定で未取得。CI成功≠メール配送正常。",
     "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/42723829749"
   },
   "pdca": [
@@ -396,9 +435,9 @@
       "site": "all",
       "priority": "P0",
       "stage": "Plan",
-      "status": "原因調査・修正未確認",
+      "status": "原因調査・本番修正未確認",
       "title": "管理KPIのGitHubログイン404",
-      "detail": "11/11ユーザーのiPhone実画面でgithub.comの404を確認。原因確定・本番修正・認証後の閲覧は未確認。",
+      "detail": "iPhoneでGitHub OAuthの404が報告され、11/12時点で認証成功を示す実機証拠が未確認。管理コードの代替経路は維持。",
       "next": "CodexがOAuthアプリ設定・redirect・ログイン後のKPI復帰を診断し、実機確認",
       "owner": "Codex",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-11-codex-kpi-github-login-404.md"
@@ -410,7 +449,7 @@
       "stage": "Check",
       "status": "ライブ未確認・監視未完成",
       "title": "問い合わせメールの配送を監視",
-      "detail": "11/1〜9の滞留11件は11/9に配送復旧したが、11/11のMakeライブ稼働・キューは未取得。GA4送信成功と通知到達を混同しない。",
+      "detail": "11/1〜9の滞留11件の配送復旧記録あり（外部6・内部テスト5）。11/12のMakeライブ稼働・キューは未取得。GA4送信成功だけでは通知到達を保証しない。",
       "next": "Make既存の正規管理画面・read-only APIで稼働とキュー・直近正常配送を確認",
       "owner": "Codex / Cowork",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-10-inquiry-pdca.md"
@@ -474,9 +513,33 @@
       "next": "会社WordPressの施設ページ→見学申込CTAと御社名必須の受付条件を確認",
       "owner": "Cowork（UX）／Codex（実装検証）",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-11-cowork-corporate-inquiry-ux.md"
+    },
+    {
+      "id": "HOIKU-KOMAZAWA-PRESELECT",
+      "site": "hoiku",
+      "priority": "P1",
+      "stage": "Check",
+      "status": "main反映済み・本番GET確認待ち",
+      "title": "駒沢大学園の見学フォームで希望園を引き継ぐ",
+      "detail": "11/12に保育HPの見学CTA3か所から希望園コードを引き継ぐよう変更。従来の必須項目・送信先は不変。実相談の改善は未判定。",
+      "next": "既存GitHub Actionsの本番GET検査を確認後D0設定、7日/14日で実見学相談とCTA・フォーム開始を照合",
+      "owner": "Codex（公開確認）/ GPT（効果検証）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/30a6c75f20627d2db9e9fa42d8bb4396c1cf7eab"
     }
   ],
   "history": [
+    {
+      "date": "11/12",
+      "title": "会社・保育・放デイの前日KPIとPDCA更新",
+      "result": "GA4 11/11 JST、GSC確定11/09 PT、直近7日/部分月間を取得。外部真正受付は未照合。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-12-inquiry-pdca.md"
+    },
+    {
+      "date": "11/12",
+      "title": "駒沢大学園の見学申込リンクとフォーム初期選択を改善",
+      "result": "保育HPの3CTAを希望園=駒沢大学園のフォームに統一。main反映、GET本番検査追加。本番公開HTML・実問い合わせ効果は要確認。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-12-inquiry-pdca.md"
+    },
     {
       "date": "11/11",
       "title": "3サイトKPIとPDCAデータを更新",
@@ -515,13 +578,53 @@
     }
   ],
   "warnings": [
-    "11/10：会社HP・保育HPのGA4送信成功各1回は実受付・メール配送との照合前。真正な外部問い合わせは未取得。",
-    "11/11：KPI管理画面GitHubログインはiPhoneで404報告あり。Codexの修正・実機復旧は未確認。",
-    "Make：11/09の滞留通知11件の配送復旧を確認した記録はあるが、今朝のライブ稼働・キューは未取得。",
-    "GA4 11/03は計測開始部分日、11/01〜02欠測。放デイ11/06・07の日別行なしは0とは補完しない。",
-    "GA4 11/10の会社HP流入元別sessions合計21はホスト別18と不一致。保育も6対5。流入元の割合は未確定。",
-    "GSC最新確定11/08 PT。11/09・10は速報・途中日のため確定値と合算しない。",
-    "11/09復旧の外部実問い合わせ6件（保育5・放デイ1）は11/09単独の新規数ではない。",
-    "3サイト横断アクティブユーザーは重複不明で合算不可。フォームの成功イベントも契約・入園・採用実績ではない。"
-  ]
+    "11/11：会社HP・保育HPのGA4送信成功イベント各1回は真の顧客問い合わせ・担当者へのメール配送との照合前。外部有効問い合わせ件数は未取得。",
+    "11/12：駒沢大学園の保育見学CTAはmain反映済み。本番公開GET・実ブラウザの施設選択動作は未確認。改善による問い合わせ増加も未判定。",
+    "GitHub OAuth：iPhoneでKPI管理画面の404報告あり。Codexの修正・本番ログイン成功は未確認。",
+    "Make：11/9の滞留11件配送復旧記録あり。11/12のライブ稼働とキューは読取APIトークン未設定で未取得。CI成功と配送正常は別。",
+    "GA4：11/03は計測開始部分日、11/01〜02は欠測。放デイ11/06・07は日別取得行なし（0として補完しない）。部分月間・7日間の解釈に注意。",
+    "GA4 11/11：会社の流入元別セッション合計42とホスト単独37が不一致。会社の流入割合は未判定。保育は7対7、放デイは3対3。",
+    "GSC：最新確定11/09（America/Los_Angeles）。11/10と11/11は速報で、11/11は途中日。GA4のJST日付と直接照合しない。",
+    "過去11/01〜09のMake滞留外部実6件（保育5・放デイ1）を、11/09や11/11の当日新規問い合わせに加算しない。",
+    "3サイトのユーザー重複は未判定のため合算不可。フォーム送信イベントを入園・契約・採用実績として扱わない。"
+  ],
+  "ga4MTD": {
+    "period": "2026-11-03〜11-11（11/01〜02欠測・11/03部分日）",
+    "corp": [
+      200,
+      199,
+      245,
+      431
+    ],
+    "hoiku": [
+      51,
+      35,
+      56,
+      84
+    ],
+    "after": [
+      17,
+      9,
+      25,
+      38
+    ]
+  },
+  "gscSeven": {
+    "period": "2026-11-03〜11-09（米国太平洋時間・確定7日）",
+    "corp": [
+      83,
+      2131,
+      7.25
+    ],
+    "hoiku": [
+      22,
+      430,
+      8.55
+    ],
+    "after": [
+      1,
+      120,
+      7.78
+    ]
+  }
 }
