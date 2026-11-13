@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-12",
-  "ga4Date": "2026-11-11",
-  "gscDate": "2026-11-09",
+  "updatedAt": "2026-11-13",
+  "ga4Date": "2026-11-12",
+  "gscDate": "2026-11-10",
   "ga4Timezone": "Asia/Tokyo",
   "gscTimezone": "America/Los_Angeles",
   "sites": [
@@ -207,27 +207,48 @@
         3,
         2
       ]
+    },
+    {
+      "date": "2026-11-12",
+      "corp": [
+        26,
+        23,
+        36,
+        57
+      ],
+      "hoiku": [
+        11,
+        9,
+        14,
+        20
+      ],
+      "after": [
+        5,
+        5,
+        5,
+        5
+      ]
     }
   ],
   "ga4Seven": {
-    "period": "2026-11-05〜11-11（放デイ11/06・07日別取得行なし）",
+    "period": "2026-11-06〜11-12（放デイ11/06・07日別取得行なし）",
     "corp": [
-      174,
-      170,
-      211,
-      373
+      167,
+      161,
+      205,
+      368
     ],
     "hoiku": [
       42,
-      29,
-      45,
-      73
+      31,
+      46,
+      64
     ],
     "after": [
-      16,
-      8,
-      21,
-      34
+      17,
+      11,
+      20,
+      26
     ]
   },
   "gscSeries": [
@@ -392,20 +413,38 @@
         20,
         8.9
       ]
+    },
+    {
+      "date": "2026-11-10",
+      "corp": [
+        14,
+        336,
+        7.3036
+      ],
+      "hoiku": [
+        2,
+        92,
+        9.9348
+      ],
+      "after": [
+        0,
+        20,
+        8.85
+      ]
     }
   ],
   "events": {
-    "date": "2026-11-11",
+    "date": "2026-11-12",
     "corp": [
-      9,
-      1,
+      3,
+      2,
       1,
       null
     ],
     "hoiku": [
+      4,
+      3,
       2,
-      1,
-      1,
       null
     ],
     "after": [
@@ -426,10 +465,34 @@
   },
   "make": {
     "status": "unknown",
-    "detail": "11/12のActionsサイトsmokeログでMake inquiry relay: UNKNOWN (Read-only Make API token not configured)。前回11/9の滞留復旧記録はあるが、今朝の実配送・現在キューは未取得。",
-    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43124461211"
+    "detail": "2026-11-13 09:27 JSTの既存site-smokeでMake inquiry relay: UNKNOWN（read-only API token未設定）。モック検査6件PASS・サイトGET成功は、Makeのライブ稼働・通知配送を証明しない。11/1〜9の滞留復旧記録は過去のもの。",
+    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43337142415"
   },
   "pdca": [
+    {
+      "id": "HOIKU-ERROR-20261112",
+      "site": "hoiku",
+      "priority": "P0",
+      "stage": "Plan",
+      "status": "原因分類・実受付未照合",
+      "title": "保育HPの送信エラーイベント1回を調査",
+      "detail": "11/12のGA4でフォーム開始3、成功2、エラー1。エラー分類と実受信は未取得。エラー1回=顧客1件失敗とは断定しない。",
+      "next": "Codexが現行受信API・フロントエラー区分・匿名集計を確認。Makeライブ読み取り権限の有無を並行確認。次回11/14に追跡。",
+      "owner": "Codex / Cowork",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-13-inquiry-pdca.md"
+    },
+    {
+      "id": "SMOKE-CTA-20261113",
+      "site": "after",
+      "priority": "P1",
+      "stage": "Act",
+      "status": "修正・本番GET検査成功",
+      "title": "相談CTA監視の誤判定を解消",
+      "detail": "HTMLリンクは拡張子なし正規URL、旧検査だけが.html必須だった。新旧を認識する検査へ変更、公開GETとCIが成功。ユーザー問い合わせ増加とは無関係。",
+      "next": "正常な検査を維持し、11/16のAS-03実相談評価へ集中。",
+      "owner": "GPT（GitHub修正）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43337142415"
+    },
     {
       "id": "KPI-AUTH-404",
       "site": "all",
@@ -447,10 +510,10 @@
       "site": "all",
       "priority": "P0",
       "stage": "Check",
-      "status": "ライブ未確認・監視未完成",
+      "status": "11/13ライブ未取得（トークン未設定）",
       "title": "問い合わせメールの配送を監視",
-      "detail": "11/1〜9の滞留11件の配送復旧記録あり（外部6・内部テスト5）。11/12のMakeライブ稼働・キューは未取得。GA4送信成功だけでは通知到達を保証しない。",
-      "next": "Make既存の正規管理画面・read-only APIで稼働とキュー・直近正常配送を確認",
+      "detail": "11/13のsite-smokeでread-only Makeトークン未設定、ライブ健康度・キューはUNKNOWN。11/9滞留11件復旧（外部6／内部テスト5）は過去の事実。",
+      "next": "既存権限内のMake管理画面かread-only APIでキューと直近配送を確認。実送信テスト禁止。",
       "owner": "Codex / Cowork",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-10-inquiry-pdca.md"
     },
@@ -529,6 +592,18 @@
   ],
   "history": [
     {
+      "date": "11/13",
+      "title": "放デイCTAの誤アラートを原因修正・本番GET再検証",
+      "result": "旧.html限定の監視条件を更新しmain反映。既存サイトsmokeが成功、全CTA・公開ページGETがPASS。実問い合わせ増加は未判定。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43337142415"
+    },
+    {
+      "date": "11/13",
+      "title": "GA4・GSCと外部実問い合わせの未照合状態を更新",
+      "result": "GA4 11/12、GSC確定11/10を取得。保育フォーム成功2・エラー1は実受付未照合、MakeライブはUNKNOWN。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-13-inquiry-pdca.md"
+    },
+    {
       "date": "11/12",
       "title": "会社・保育・放デイの前日KPIとPDCA更新",
       "result": "GA4 11/11 JST、GSC確定11/09 PT、直近7日/部分月間を取得。外部真正受付は未照合。",
@@ -578,53 +653,53 @@
     }
   ],
   "warnings": [
-    "11/11：会社HP・保育HPのGA4送信成功イベント各1回は真の顧客問い合わせ・担当者へのメール配送との照合前。外部有効問い合わせ件数は未取得。",
-    "11/12：保育HP駒沢大学園の新CTAはGitHub Actionsの本番GETで公開確認済み。実ブラウザ動作、見学相談の増加は未確認。11/19・11/26に効果判定する。",
-    "GitHub OAuth：iPhoneでKPI管理画面の404報告あり。Codexの修正・本番ログイン成功は未確認。",
-    "Make：11/12のサイトsmokeでUNKNOWN（読取APIトークン未設定）。11/9滞留復旧記録はあるが、今日のライブ配送・キューは未取得。",
-    "GA4：11/03は計測開始部分日、11/01〜02は欠測。放デイ11/06・07は日別取得行なし（0として補完しない）。部分月間・7日間の解釈に注意。",
-    "GA4 11/11：会社の流入元別セッション合計42とホスト単独37が不一致。会社の流入割合は未判定。保育は7対7、放デイは3対3。",
-    "GSC：最新確定11/09（America/Los_Angeles）。11/10と11/11は速報で、11/11は途中日。GA4のJST日付と直接照合しない。",
-    "過去11/01〜09のMake滞留外部実6件（保育5・放デイ1）を、11/09や11/11の当日新規問い合わせに加算しない。",
-    "3サイトのユーザー重複は未判定のため合算不可。フォーム送信イベントを入園・契約・採用実績として扱わない。"
+    "11/12：会社HPのGA4成功1、保育HP成功2・エラー1（フォーム開始3）。エラー原因・実お客様の受付・メール配送は未照合。放デイは成功イベント取得行なし（0件としない）。",
+    "11/13：放デイ公開HTMLの相談CTAリンクは正規化され拡張子なし。監視の旧URL固定を修正、Actions 43337142415成功。送信・受信の本番検査はしていない。",
+    "11/13：Make読取トークン未設定のためライブ稼働・通知配送・キューはUNKNOWN。CIが成功でも中継正常の証拠ではない。",
+    "GA4 11/12：会社の流入元別37対ホスト合計36、保育15対14で不一致。比率にしない。放デイ5対5。",
+    "GA4：11/03は計測開始部分日、11/01〜02は欠測。放デイ11/06・07は日別取得行なし。期間ユーザーは別集計。",
+    "GSC：最新確定11/10 PT。11/11・12 PTは速報（11/12は途中日）。GA4 JSTと混ぜない。",
+    "11/9に復旧した滞留外部実問い合わせ6件（保育5、放デイ1）を新規当日分に計上しない。",
+    "GitHub OAuth：iPhoneからKPI管理画面に404の報告があり、管理者本人のログイン成功は未確認。",
+    "採用・見学・利用・法人問い合わせの実績は受信側の匿名集計照合まで全て未取得。サイト間ユーザー数は合算不可。"
   ],
   "ga4MTD": {
-    "period": "2026-11-03〜11-11（11/01〜02欠測・11/03部分日）",
+    "period": "2026-11-03〜11-12（11/01〜02欠測・11/03部分日）",
     "corp": [
-      200,
-      199,
-      245,
-      431
+      223,
+      222,
+      281,
+      488
     ],
     "hoiku": [
-      51,
-      35,
-      56,
-      84
+      61,
+      44,
+      70,
+      104
     ],
     "after": [
-      17,
-      9,
-      25,
-      38
+      22,
+      14,
+      30,
+      43
     ]
   },
   "gscSeven": {
-    "period": "2026-11-03〜11-09（米国太平洋時間・確定7日）",
+    "period": "2026-11-04〜11-10（米国太平洋時間・確定7日）",
     "corp": [
-      83,
-      2131,
-      7.25
+      80,
+      2170,
+      7.29
     ],
     "hoiku": [
-      22,
-      430,
-      8.55
+      18,
+      435,
+      9.14
     ],
     "after": [
       1,
-      120,
-      7.78
+      116,
+      8.11
     ]
   }
 }
