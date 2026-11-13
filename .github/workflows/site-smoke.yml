@@ -159,7 +159,7 @@ jobs:
           # Pages rollout can lag the Actions-generated HTML commit; verify the actual public response.
           ok=0
           for attempt in $(seq 1 12); do
-            if curl --max-time 30 -fsSL "$base/availability.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/availability-public.html                 && grep -Fq 'href="/contact.html?facility=lopp#form"' /tmp/availability-public.html                 && grep -Fq 'href="/contact.html?facility=compass#form"' /tmp/availability-public.html                 && grep -Fq '希望施設を選んで、空き状況・見学を相談する' /tmp/availability-public.html                 && curl --max-time 30 -fsSL "$base/compass.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/compass-public.html                 && grep -Fq 'href="/contact.html?facility=compass#form"' /tmp/compass-public.html                 && curl --max-time 30 -fsSL "$base/contact.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/contact-public.html                 && grep -Fq 'id="form"' /tmp/contact-public.html                 && grep -Fq 'q.get("facility")' /tmp/contact-public.html; then
+            if curl --max-time 30 -fsSL "$base/availability.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/availability-public.html                 && grep -Eq 'href="/contact(\.html)?\?facility=lopp#form"' /tmp/availability-public.html                 && grep -Eq 'href="/contact(\.html)?\?facility=compass#form"' /tmp/availability-public.html                 && grep -Fq '希望施設を選んで、空き状況・見学を相談する' /tmp/availability-public.html                 && curl --max-time 30 -fsSL "$base/compass.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/compass-public.html                 && grep -Eq 'href="/contact(\.html)?\?facility=compass#form"' /tmp/compass-public.html                 && curl --max-time 30 -fsSL "$base/contact.html?check=${GITHUB_RUN_ID}-${attempt}" -o /tmp/contact-public.html                 && grep -Fq 'id="form"' /tmp/contact-public.html                 && grep -Fq 'q.get("facility")' /tmp/contact-public.html; then
               ok=1
               break
             fi
@@ -175,7 +175,7 @@ jobs:
           for attempt in $(seq 1 12); do
             koma=$(curl --max-time 25 -fsSL "$base/komazawa.html") || { sleep 5; continue; }
             contact=$(curl --max-time 25 -fsSL "$base/contact.html") || { sleep 5; continue; }
-            if grep -Fq 'href="/contact.html?destination=komazawa#form"' <<<"$koma" \
+            if grep -Eq 'href="/contact(\.html)?\?destination=komazawa#form"' <<<"$koma" \
                 && grep -Fq 'requestedNursery === "komazawa" || requestedNursery === "umegaoka"' <<<"$contact" \
                 && grep -Fq 'nurserySelect.value = requestedNursery' <<<"$contact"; then
               echo 'Komazawa nursery preselection deployed (GET only)'
