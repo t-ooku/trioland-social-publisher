@@ -17,7 +17,8 @@ function securityHeaders() {
     "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
     "x-frame-options": "DENY",
     "x-content-type-options": "nosniff",
-    "referrer-policy": "no-referrer",
+    // /admin/step のフォーム POST に Origin を付けるため same-origin（no-referrer だとブラウザが Origin: null を送り 403 になる）。/admin/access と同じ。
+    "referrer-policy": "same-origin",
     "x-robots-tag": "noindex, nofollow",
   };
 }

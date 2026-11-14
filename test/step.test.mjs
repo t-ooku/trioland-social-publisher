@@ -200,4 +200,12 @@ for (const bytes of [ex.checklistXlsx(clv), ex.checklistDocx(clv)]) {
   assert.ok(bytes.length > 2000);
 }
 
+// /admin/step のフォーム POST で Origin を送らせる（no-referrer だと Origin: null になり 403 になる）
+{
+  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const fn = src.slice(src.indexOf("function securityHeaders()"), src.indexOf("function adminStyles()"));
+  assert.match(fn, /"referrer-policy": "same-origin"/);
+  assert.doesNotMatch(fn, /"referrer-policy": "no-referrer"/);
+}
+
 console.log("step tests passed");
