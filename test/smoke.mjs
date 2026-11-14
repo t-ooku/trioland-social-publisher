@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const source = readFileSync(new URL("../src/index.js", import.meta.url), "utf8");
+const worker = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
 const config = readFileSync(new URL("../wrangler.jsonc", import.meta.url), "utf8");
 
 assert.match(source, /hoshilu_isolated: true/);
@@ -31,7 +32,13 @@ assert.match(source, /authMethod: "admin_token"/);
 assert.match(source, /setCookie\(ADMIN_SESSION_COOKIE, sessionToken, ADMIN_SESSION_TTL_SECONDS\)/);
 assert.match(source, /clearCookie\(ADMIN_ACCESS_CSRF_COOKIE\)/);
 assert.match(source, /管理コードで本人確認済み/);
-assert.match(source, /href="\/admin\/login">GitHubログイン（予備）/);
+assert.match(source, /href="\/admin\/login\$\{suffix\}">GitHubログイン（予備）/);
+assert.match(source, /return value === "\/admin\/kpi" \? value : "\/admin"/);
+assert.match(source, /location: adminDestination\(rawAdminState\)/);
+assert.match(source, /redirectWithCookies\(destination,/);
+assert.match(worker, /\/admin\/access\?return_to=\/admin\/kpi/);
+assert.match(worker, /redirect: "manual"/);
+assert.match(worker, /if \(!result\.ok\) throw new Error\("KPI_SOURCE_UNAVAILABLE"\)/);
 assert.doesNotMatch(source, /href=["'][^"']*ADMIN_TOKEN/i);
 assert.doesNotMatch(source, /name="adminToken"[^>]*value=/i);
 assert.doesNotMatch(source, /admin-session:[\s\S]{0,500}adminToken\s*:/i);

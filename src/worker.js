@@ -86,7 +86,15 @@ const KPI_ASSET_BASE = "https://raw.githubusercontent.com/t-ooku/trioland-social
 async function handleKpiAdmin(request, env) {
   const url = new URL(request.url);
   const session = await adminSession(request, env);
-  if (!session) return Response.redirect(url.origin + "/admin/access", 302);
+  if (!session) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        location: url.origin + "/admin/access?return_to=/admin/kpi",
+        "cache-control": "no-store",
+      },
+    });
+  }
   if (request.method !== "GET" && request.method !== "HEAD") {
     return new Response("Method Not Allowed", { status: 405, headers: { allow: "GET, HEAD" } });
   }
@@ -95,7 +103,7 @@ async function handleKpiAdmin(request, env) {
   try {
     const result = await fetch(upstreamUrl, {
       headers: { accept: wantsData ? "application/json" : "text/html" },
-      redirect: "error",
+      redirect: "manual",
       cache: "no-store"
     });
     if (!result.ok) throw new Error("KPI_SOURCE_UNAVAILABLE");

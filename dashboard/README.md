@@ -4,7 +4,7 @@
 
 管理者限定URL: `https://trioland-social-publisher.mygate-jp.workers.dev/admin/kpi`。
 
-既存のWorker管理セッション（GitHub本人確認・管理コードログイン、8時間セッション）を再利用する。未ログイン時は `/admin/access` に転送。公開3サイトのHTMLには追加しない。HTMLは `dashboard/index.html`、日報データは `dashboard/latest.json`。管理者のブラウザにはWorkerの `/admin/kpi/data` から返す。GitHubのrawファイルにアクセスできない場合は実測値を偽造せず取得失敗を表示。認証情報・氏名・メール・電話・相談本文・子どもの情報・送信本文・Makeトークンは保存しない。
+既存のWorker管理セッション（GitHub本人確認・管理コードログイン、8時間セッション）を再利用する。未ログイン時はKPI画面を開くログイン画面へ転送し、どちらの認証方法でも認証後に `/admin/kpi` を表示する。公開3サイトのHTMLには追加しない。HTMLは `dashboard/index.html`、日報データは `dashboard/latest.json`。管理者のブラウザにはWorkerの `/admin/kpi/data` から返す。GitHubのrawファイルにアクセスできない場合は実測値を偽造せず取得失敗を表示。認証情報・氏名・メール・電話・相談本文・子どもの情報・送信本文・Makeトークンは保存しない。
 
 **重要：このGitHubリポジトリはpublic。dashboard/latest.jsonもGitHub上では公開される。現在は、既存の公開日報に記載済みの匿名・集計値だけを使う。非公開の顧客成果・社内売上・未公開の取引情報を追加する場合は、このJSONに記録せず、認証済みのサーバー側非公開ストレージへ方式変更する。**
 

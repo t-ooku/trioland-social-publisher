@@ -4,7 +4,9 @@ on:
     branches: [main]
     paths:
       - 'dashboard/**'
+      - 'src/index.js'
       - 'src/worker.js'
+      - 'test/smoke.mjs'
       - '.github/workflows/kpi-dashboard-check.yml'
   workflow_dispatch:
 permissions:
@@ -18,6 +20,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          node test/smoke.mjs
           node --check src/worker.js
           node <<'JS'
           const fs=require('fs'),assert=require('assert');
