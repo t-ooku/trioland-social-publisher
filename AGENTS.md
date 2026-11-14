@@ -5,3 +5,4 @@
 - 問い合わせメールの中継（Make）/ 毎日の「トリオキャリアHP・採用SEO日報」の中で確認 / 手順と異常時の書き方は docs/handoff/2026-11-09-cowork-to-codex-make-health-check.md。取れなければ「未取得」と書き、「正常」としない。
 
 - Make問い合わせ中継：既存site-smokeの `tools/make_inquiry_health.py`（毎日08:15 JST、読取専用）と `docs/handoff/2026-11-09-cowork-to-codex-make-health-check.md` に沿って稼働・キューを確認。2026-11-10のrun42723829749は判定6件PASSだが `MAKE_API_TOKEN` Secret未設定でライブ状態UNKNOWN。CI成功のみで「メール中継正常」と報告しない。重大障害は実問い合わせが届かなくなるため日報で先に注意喚起し、Make再送・キュー削除・本番テスト送信はしない。詳しくは `docs/seo/2026-11-10-inquiry-pdca.md`。
+- 会社HP お問い合わせ（CF7 ID 234）の「御社名」任意化と「確認する」説明の修正は Cowork が WordPress 管理画面で行う（Codex は WP を編集しない。修正後の公開GET・GA4推移の確認だけ）。`docs/handoff/2026-11-14-corp-contact-form-owner.md`。
