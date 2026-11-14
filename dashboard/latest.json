@@ -518,25 +518,25 @@
       "id": "KPI-AUTH-404",
       "site": "all",
       "priority": "P0",
-      "stage": "Plan",
-      "status": "原因調査・本番修正未確認",
+      "stage": "Check",
+      "status": "KPI用ログイン導線は本番反映・iPhone実機認証は未確認",
       "title": "管理KPIのGitHubログイン404",
-      "detail": "iPhoneのGitHub OAuth404既報。11/14時点でCodexの修正受領・本番認証成功は確認できず、アクセス障害は未解決として扱う。",
-      "next": "CodexがOAuthアプリ設定・redirect・ログイン後のKPI復帰を診断し、実機確認",
+      "detail": "管理コード・GitHub認証後にKPIへ戻る修正とKPIのデータ取得修正を実装。ローカルWorkerで認証後表示を検証。本番GETでKPI用ログイン画面とGitHub認可への転送を確認。404の原因と本番認証成功は未確認。",
+      "next": "iPhone Safariの認証とKPI/PDCAデータの表示を確認する。404が続く場合は発生段階を確認し、OAuth Appの登録内容と照合する。",
       "owner": "Codex",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-11-codex-kpi-github-login-404.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/6e901078c8356f6d3d2518a8d1052f59de7f7273"
     },
     {
       "id": "MAIL-P0",
       "site": "all",
       "priority": "P0",
       "stage": "Check",
-      "status": "11/14ライブ未取得（最終GitHub実ログ11/13 UNKNOWN）",
+      "status": "11/14 Make UNKNOWN・会社CF7の担当者受信未照合",
       "title": "問い合わせメールの配送を監視",
-      "detail": "最終site-smoke run43358648380のログで読取トークン未設定を確認。CI successはMake/Gmail配送正常の証拠ではない。11/13の会社HP送信成功4回は受信台帳未照合。",
-      "next": "Codex/Coworkが既存承認済み権限でMakeの有効/キュー/直近配送と、会社CF7受信の匿名集計を別々に照合。権限不足なら必要な本人操作を最小限報告。",
+      "detail": "既存site-smokeでシナリオとWebhookに加え、直近実行・Gmail接続期限を確認するよう拡張。11/14の実ログは読取トークン未設定、担当受信も未取得。会社HPのGA4送信成功4回は担当受信未照合。",
+      "next": "Make読取Secretの設定後に既存監視でライブ確認。会社CF7は既存SMTPログと担当受信記録を匿名件数で照合。",
       "owner": "Codex / Cowork",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-14-inquiry-pdca.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43543177959"
     },
     {
       "id": "AS-03",
@@ -566,13 +566,13 @@
       "id": "CORP-01",
       "site": "corp",
       "priority": "P1",
-      "stage": "Plan",
-      "status": "公開フォームの説明矛盾を確認・WordPress編集未実施",
+      "stage": "Check",
+      "status": "11/14本番反映確認・効果検証中",
       "title": "個人相談時の「御社名」必須欄",
-      "detail": "11/14公開ページで『御社名（必須）』と、確認画面なしなのに『確認する』ボタン案内が併存。11/13会社問い合わせ7PV、フォーム開始5、成功4（外部受信未照合）。WordPress CF7の受信要件が未確認のため必須条件は未変更。",
-      "next": "Coworkが既存WP承認済み経路でCF7の文言位置・実際の確認画面と個人/法人の受付条件を照合。確認画面がないなら文言を実動作と一致させ、Codexが本番GET/スマホ検証。",
-      "owner": "Cowork",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-14-inquiry-pdca.md"
+      "detail": "会社HPの公開CF7で御社名（任意）、必須属性なし、送信ボタンと説明の一致をPC・iPhone Safariのユーザーエージェントで確認。",
+      "next": "11/21（D+7）・11/28（D+14）に入力開始、送信成功、照合済みの外部実受付を比較。Safari実機での操作とメール配送は未確認。",
+      "owner": "Cowork（修正）／Codex（検証）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-14-corp-contact-form-owner.md"
     },
     {
       "id": "SEO-01",
@@ -612,6 +612,12 @@
     }
   ],
   "history": [
+    {
+      "date": "11/14",
+      "title": "KPI用ログイン導線を本番確認し、Make監視を拡張",
+      "result": "管理コード・GitHub認証後のKPI遷移と認証後データをローカル検証。本番でKPI用ログイン画面を確認。Makeは実行履歴とGmail接続期限の検査を追加し、稼働と担当受信はUNKNOWN。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/6e901078c8356f6d3d2518a8d1052f59de7f7273"
+    },
     {
       "date": "11/14",
       "title": "会社HPの実問い合わせ受信が未照合と再確認、フォーム説明矛盾を公開ページで発見",
@@ -682,14 +688,14 @@
   "warnings": [
     "11/13：会社HPのGA4送信成功イベント4回・独自フォーム開始5回、問い合わせページ7PV。ただしWordPress CF7の実受付/メール配送・内部/スパム除外が未照合。外部実問い合わせ数は未取得。",
     "11/13：保育HPはCTA1、放デイはCTA1・フォーム開始1。両サイトの送信成功は取得行なし（実問い合わせ0件とは断定しない）。",
-    "11/14：Make監視の最終GitHub実ログは11/13 12:23 JSTでread-only token未設定によるUNKNOWN。CI成功は本番メール配送の正常性を示さない。11/14のsite-smoke新規実行は09時台一覧に未反映。",
-    "11/14：会社HP公開お問い合わせで『御社名（必須）』と『確認する』ボタン案内／『確認画面は表示されません』が併存。WordPress CF7運用要件の確認までは編集しない。",
+    "11/14のsite-smoke実ログもMake読取トークン未設定でUNKNOWN。担当者受信の確認も未取得。",
+    "11/14：会社HP本番で御社名の任意化と送信ボタンに合わせた説明を確認。実受信と7日・14日後の効果は未確認。",
     "11/12：保育HP inquiry_submit_error 1回の原因分類は未取得。11/13新規エラーの取得行なしを正常と同一視しない。",
     "GA4：11/01〜02は欠測、11/03は計測開始部分日。放デイ11/06・07は日別取得行なし。直近7日・当月ユーザーは別の期間集計で取得し、3サイト合算はしない。",
     "GA4：11/13流入元別セッションは会社Organic Search17/Direct13、保育Organic7/Direct3、放デイOrganic2。今日日別ではホスト総数と一致、別日・別定義の不一致は継続注意。",
     "GSC：最新確定11/10 PT。11/11〜13は速報（13は途中日）。GA4 JSTと同じ日付として扱わない。期間順位は表示加重近似。",
     "11/9に滞留から復旧した外部実相談6件（保育5・放デイ1）を11/13の新規問い合わせ数に計上しない。",
-    "管理KPIのGitHub OAuth404は実機認証成功を未確認。GitHub更新だけで本番管理画面が使えるとは報告しない。"
+    "KPI用ログイン導線は本番反映済み。iPhone SafariのGitHub認証と認証後の本番KPI表示は未確認。"
   ],
   "ga4MTD": {
     "period": "2026-11-03〜11-13（11/01〜02欠測・11/03部分日）",

@@ -1,5 +1,5 @@
 # ステップアップ表（/step）の本番確認。Workers Builds のデプロイを待ってから、公開されている入口だけを確かめる。
-# 本物のリンク（トークン）は使わない。存在しないトークンで API を叩き、404 が返る（＝D1 につながっている）ことを見る。
+# ログイン前の /step/api/me が 401 を返すことを確認する。
 name: Step app production check
 on:
   workflow_dispatch:
@@ -34,9 +34,8 @@ jobs:
           check "/health" 200 "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/health")"
           check "/step/app.css" 200 "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/step/app.css")"
           check "/step/unknown (404 page)" 404 "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/step/unknown")"
-          body=$(curl -s -w ' %{http_code}' -H 'authorization: Bearer AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' "$BASE/step/api/me")
-          echo "api with unknown link: $body"
-          case "$body" in *LINK_INVALID*404) echo 'ok   /step/api/me rejects unknown link (D1 reachable)';; *) echo '::error::/step/api/me unexpected'; fail=1;; esac
+          body=$(curl -s -w ' %{http_code}' "$BASE/step/api/me")
+          case "$body" in *LOGIN_REQUIRED*401) echo 'ok   /step/api/me requires a session';; *) echo '::error::/step/api/me unexpected'; fail=1;; esac
           check "/admin/step without login (redirect)" 302 "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/admin/step")"
           robots=$(curl -s -D - -o /dev/null "$BASE/step/unknown" | tr -d '\r' | grep -i '^x-robots-tag:' || true)
           echo "$robots" | grep -qi noindex && echo 'ok   noindex header' || { echo '::error::noindex header missing'; fail=1; }

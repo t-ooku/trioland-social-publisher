@@ -35,16 +35,17 @@ jobs:
           assert(!forbidden.test(JSON.stringify(d)),'possible secret detected');
           console.log('dashboard safety/schema checks: PASS');
           JS
-      - name: Check unauthenticated KPI route is protected (after deployment)
+      - name: Check that the live KPI login preserves the destination
         shell: bash
-        continue-on-error: true
         run: |
           set -euo pipefail
-          u='https://trioland-social-publisher.mygate-jp.workers.dev/admin/kpi'
-          code=$(curl -sS --max-time 15 -o /tmp/kpi-body -D /tmp/kpi-headers -w '%{http_code}' "$u" || true)
-          echo "public HTTP status: $code"
-          if [ "$code" = 302 ] && grep -qi 'location: .*\/admin\/access' /tmp/kpi-headers; then
-            echo 'Protected route is deployed'; exit 0
-          fi
-          echo 'UNVERIFIED: worker route not deployed or unavailable. Do not claim live dashboard success.'
+          base='https://trioland-social-publisher.mygate-jp.workers.dev'
+          for attempt in $(seq 1 12); do
+            code=$(curl -sS --max-time 10 -o /dev/null -D /tmp/kpi-headers -w '%{http_code}' "$base/admin/kpi" || true)
+            if [ "$code" = 302 ] && tr -d '\r' </tmp/kpi-headers | grep -Fqi 'location: https://trioland-social-publisher.mygate-jp.workers.dev/admin/access?return_to=/admin/kpi'; then
+              echo 'Live KPI login preserves its destination'; exit 0
+            fi
+            [ "$attempt" = 12 ] || sleep 10
+          done
+          echo '::error::Live KPI login destination could not be verified.'
           exit 1
