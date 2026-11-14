@@ -113,6 +113,24 @@ jobs:
           code=$(curl --max-time 30 -s -o /dev/null -w '%{http_code}' https://trioland-social-publisher.mygate-jp.workers.dev/api/inquiry)
           echo "inquiry GET status: $code (405 is expected; delivery is not tested)"
           test "$code" = 405
+      - name: Corporate contact form UX regression (GET only, never submit)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # WordPress/CF7 is maintained by Cowork/owner; inspect public copy only.
+          # This is NOT an email delivery check. Existing site-smoke schedule; no extra jobs.
+          url="https://www.triocareer.jp/contact/"
+          if ! curl --max-time 30 -fsSL "$url" -o /tmp/triocareer-corporate-contact.html; then
+            echo "::warning::Corporate contact form GET could not be verified; do not call it normal."
+          else
+            echo "Corporate contact form public GET: 200 (does not confirm submission or delivery)"
+            if grep -Eq '御社名[^<]{0,40}(（必須）|必須)' /tmp/triocareer-corporate-contact.html; then
+              echo "::warning::Corporate contact form still appears to require a company name. Check live CF7/owner screenshot."
+            fi
+            if grep -Eq '「確認する」ボタンをクリック|「確認する」ボタンを押' /tmp/triocareer-corporate-contact.html; then
+              echo "::warning::Corporate contact instructions may still mention a non-existent confirmation step."
+            fi
+          fi
       - name: Hoiku canonical and sitemap agree with final Pages URLs (GET only)
         shell: bash
         run: |
