@@ -6,10 +6,10 @@
 
 | 項目 | 状態 | 中身 |
 |---|---|---|
-| アプリ本体 `/step/` | 本番反映済み・画面は本番未確認 | `src/worker.js`（入口）→ `src/step.js`・`src/step_ui.js`・`src/step_logic.js`。Workers Builds のデプロイ後、`step-check.yml` の確認アクセスで D1 に初期の項目（版 1・7 段階）が書き込まれたことを確認（2026-11-08 02:01 UTC）。ブラウザでの画面確認は所有者待ち |
+| アプリ本体 `/step/` | 本番反映済み・画面は本番未確認 | `src/worker.js`（入口）→ `src/step.js`・`src/step_ui.js`・`src/step_logic.js`。Workers Builds のデプロイ後、`step-check.yml` の確認アクセスで D1 に初期の項目（版 1・7 段階）が書き込まれたことを確認（2026-11-08 02:01 UTC）。ブラウザでの画面確認は所有者待ち。2026-11-14：所有者が本部IDで `/step/` にログインし、パスワードを変えられた（ログインとパスワード変更は本番確認済み。ほかの画面は未確認） |
 | D1 | 本番確認済み | `trio_step`（id `1aade7a9-3239-4541-a856-b986cdcc5707`、APAC）。テーブルは `migrations/0001_step.sql`。Worker も初回に `CREATE TABLE IF NOT EXISTS` で作る |
 | 園長リンク（旧方式） | 2026-11-11 で終了 | 駒沢大学園・梅ヶ丘園の専用リンクは、開くとログインの画面に案内する。ID とパスワードに切り替え |
-| 本部の管理画面 `/admin/step` | 実装済み・本番未確認 | 既存の管理ログイン（`/admin/access`）のあと、URL を直接開く。最初の本部IDの発行と、本部IDの仮パスワード再発行。管理画面のトップにはまだリンクがない（`src/index.js` は変更していない） |
+| 本部の管理画面 `/admin/step` | 本番確認済み（2026-11-14） | 所有者のスマホで最初の本部IDを発行した。本番 D1 の users は hq 1件で、ログイン済み・パスワード変更済み（件数だけを確認）。発行の 403 は `src/worker.js` の referrer-policy を same-origin にして直した（740cc80）。既存の管理ログイン（`/admin/access`）のあと、URL を直接開く。最初の本部IDの発行と、本部IDの仮パスワード再発行。管理画面のトップにはまだリンクがない（`src/index.js` は変更していない） |
 | QR コード | 未実装 | ID と仮パスワードは「まとめてコピー」「LINEなどで送る」「印刷して渡す」で渡す |
 | 既存機能（問い合わせ API・Instagram・求人管理・MCP） | 実装済み・本番未確認 | `/step` と `/admin/step` 以外は `src/index.js` にそのまま渡す。ローカルで `/health`・`/admin`・`OPTIONS /api/inquiry` の応答が変わらないことを確認。本番は `step-check.yml` の結果で確認する |
 
