@@ -55,3 +55,8 @@
 
 ## 安全・状態
 今日日報作成時点のサイト本体新機能改修なし。実施したのは**既存公開GET監視への会社問い合わせ文言の回帰検査追加**。GitHub変更≠CI/配備/実受信。外部有効受付は全サイト未照合、成果率算出不可。相談者個人情報、送信先アドレス、検索クエリ、Secret等は公開GitHubに保存しない。
+
+## 検査完了追記（2026-11-15 08:57 JST頃）
+- 新規追加の会社HP公開フォーム文言チェックを含む既存 [site-smoke #43655677352](https://github.com/t-ooku/trioland-social-publisher/actions/runs/43655677352) が **success**。会社 `/contact/` の公開GETは200で、検査が対象とする旧い「御社名必須」「確認する」パターンの警告は**発生しなかった**。これは現行CF7保存・全端末表示・実送信・メール受信の証明ではない。外部Webテキスト抽出の古い内容はキャッシュ等の可能性が残り、当該Actionsの公開HTTP結果を優先して記録する。
+- Makeの同じrunの実ログは **Live UNKNOWN / Recipient delivery UNKNOWN**。フォーム表示のCI成功と送達を混同しない。
+- [KPI dashboard safety and publish check #43655980373](https://github.com/t-ooku/trioland-social-publisher/actions/runs/43655980373) は **success**。11/15向け `dashboard/latest.json` はGitHub main反映済み、データ検査PASS。ただし認証後の管理画面表示やWorkerデプロイの保証ではない。
