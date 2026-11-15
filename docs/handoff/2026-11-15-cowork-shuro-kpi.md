@@ -101,5 +101,5 @@
 - 所有者：「ホーム / お問い合わせ の下の余白を詰めたい」。
 - 原因：パンくずの下の section の上の余白（40px）と、`.co-grid` の上の余白（36px）が重なり、約76px 空いていた。
 - 直したこと：所有者がテーマファイルエディターで `pages/contact.php` の21行目を `<section class="wrap" style="padding-block:20px 80px"><div class="co-grid" style="margin-top:0">` に変えた。「ファイルの編集に成功しました」を所有者のスクショで確認した。
-- 状態：**実装済み・本番の見た目は所有者のスクショ待ち**。
+- 状態：**本番確認済み**（2026-11-15 12:07 JST、所有者のスマホで公開ページ `/contact/` のスクショ。パンくずのすぐ下に「本社」の箱が来ている）。
 - **Codex へ**：テーマを作り直すと元に戻る。`corp-site/gen_pages.py` の `p_contact()` の `<section class="wrap" style="padding-block:40px 80px"><div class="co-grid">` を同じ形に変えておくこと。`digilumi` の説明文（上の節）と合わせて、次のテーマ版を作る前に直す。
