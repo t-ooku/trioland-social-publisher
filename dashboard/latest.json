@@ -543,8 +543,8 @@
   },
   "make": {
     "status": "unknown",
-    "detail": "11/14所有者のMake画面ではシナリオ6306695 Active、11/10〜12各1件成功との記録。ただし11/14 12:10 JST site-smoke #43550213007の実ログはMake live UNKNOWN（Free/APIトークン未設定）および受信者配達UNKNOWN。接続Gmailに11/08〜15の該当Makeエラー通知なし、正式通知先か未確認。会社HPは別のWordPress CF7でBccコピー配達未確認。",
-    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43550213007"
+    "detail": "11/14所有者のMake画面ではシナリオ6306695 Active、11/10〜12各1件成功との記録。ただし11/14 12:10 JST site-smoke #43655677352の実ログはMake live UNKNOWN（Free/APIトークン未設定）および受信者配達UNKNOWN。接続Gmailに11/08〜15の該当Makeエラー通知なし、正式通知先か未確認。会社HPは別のWordPress CF7でBccコピー配達未確認。",
+    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43655677352"
   },
   "pdca": [
     {
@@ -593,7 +593,7 @@
       "detail": "会社WordPress CF7 234：所有者がBccを追加したとの11/14記録があるが送信先・Bcc先の実到達は未照合。GA4 11/14フォーム開始3・成功1。Make 6306695は11/14画面でActiveだが既存site-smokeの実ログはライブ/担当受信UNKNOWN、FreeプランでAPIトークン新設は前提としない。接続GmailのMakeエラー通知は見つからないが正式通知先とは限らない。",
       "next": "Coworkが既存正規権限で会社正式受信箱・Bccの匿名件数を確認、CodexがMake History/Queue/配送結果を既存画面で読取。未取得なら次回もUNKNOWN。",
       "owner": "Codex / Cowork",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43550213007"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43655677352"
     },
     {
       "id": "AS-03",
@@ -624,12 +624,12 @@
       "site": "corp",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/14所有者画面で文言修正の記録／11/15外部抽出と表示食い違い・追加GET検査の結果待ち",
+      "status": "11/15新検査の公開GET200・旧文言パターン未検出／実受信未確認",
       "title": "個人相談時の「御社名」必須欄",
-      "detail": "本人11/14スクショは御社名任意・送信案内修正。一方、11/15Web取得では旧い御社名必須・確認文言を返す。キャッシュか実配信か不明。既存site-smokeに読取専用のフォーム文言警告を追加（f5179cb）。",
+      "detail": "11/14所有者スクショは御社名任意・送信説明修正。11/15の公開GETチェックで200かつ旧「御社名必須」「確認する」のパターン警告なし（site-smoke #43655677352 success）。一方Web検索抽出は古い表現を返し、キャッシュ差の可能性。実操作・メール受信までは検証せず。",
       "next": "既存site-smoke実ログを確認し、差異があればCoworkがWP/CF7と表示キャッシュを照合。D+7=11/21 D+14=11/28の効果を匿名の実受付とGA4で比較。",
       "owner": "Cowork（修正）／Codex（検証）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/f5179cb5098cf6655c0a6728742ead1ece09c1ea"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43655677352"
     },
     {
       "id": "SEO-01",
@@ -672,7 +672,7 @@
     {
       "date": "11/15",
       "title": "GA4/GSCを更新し、会社問い合わせフォームの表示回帰検査を追加",
-      "result": "11/14会社HP GA4成功イベント1、入力開始3、外部実受付未照合。既存site-smokeにフォーム文言のGET警告検査を追加（f5179cb）。保育/放デイMakeのライブ配送UNKNOWN。",
+      "result": "GA4 11/14会社の成功イベント1は受信未照合。site-smoke #43655677352でWordPressお問い合わせGET200・旧文言警告なし、KPI検査 #43655980373 success。Make担当配達はUNKNOWN。",
       "link": "https://github.com/t-ooku/trioland-social-publisher/commit/f5179cb5098cf6655c0a6728742ead1ece09c1ea"
     },
     {
@@ -752,7 +752,7 @@
     "11/14 GA4：会社HP CTA4、独自フォーム開始3、送信成功イベント1。外部有効問い合わせ・メール配達は未照合。保育/放デイはCTA・フォーム開始・成功の取得行なし（0件とは断定しない）。",
     "会社HP CF7はMakeと別経路。11/14の所有者Bcc追加は保存後の本番送信・実受信が確認できず、担当受信UNKNOWN。",
     "保育/放デイMake：11/14所有者画面はActive。ただし最新確認済みsite-smoke #43550213007はLive UNKNOWN・Recipient delivery UNKNOWN。FreeプランでAPIトークン設定を追加契約の前提にしない。接続Gmailの通知なしは正常の証明ではない。",
-    "11/14会社HPお問い合わせフォームは所有者スマホ画像では御社名任意・送信説明修正。11/15Web抽出では旧文言が残り、キャッシュか本番差異か未確定。11/15既存site-smokeへ公開GET文言監視を追加（f5179cb）、結果確認待ち。",
+    "会社HPフォームは11/14所有者スクショで任意化・送信説明修正を確認。11/15 08:56 JSTのsite-smoke #43655677352で公開GET200、旧文言パターン警告なし。一部Web抽出は旧文言を返しておりキャッシュ等は未確定。フォーム実送信と実受信は試験していない。",
     "GA4：11/01〜02欠測、11/03部分日、放デイ11/06〜07日別取得行なし。サイト間ユニーク重複・内部/自動アクセス除外は未確認。期間ユーザーは別集計取得。",
     "11/14放デイは5セッション、相談フォーム3PV、採用2PV。相談/採用の実受付件数は未照合。",
     "11/12保育HP inquiry_submit_error 1回の原因分類が未取得。11/14の該当イベント取得行なしは復旧の証拠ではない。",
