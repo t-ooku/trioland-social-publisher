@@ -475,7 +475,7 @@ def p_biz():
         '<a class="btn" href="https://afterschool.triocareer.jp/" target="_blank" rel="noopener">放課後デイのHP <span class="u">afterschool.triocareer.jp</span></a>')
     menus = "".join((f'<div class="menu rv"><img src="a/dgc-{n}.webp" width="600" height="480" alt="" loading="lazy">{t}</div>' if DG_OK else f'<div class="menu rv"><span class="mi">{DG_MENU_ICON.get(n, "")}</span>{t}</div>') for n, t in [("01", "動画・映像編集"), ("02", "イラスト・キャラクター"), ("06", "グラフィックデザイン"), ("03", "WEB・SNS運営"), ("05", "データ入力・事務"), ("07", "社会体験・イベント")])
     biz_page("digilumi", "就労継続支援B型 でじるみ｜東京・千葉・栃木の6事業所｜トリオキャリア",
-        "トリオキャリアが運営する就労継続支援B型事業所でじるみ（東京大田・千葉我孫子・千葉市川・栃木宇都宮・千葉中央・栃木小山）。イラスト・動画・デザインを学びながら自分のペースで働けます。",
+        "東京・千葉・栃木の就労継続支援B型「でじるみ」。イラスト・動画編集・デザインに取り組める6事業所のアクセスと、無料見学・体験のご案内。",
         ('<img src="a/dg-chara.webp" width="600" height="600" alt="でじるみのキャラクター" loading="lazy" style="object-fit:contain;background:#111">' if DG_OK else dgart("イラスト・動画・デザインを学ぶでじるみ", "イラスト・動画・デザイン", "abs big")),
         "貴方の「好き」を「仕事」に。イラスト・動画・デザインに特化したB型事業所です。自分のペースで通いながらプロのクリエイターに学び、工賃を受け取れます。",
         ["学習費用0円", "無料見学・体験", "各事業所 定員20名"],
@@ -597,7 +597,7 @@ def p_contact():
     cr, crld = crumbs([("ホーム", "index.html"), ("お問い合わせ", None)])
     rows = "".join(f'<tr><th><a href="{f["page"]}">{E(f["name"])}</a></th><td class="num">{f["tel"]}</td></tr>' for f in F)
     body = f'''{phead("Contact", "お問い合わせ", "サービス・見学・採用のご相談は、お電話かフォームからどうぞ。")}{cr}
-<section class="wrap" style="padding-block:40px 80px"><div class="co-grid">
+<section class="wrap" style="padding-block:20px 80px"><div class="co-grid" style="margin-top:0">
   <div class="contact rv" style="display:block"><div class="eyebrow">Head office</div><div class="sub" style="color:#fff">本社</div><div class="tel num">{ORG["tel"]}</div><small>受付 9:00〜18:00（土日祝を除く）</small>
     <p style="margin:16px 0 0;font-size:14px">〒{ORG["zip"]} {ORG["pref"]}{ORG["city"]}{ORG["street"]}</p>{'<a class="btn" href="#form">お問い合わせフォーム</a>' if MODE == "wp" else '<a class="btn" href="https://www.triocareer.jp/contact/" target="_blank" rel="noopener">お問い合わせフォーム</a>'}</div>
   <div class="rv"><div class="sub-h" style="margin-top:0">施設の電話番号</div><div class="tbl"><table>{rows}</table></div></div>
