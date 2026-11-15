@@ -548,6 +548,30 @@
   },
   "pdca": [
     {
+      "id": "GROWTH-FUNNEL-20261115",
+      "site": "all",
+      "priority": "P1",
+      "stage": "Plan",
+      "status": "7日実測を再取得・効果未判定／外部有効CVR未算出",
+      "title": "3サイトのPV・検索CTR・問い合わせCVRを目的別PDCAで改善",
+      "detail": "GA4 11/08〜14 JST：会社230セッション401PV・CTA34/開始17/成功12イベント、保育47/67・CTA12/開始5/成功4、放デイ27/34・CTA2/開始6/成功5。成功はイベント回数、内部テスト・受信未照合のため真のCVRではない。保護者利用希望・採用・B型・法人を分ける。",
+      "next": "既存毎朝日報でGA4・GSCと匿名受信集計を照合。保育は見学検討と採用記事、放デイは保護者施設ページと採用記事の流入別に評価。新規日次タスクなし。",
+      "owner": "GPT（集計・優先順位）／Cowork（UX案）／Codex（計測・公開）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-15-cowork-growth-pv-ctr-cvr.md"
+    },
+    {
+      "id": "GROWTH-CALLCENTER-CTR-20261115",
+      "site": "corp",
+      "priority": "P1",
+      "stage": "Plan",
+      "status": "2026-11-15 検証データ取得・Cowork指示書保存／Cowork受領・実装・公開未確認",
+      "title": "会社HPコールセンター事業の検索CTR改善",
+      "detail": "GSC確定11/06〜12 PTでコールセンター事業635表示2クリック CTR0.31% 平均7.41位。でじるみ事業770表示4クリック CTR0.52%は次点。まず1ページ1仮説でタイトル・description改善を検証し、内容・CV導線は段階的に扱う。ユーザー指示によりPV/CTR/実問い合わせCVRを主要成長KPIとする。",
+      "next": "Coworkが現行タイトル/description・ページ内容とスマホUXを点検し、確認済み事実だけで改善案を具体化。Codexが変更重複のない実装/CI/公開を確認。D0を記録してD+7/+14、必要なら+28でCTR・自然検索入口・PV・外部有効問い合わせを検証。",
+      "owner": "Cowork（文言・UX）／Codex（実装・公開検証）／GPT（成果判定）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-15-cowork-growth-pv-ctr-cvr.md"
+    },
+    {
       "id": "HOIKU-ERROR-20261112",
       "site": "hoiku",
       "priority": "P0",
@@ -588,10 +612,10 @@
       "site": "all",
       "priority": "P0",
       "stage": "Check",
-      "status": "会社11/14 GA4成功イベント1・実メール受付未照合／Make配達UNKNOWN",
+      "status": "11/15本人の受信画面で会社HP問い合わせ通知メールを確認／実案件の有効性・Bcc照合は未判定。Make 6306695はActive画面・履歴あり、担当受信の全数照合はUNKNOWN",
       "title": "問い合わせメールの配送を監視",
-      "detail": "会社WordPress CF7 234：所有者がBccを追加したとの11/14記録があるが送信先・Bcc先の実到達は未照合。GA4 11/14フォーム開始3・成功1。Make 6306695は11/14画面でActiveだが既存site-smokeの実ログはライブ/担当受信UNKNOWN、FreeプランでAPIトークン新設は前提としない。接続GmailのMakeエラー通知は見つからないが正式通知先とは限らない。",
-      "next": "Coworkが既存正規権限で会社正式受信箱・Bccの匿名件数を確認、CodexがMake History/Queue/配送結果を既存画面で読取。未取得なら次回もUNKNOWN。",
+      "detail": "11/15本人が会社HPからの問い合わせメール受信画面を提供（個人情報はGitHubに保存しない）。CF7の通知メールが少なくとも1通届いたことを確認したが外部有効問い合わせやBccの完全な受信照合は未判定。Make 6306695はActive、Webhook→Gmail構成と直近History表示あり。実行44は問い合わせ44件を意味せず、Queue・個別Gmail配達・担当受信は未照合。別シナリオ5623382の警告は区別。",
+      "next": "配送安全点検は継続し、匿名の受付種別・実件数が把握できる時点で成功イベントと照合。集客改善の主PDCAは新しいGrowth施策で進める。",
       "owner": "Codex / Cowork",
       "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43655677352"
     },
@@ -669,6 +693,12 @@
     }
   ],
   "history": [
+    {
+      "date": "11/15",
+      "title": "PV・検索CTR・CVR改善の優先順位を確定・Cowork指示書を保存",
+      "result": "GSC確定11/06〜12のページ別でコールセンター635表示2クリック(0.31%)、でじるみ770表示4クリック(0.52%)を確認。3サイトのGA4 11/08〜14のPV・イベントを再取得。会社の問い合わせメール受信スクショとMake Active/履歴を確認。指示書はGitHub保存済み、Cowork受領・実装・公開は未確認。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-15-cowork-growth-pv-ctr-cvr.md"
+    },
     {
       "date": "11/15",
       "title": "GA4/GSCを更新し、会社問い合わせフォームの表示回帰検査を追加",
@@ -749,7 +779,7 @@
     }
   ],
   "warnings": [
-    "11/14 GA4：会社HP CTA4、独自フォーム開始3、送信成功イベント1。外部有効問い合わせ・メール配達は未照合。保育/放デイはCTA・フォーム開始・成功の取得行なし（0件とは断定しない）。",
+    "11/14 GA4会社CTA4・フォーム開始3・成功1。11/15の所有者画像で会社問い合わせ通知メールの受信1例を確認したが、当該イベントと受信メールの同一性・外部有効実件数は未照合。保育・放デイの行なしを0件扱いしない。",
     "会社HP CF7はMakeと別経路。11/14の所有者Bcc追加は保存後の本番送信・実受信が確認できず、担当受信UNKNOWN。",
     "保育/放デイMake：11/14所有者画面はActive。ただし最新確認済みsite-smoke #43550213007はLive UNKNOWN・Recipient delivery UNKNOWN。FreeプランでAPIトークン設定を追加契約の前提にしない。接続Gmailの通知なしは正常の証明ではない。",
     "会社HPフォームは11/14所有者スクショで任意化・送信説明修正を確認。11/15 08:56 JSTのsite-smoke #43655677352で公開GET200、旧文言パターン警告なし。一部Web抽出は旧文言を返しておりキャッシュ等は未確定。フォーム実送信と実受信は試験していない。",
