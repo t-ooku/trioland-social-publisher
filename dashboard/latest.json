@@ -630,10 +630,10 @@
       "site": "corp",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/16 Cowork/所有者が6事業所CTA＋FAQを本番反映確認／11/17生成元同期main commit済み・本日WP再配備なし・GET/CI未確認",
+      "status": "11/16所有者・Coworkが公開確認／11/17生成元修正+施設バナー独立許可+既存site-smoke回帰検査main反映／新commit CI・最新本番GET未確認",
       "title": "でじるみ6事業所の見学・利用相談CTAを生成元へ同期",
-      "detail": "11/16 22:15頃Coworkが6事業所の見学・利用相談リンクから会社HP /contact/#form への遷移先とFAQ表示を確認。次のテーマ生成で旧リンク・旧FAQ・未承認画像差替えへ巻戻らないようcorp-site/gen_pages.pyを修正。事業紹介7画像の暫定使用承認だけ反映、施設バナーの承認フラグは維持。11/16 GA4の東京大田CTA5は公開前も含みうるため効果に算入しない。",
-      "next": "Codexが既存の正規公開GET経路で6事業所のCTA・FAQPage・画像を再確認し、本日更新した生成元のPython構文・ビルド/CIを確認。実受付の匿名内訳が取れる場合だけ11/23（D+7）、11/30（D+14）に評価。",
+      "detail": "11/16 Cowork/所有者が6事業所の見学・利用相談CTAから会社HP /contact/#formへの案内とFAQ表示を本番で確認。11/17 mainで生成元を同期（01cff1c3）、事業紹介7画像の暫定許可と未承認施設バナーを分離（6a6f44c）、既存site-smokeに構文・旧文言回帰検査追加（1ea9d23）。本日の新WP再配備・GET・CIの実成功は未確認。",
+      "next": "次回は既存CIの実ログ、WordPress6施設GETとFAQPage、許可済み画像とバナー非公開、保育トップ新metaのCloudflare実配信を確認。新フォーム送信はしない。11/23・11/30に外部有効相談を同条件で検証。",
       "owner": "Cowork/所有者（11/16実公開）／GPT（11/17生成元修正）／Codex（GET・CI・公開検証）",
       "link": "https://github.com/t-ooku/trioland-social-publisher/commit/01cff1c3e1cfe7cd3443c354ab3bc2b38193b09b"
     },
@@ -822,7 +822,7 @@
     {
       "date": "11/17",
       "title": "でじるみ6事業所の見学・相談CTAを生成元に同期しKPI更新",
-      "result": "11/16 GA4で会社116・保育23・放デイ21PV、送信成功イベント会社1・保育2。GSC確定11/14まで更新。Coworkが11/16公開確認した事業所CTA・FAQと、暫定許可された画像のWordPress生成元をmain 01cff1c3で整合。新WP再配備・CI・本日GET未確認。外部有効問い合わせCVRは未算出。",
+      "result": "11/16 GA4会社116・保育23・放デイ21PV、GSC確定11/14。会社成功イベント1・保育2。Cowork 11/16の6事業所CTA・FAQを生成元へmain同期、施設バナー未承認範囲を分離し既存site-smokeに回帰検査追加（01cff1c3/6a6f44c/1ea9d23）。新CI実行結果・最新WordPressGET未確認、外部有効問い合わせ・CVR未算出。",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-17-inquiry-pdca.md"
     },
     {
@@ -919,7 +919,7 @@
   "warnings": [
     "11/16 GA4：会社116PV・39セッション・CTA16/独自フォーム開始7/成功1イベント、保育23PV・14セッション・CTA4/開始2/成功2、放デイ21PV・6セッション・CTA7/独自開始と成功は取得行なし。イベント件数を人数や外部有効問い合わせとみなさない。3サイト実受付未照合・CVR未算出。",
     "11/16会社WordPressとでじるみ事業所ページに所有者の編集・確認が複数あり、内部アクセス除外は未確認。11/15比PV増を純粋な集客増と断定しない。",
-    "11/16 Cowork/所有者がでじるみ6事業所の見学・利用相談CTAとFAQを本番確認。11/17の生成元同期はmain commit 01cff1c3まで。本日WordPressへ再公開しておらず、最新の公開GET・CIは未確認。11/23・30評価。",
+    "11/16 Cowork/所有者がでじるみ6事業所の見学・利用相談CTAとFAQを本番確認。11/17 mainで生成元同期01cff1c3、施設バナー独立許可6a6f44c、既存smoke検査1ea9d23。WordPress再配備なし。新commitのCI結果と最新公開GET未確認。D+7=11/23、D+14=11/30。",
     "保育トップ新meta：build_site.pyとGitHub生成HTMLに新文言あり、Cloudflare Pagesの実配信は読取経路で未確認。効果D0は確定できない。",
     "11/16 GA4流入元別セッションの合計は会社44対ホスト全39、保育15対14、放デイ7対6。スコープ不一致の原因未判定。流入構成比は算出しない。",
     "11/16放デイCTA7回、GA4自動form_start1回、独自inquiry_form_startの行なし、送信成功行なし。採用CTA1を含むため利用検討7人の離脱と呼ばない。実受付未照合。",
