@@ -2,8 +2,9 @@
 # 出力：corp4/index.html（Artifact が外枠を付けるので中身だけ）と、ほかのページ（完全な HTML）、assets/site.css・site.js
 import json, math, html, pathlib, datetime, os
 MODE = os.environ.get("TRIO_MODE", "proto")   # proto＝試作版（Artifact）／wp＝本番の WordPress テーマ
-# でじるみ本部サイトの写真は掲載許可が要確認（中村さん経由）。許可が出るまで本番では使わない（2026-10-20 オーナー回答）
-DG_OK = os.environ.get("TRIO_DG_PHOTOS", "1" if MODE == "proto" else "0") == "1"
+# 2026-11-16 所有者が本部の正式素材到着まで事業紹介用の既存7画像を暫定使用することを承認。
+# 次の WordPress テーマ生成でも確認済み画像に戻せるよう既定値を有効化する（個別施設の未承認バナーは DG_FAC_OK=0 のまま）。
+DG_OK = os.environ.get("TRIO_DG_PHOTOS", "1") == "1"
 # 各事業所の施設写真：オーナーは掲載可としたが、でじるみ本部から「公開前にクリエイティブチェック（公開前の HP リンクを提出）」が必要と回答（2026-10-20）。
 # 本部のチェックが通るまで本番には出さない（TRIO_DG_FAC=1 で出す）。試作版（チェック用リンク）には出す
 DG_FAC_OK = os.environ.get("TRIO_DG_FAC", "1" if MODE == "proto" else "0") == "1"
@@ -110,7 +111,7 @@ for k, n, z, pf, c, st, tel, la, ln, sta, acc, op, slug in DG:
         faq=[(f"でじるみ{n}はどこにありますか？", f"{pf}{c}{st}です。{acc[0]}です。"),
              ("利用にお金はかかりますか？", "学習費用はかかりません。福祉サービスとしての利用料については、各事業所にお問い合わせください。"),
              ("どんなことができますか？", "イラスト・キャラクターデザイン、動画編集、グラフィックデザイン、WEB・SNS運営、データ入力などを学びながら作業し、工賃を受け取れます。"),
-             ("見学や体験はできますか？", "無料見学・無料体験を随時受け付けています。でじるみ公式サイトの事業所ページからお問い合わせください。")]))
+             ("見学や体験はできますか？", "無料見学・無料体験を随時受け付けています。このページの「見学・利用を相談する」ボタンか、お電話でお問い合わせください。")]))
 BIZ = {
   "hoiku": dict(label="企業主導型保育", sub="トリオランド", page="hoiku.html", color="#e0875a", no="01"),
   "houkago": dict(label="放課後等デイサービス", sub="ロップ・コンパスマイル", page="afterschool.html", color="#3ea37a", no="02"),
@@ -519,16 +520,19 @@ def p_facility(f):
     mini = map_svg((f["lng"] - .05, f["lng"] + .05, f["lat"] - .035, f["lat"] + .035), 480, [f], tol=.4, wards=(f["pref"] == "東京都"), cls="kmap mini", labels=False, show_lines=False)
     gal = "".join(f'<figure><img src="a/{p}" width="{w}" height="{h}" alt="{E(a)}" loading="lazy"><figcaption>{E(a)}</figcaption></figure>' for p, w, h, a in f["gallery"])
     if f.get("banner") and DG_OK: gal = f'<figure class="wide"><img src="a/{f["banner"]}" width="1200" height="300" alt="{E(f["name"])}のバナー" loading="lazy"></figure>' + gal
-    links = [(f["site"], "公式ページ" if f["biz"] != "digilumi" else "でじるみ公式の事業所ページ"), (f["gmap"], "Googleマップで開く")]
+    # でじるみ6施設は2026-11-16に所有者が本番でCTAを上部に移し、アクセス下の重複ボタンを削除済み。
+    links = [] if f["biz"] == "digilumi" else [(f["site"], "公式ページ"), (f["gmap"], "Googleマップで開く")]
     if f.get("vacancy"): links.append((f["vacancy"], "空き状況"))
     if f.get("insta"): links.append((f["insta"], "Instagram"))
     linkh = "".join(f'<a class="btn" href="{E(u)}" target="_blank" rel="noopener">{t}</a>' for u, t in links)
+    dg_visit = '<a class="btn" href="/contact/#form" style="background:var(--ink);color:#fff">見学・利用を相談する</a>' if f["biz"] == "digilumi" else ""
+    dg_site = f'<a class="btn" href="{E(f["site"])}" target="_blank" rel="noopener">でじるみ公式の事業所ページ</a>' if f["biz"] == "digilumi" else ""
     rel = [x for x in F if x["biz"] == f["biz"] and x["k"] != f["k"]][:3] or [x for x in F if x["k"] != f["k"]][:3]
     near = sorted([x for x in F if x["k"] != f["k"]], key=lambda x: (x["lat"] - f["lat"]) ** 2 + (x["lng"] - f["lng"]) ** 2)[:3]
     faq = "".join(f'<details class="qa"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in f["faq"])
     body = f'''<section class="fhero"><div class="wrap fh-grid">
   <div class="rv"><span class="bz" style="--c:{b["color"]}">{b["label"]}</span><h1>{E(f["name"])}</h1><p class="addr">{E(f["addr"])}</p><p class="acc">{E(f["access"][0])}</p>
-    <div class="fh-btn"><a class="btn" href="tel:{f["tel"].replace("-", "")}">TEL {f["tel"]}</a><a class="btn" href="{E(f["gmap"])}" target="_blank" rel="noopener">地図アプリで開く</a></div></div>
+    <div class="fh-btn">{dg_visit}<a class="btn" href="tel:{f["tel"].replace("-", "")}">TEL {f["tel"]}</a><a class="btn" href="{E(f["gmap"])}" target="_blank" rel="noopener">地図アプリで開く</a>{dg_site}</div></div>
   <div class="ph rv">{dgart(f["name"], f["short"].replace("でじるみ", ""), "abs") if (f["biz"] == "digilumi" and not DG_FAC_OK) else f'<img src="a/{f["photo"]}" width="{f["photo_wh"][0]}" height="{f["photo_wh"][1]}" alt="{E(f["photo_alt"])}">'}</div>
 </div></section>{cr}
 <section class="wrap fbody">
