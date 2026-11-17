@@ -25,6 +25,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Corporate Digilumi generator regression (syntax and approved copy; no POST)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile corp-site/gen_pages.py
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('corp-site/gen_pages.py').read_text(encoding='utf-8')
+          assert 'DG_OK = os.environ.get("TRIO_DG_PHOTOS", "1") == "1"' in p, 'approved temporary image default missing'
+          assert 'DG_FAC_OK = os.environ.get("TRIO_DG_FAC", "1" if MODE == "proto" else "0") == "1"' in p, 'unapproved facility photo default changed'
+          assert 'href="/contact/#form"' in p and '見学・利用を相談する' in p, 'owner-approved facility consultation CTA missing'
+          assert 'links = [] if f["biz"] == "digilumi"' in p, 'old duplicate Digilumi links could return'
+          assert 'このページの「見学・利用を相談する」ボタンか、お電話でお問い合わせください。' in p, 'new FAQ answer missing'
+          assert '無料見学・無料体験を随時受け付けています。でじるみ公式サイトの事業所ページからお問い合わせください。' not in p, 'outdated FAQ answer remains'
+          print('Corporate generator approved CTA, FAQ and photo flags: PASS; source parse PASS')
+          PY
       - name: Make inquiry relay health check (read-only; no customer data)
         id: make-relay
         if: ${{ !cancelled() }}
