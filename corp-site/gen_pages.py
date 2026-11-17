@@ -519,7 +519,7 @@ def p_facility(f):
     table = "".join(f"<tr><th>{E(a)}</th><td>{E(c)}</td></tr>" for a, c in rows)
     mini = map_svg((f["lng"] - .05, f["lng"] + .05, f["lat"] - .035, f["lat"] + .035), 480, [f], tol=.4, wards=(f["pref"] == "東京都"), cls="kmap mini", labels=False, show_lines=False)
     gal = "".join(f'<figure><img src="a/{p}" width="{w}" height="{h}" alt="{E(a)}" loading="lazy"><figcaption>{E(a)}</figcaption></figure>' for p, w, h, a in f["gallery"])
-    if f.get("banner") and DG_OK: gal = f'<figure class="wide"><img src="a/{f["banner"]}" width="1200" height="300" alt="{E(f["name"])}のバナー" loading="lazy"></figure>' + gal
+    if f.get("banner") and DG_FAC_OK: gal = f'<figure class="wide"><img src="a/{f["banner"]}" width="1200" height="300" alt="{E(f["name"])}のバナー" loading="lazy"></figure>' + gal
     # でじるみ6施設は2026-11-16に所有者が本番でCTAを上部に移し、アクセス下の重複ボタンを削除済み。
     links = [] if f["biz"] == "digilumi" else [(f["site"], "公式ページ"), (f["gmap"], "Googleマップで開く")]
     if f.get("vacancy"): links.append((f["vacancy"], "空き状況"))
