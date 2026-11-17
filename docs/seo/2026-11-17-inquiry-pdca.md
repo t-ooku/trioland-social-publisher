@@ -100,3 +100,9 @@ GA4 11/16の流入元別セッション（`hostname + session_primary_channel_gr
 1. Codex：既存の公開GET実行経路で、保育トップの実meta、でじるみ6事業所CTA／FAQPageと画像、会社フォームを取得。GET証拠を残し、本番未確認を機械的に繰り返すだけで終えない。最新CIの実ログも確認。権限やDNSで不可能ならその理由・担当・次に可能な経路を明記。
 2. Cowork（既存受領済み）：11/16事業所変更の本番状態維持、スマホ相談導線監査。WordPressの追加変更は所有者承認・既存編集経路に限定し、Codexによる生成元同期に重複着手しない。
 3. GPT：Windsor.aiの最新確定GSC・GA4を既存朝日報で再取得し、ページ別・目的別の実数、翌日のPV/CTR/CVRとD+7/14を同定義で比較。匿名の実受付・外部有効セッションが取得できるまでは未算出を維持。
+
+## 追記：本番施設バナーの権限分離とCI回帰検査（11/17）
+
+- 生成元で事業紹介用の画像7点だけを既定有効化した際、施設別バナーの表示条件に従来 `DG_OK` が使われていることを追加で発見。このままだと事業紹介用の仮許可を施設バナーに拡大してしまうため、`p_facility` のバナー条件を **`DG_FAC_OK`** に変更（commit [6a6f44c](https://github.com/t-ooku/trioland-social-publisher/commit/6a6f44c1d0cdae2f5b63ebf1881a11ae0ea52e0a)）。施設画像について未承認の公開範囲を広げない。
+- **既存のsite-smoke** に、`corp-site/gen_pages.py` のPython構文、6事業所の見学CTA・FAQ、画像許可フラグ、施設バナーの独立した許可条件を検査する手順を追加（commit [1ea9d23](https://github.com/t-ooku/trioland-social-publisher/commit/1ea9d236ff4f920a403e7c48ddced12b960ba842)）。毎朝の既存スケジュール内で検査し、新規の定期タスク・外部送信は増やさない。
+- これらのcommitはGitHub mainへ反映済みだが、新規CI実行結果・公開WordPressの新規デプロイ・6事業所の当日GETは**未確認**。確認できないものを成功済みとは書かない。
