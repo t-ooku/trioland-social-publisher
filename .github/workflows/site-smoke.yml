@@ -188,6 +188,14 @@ jobs:
                       raise
                   time.sleep(10)
           PY
+      - name: Growth live content audit (GET only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Existing schedule only. No form submit, Make replay, customer data, or tracking writes.
+          # Mismatch/GET failures are warnings; do not infer a service outage.
+          python3 tools/triocareer_growth_public_audit.py --self-test
+          python3 tools/triocareer_growth_public_audit.py
       - name: Afterschool consultation CTA in public HTML (GET only; no form submit)
         shell: bash
         run: |
