@@ -14,7 +14,7 @@
 
 - Coworkの `docs/handoff/ack/2026-11-17-cowork-ack.md` にある確定不具合をCodex担当領域で修正した。対象は `build_site.py` の `column_cta()` **1か所だけ**で、`href="#form"` → `href="/recruit.html#form"`。採用ページ内の `#form` はそのまま、入園相談フォームは変更なし。
 - 変更commit `424fa1e0e5889e2a7ae5fe581aa32627bec7f55c`。Build site run [44204413441](https://github.com/t-ooku/trioland-social-publisher/actions/runs/44204413441) は成功、生成済みコラムHTMLは新リンク、採用先HTMLに `id="form"` / `data-ga-form="nursery_recruit"` がある。
-- 既存site-smoke内に、保育トップmeta・コラム採用導線・でじるみ6事業所CTA/FAQの**本番GET監査**を追加（`tools/triocareer_growth_public_audit.py`, `.github/workflows/site-smoke.yml`）。11/18 run [44204448506](https://github.com/t-ooku/trioland-social-publisher/actions/runs/44204448506) 1回目で、保育トップmetaとでじるみ6事業所はMATCH。**コラム新リンクは初回MISMATCH**（公開反映のタイミング未確定）；既存ジョブ再検査の結果を踏まえて公開D0を確定するまで完了と呼ばない。
+- 既存site-smoke内に、保育トップmeta・コラム採用導線・でじるみ6事業所CTA/FAQの**本番GET監査**を追加（`tools/triocareer_growth_public_audit.py`, `.github/workflows/site-smoke.yml`）。11/18 run [44204448506](https://github.com/t-ooku/trioland-social-publisher/actions/runs/44204448506) 1回目で、保育トップmetaとでじるみ6事業所はMATCH。**コラム新リンクは初回MISMATCH**（公開反映前のタイミング）だったが、同じsite-smokeの再検査 attempt 2（2026-11-18 09:03 JST頃）では **MATCH**。保育トップmetaと6事業所CTA/FAQも全てMATCH、既存ジョブ成功。コラム採用導線の公開D0＝**11/18**、D+7＝**11/25**、D+14＝**12/02**。ただし実応募増加と外部受信は未照合。
 - 公開確認後のD+7/D+14で、対象コラム6本・新記事のPV、採用へのCTA、採用フォーム開始と成功、匿名照合済み実応募件数を別段階で確認。変更前11/11〜17 JSTの既存コラム個別ページ取得行は合計14PV（5記事分の行、残りは行なし）。CTAイベントは該当コラム個別ページに取得行なし（ゼロ確定ではない）。CTR・実応募CVRは別指標。
 
 ## Coworkへ依頼すること（既存WordPress責任を尊重）
