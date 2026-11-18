@@ -72,6 +72,15 @@ def inspect_live():
     else:
         outcomes.append(("Nursery top meta description", "MISMATCH (actual public meta differs)"))
 
+    column = fetch_public(HOIKU_URL + "column/gosui-check-anzen.html" + suffix)
+    recruit = fetch_public(HOIKU_URL + "recruit.html" + suffix)
+    if column is None or recruit is None:
+        outcomes.append(("Nursery column recruitment consultation CTA", "UNKNOWN (public GET failed)"))
+    elif 'href="/recruit.html#form"' in column and 'id="form"' in recruit:
+        outcomes.append(("Nursery column recruitment consultation CTA", "MATCH"))
+    else:
+        outcomes.append(("Nursery column recruitment consultation CTA", "MISMATCH (target form or link missing)"))
+
     for path in DIGILUMI_PATHS:
         page = fetch_public(CORP_URL + path + suffix)
         label = "Digilumi " + path.split("/")[-2]
