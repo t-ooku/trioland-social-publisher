@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-17",
-  "ga4Date": "2026-11-16",
-  "gscDate": "2026-11-14",
+  "updatedAt": "2026-11-18",
+  "ga4Date": "2026-11-17",
+  "gscDate": "2026-11-15",
   "ga4Timezone": "Asia/Tokyo",
   "gscTimezone": "America/Los_Angeles",
   "sites": [
@@ -312,27 +312,48 @@
         6,
         21
       ]
+    },
+    {
+      "date": "2026-11-17",
+      "corp": [
+        42,
+        37,
+        50,
+        93
+      ],
+      "hoiku": [
+        14,
+        6,
+        17,
+        24
+      ],
+      "after": [
+        3,
+        2,
+        3,
+        4
+      ]
     }
   ],
   "ga4Seven": {
-    "period": "2026-11-10〜11-16（JST、active/newはGA4期間指定の別集計）",
+    "period": "2026-11-11〜11-17（JST、active/newはGA4期間指定の別集計）",
     "corp": [
-      162,
-      154,
-      210,
-      408
+      187,
+      176,
+      242,
+      469
     ],
     "hoiku": [
-      46,
-      31,
-      60,
-      94
+      54,
+      33,
+      72,
+      107
     ],
     "after": [
-      22,
-      12,
+      21,
+      13,
       31,
-      51
+      52
     ]
   },
   "gscSeries": [
@@ -587,24 +608,42 @@
         19,
         14.5789
       ]
+    },
+    {
+      "date": "2026-11-15",
+      "corp": [
+        20,
+        334,
+        6.0659
+      ],
+      "hoiku": [
+        3,
+        101,
+        10.0792
+      ],
+      "after": [
+        0,
+        28,
+        7.2143
+      ]
     }
   ],
   "events": {
-    "date": "2026-11-16",
+    "date": "2026-11-17",
     "corp": [
-      16,
       7,
-      1,
+      5,
+      4,
       null
     ],
     "hoiku": [
       4,
-      2,
-      2,
+      null,
+      null,
       null
     ],
     "after": [
-      7,
+      2,
       null,
       null,
       null
@@ -621,10 +660,46 @@
   },
   "make": {
     "status": "unknown",
-    "detail": "11/14所有者画面でMake問い合わせ用シナリオ6306695はActive/Historyあり。11/16時点の既存site-smokeではLive UNKNOWN／Recipient delivery UNKNOWN。Make無料プランのAPIトークンを要求しない。11/10〜17の接続Gmailで該当警告メール0件だが正式通知先一致不明、正常と断定しない。会社WordPress CF7はMakeと別経路で過去の受信実例あり、11/16有効実受付数未照合。",
-    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43776760917"
+    "detail": "11/18 site-smoke #44204448506 attempt2成功。保育トップmeta／保育コラム採用CTA／でじるみ6事業所CTA/FAQを公開GETでMATCH確認。ただしMake問い合わせ用シナリオ6306695のLive/担当者受信はUNKNOWN（読取APIなし）。接続Gmailの11/11〜18検索で該当警告通知は未確認、正式通知先一致不明。会社HP CF7 11/17成功イベント4・エラー2、真正な実受付は未照合。",
+    "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/44204448506"
   },
   "pdca": [
+    {
+      "id": "HOIKU-TOP-META-20261118",
+      "site": "hoiku",
+      "priority": "P1",
+      "stage": "Check",
+      "status": "11/16実装・11/18初回公開meta一致確認（D0=11/18）",
+      "title": "保育トップの保護者向け検索説明文",
+      "detail": "11/16更新meta descriptionは11/18 site-smoke #44204448506 attempt2の公開GETで一致。GSC11/09〜15の保育トップ65表示1クリック（CTR1.54%）、平均5.66位。変更後の検索CTR効果は未判定。",
+      "next": "11/25・12/02・12/16に同じURL・確定GSC期間・検索クリック/表示/順位で比較。期間不足や別要因があれば効果未判定。",
+      "owner": "Codex（公開確認）／Cowork（文案）／GPT（PDCA）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/44204448506"
+    },
+    {
+      "id": "CORP-CF7-ERROR-20261118",
+      "site": "corp",
+      "priority": "P0",
+      "stage": "Plan",
+      "status": "11/17 送信エラー2イベントを確認・原因区分未取得",
+      "title": "会社HP CF7のお問い合わせ送信エラーを原因別に調査",
+      "detail": "11/17会社/contact/で独自フォーム開始5、成功4、エラー2イベント。CF7のinvalid/spam/mail_failedのいずれかだがWindsor現行フィールドからerror_code取得不可。実顧客・配送失敗とは断定不可。",
+      "next": "Coworkが既存認証済みWordPress側のエラー/SMTPログから個人情報を出さず原因区分を匿名集計。分類後に1要因だけ改善。権限・確認経路が無ければ不明と明示。外部送信テスト禁止。",
+      "owner": "Cowork（WordPress・原因分類）／GPT（成果判定）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-18-cowork-pdca-feedback.md"
+    },
+    {
+      "id": "HOIKU-COLUMN-RECRUIT-CTA-20261118",
+      "site": "hoiku",
+      "priority": "P1",
+      "stage": "Check",
+      "status": "修正main/Build成功/公開GET MATCH（D0=11/18）・効果未判定",
+      "title": "保育コラムの採用前見学CTAのリンク不具合を修正",
+      "detail": "旧href=#formは記事内に対応するform IDがなく、採用前見学が開けない状態。build_site.py column_ctaだけ/recruit.html#formへ修正。11/18 Build site #44204413441 success、site-smoke #44204448506 attempt2で新リンクと実フォームを公開GET確認。11/11〜17の既存コラム個別ページ5本で計14PV、残り1本は取得行なし。採用有効実受付は未照合。",
+      "next": "11/25(D+7)・12/02(D+14)、記事別PV、採用CTA、nursery_recruitフォーム開始/成功、匿名の実応募で効果判定。件数が少なければ未判定を維持。",
+      "owner": "GPT（修正）／Codex（既存Buildと公開検査）／Cowork（実機UX・結果）",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-18-inquiry-pdca.md"
+    },
     {
       "id": "DG-FACILITY-CTA-SYNC-20261117",
       "site": "corp",
@@ -666,10 +741,10 @@
       "site": "all",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/16 GA4・11/14確定GSC更新済み／外部有効実受付・CVRは引き続き未照合",
+      "status": "11/17のPV・検索CTRを実取得。実問い合わせCVRは未照合・未算出",
       "title": "3サイトPV・CTR・実問い合わせCVRの目的別PDCA",
-      "detail": "11/16：会社39セッション116PV・CTA16/開始7/成功1、保育14/23・CTA4/開始2/成功2、放デイ6/21・CTA7/独自開始行なし/成功行なし。日中のWordPress編集・所有者アクセス等の影響未除外。日付別GSCは11/14 PTまで確定。",
-      "next": "事業別の匿名実受付と成果発生セッションを正規読取元で照合できない限りCVR未算出。前日・同曜日7日比較。11/16のPV急増が新規顧客由来とは断定しない。",
+      "detail": "GA4 11/17：会社50セッション93PV／保育17・24PV／放デイ3・4PV。GSC確定11/15：会社20/334（5.99%）、保育3/101（2.97%）、放デイ0/28。送信成功は会社4イベントのみ取得、外部有効件数・セッション帰属未照合。",
+      "next": "新規記事量産せず、11/18修正済みの採用相談CTAのD+7/14評価、会社CF7エラー区分、11/19駒沢の見学導線評価を優先。",
       "owner": "GPT（成果評価）／Cowork（UX）／Codex（測定）",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-16-inquiry-pdca.md"
     },
@@ -726,10 +801,10 @@
       "site": "all",
       "priority": "P0",
       "stage": "Check",
-      "status": "会社HP過去受信実例あり。11/16成功イベント会社1/保育2は実メールと未照合。Make Live/担当配達UNKNOWN",
+      "status": "会社11/17成功4・エラー2イベント／外部実受信未照合、Make Live UNKNOWN",
       "title": "問い合わせメール配送と匿名受付の監視",
-      "detail": "11/15所有者が会社CF7メール件名と用件分類8択・Bccを更新し本番UIを確認、実メールでの新件名・種別・担当配送は未確認。Make6306695は11/14所有者画面Active。11/16確認のsite-smoke #43776760917実ログはMake Live UNKNOWN／Recipient delivery UNKNOWN。接続Gmailで11/08〜16の同ID警告メールは見つからないが正式通知先一致は未確認。",
-      "next": "本番テスト送信せず実際の問い合わせ受信時に同期間・同フォーム・用件別の匿名実受付とメール配送を突合。Make Free契約のAPIトークン追加課金は求めない。",
+      "detail": "11/17会社CF7/contactで成功4・エラー2、担当受信・外部有効件数は未照合。11/18 site-smoke #44204448506は成功だがMake Live/Recipient delivery UNKNOWN。接続済みGmailに該当警告検索結果0件、通知先の一致は未確認。",
+      "next": "Coworkが既存WP読取権限でエラーのinvalid/spam/mail_failed分類と匿名実受付を確認。Make現行無料プランは認証済み管理画面のHistory/Queueで実送信せず確認。",
       "owner": "Cowork（CF7/受信管理）／Codex（既存監視）",
       "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43776760917"
     },
@@ -774,10 +849,10 @@
       "site": "hoiku",
       "priority": "P2",
       "stage": "Check",
-      "status": "11/16 D+7：GSC最新確定11/13・URL Inspection未取得で効果未判定",
+      "status": "11/18公開sitemap135 URL/canonicalサンプル検査PASS、GSCインデックス評価は未判定",
       "title": "保育SEOのcanonical・sitemap",
       "detail": "11/09 D0。現行GSCでは11/13 PTまでしか確定しておらず、11/16の登録状態を評価できない。robots/sitemap/旧URL転送とGoogle index済み件数は別。",
-      "next": "最新確定データとURL Inspectionの正式な読取経路が得られるタイミングで対象URLを比較し、11/23 D+14・12/07 D+28を追う。",
+      "next": "11/23 D+14、12/07 D+28に対象URLのGSC検索露出・Google-selected canonicalを正式UIで確認。",
       "owner": "Codex（GET・Indexing）／GPT（指標）",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-09-indexing-notifications-pdca.md"
     },
@@ -819,6 +894,12 @@
     }
   ],
   "history": [
+    {
+      "date": "11/18",
+      "title": "保育コラム6記事の採用前見学CTAを修正・Build・公開GETまで完了",
+      "result": "GA4 11/17会社93PV・保育24PV・放デイ4PV。会社フォーム成功4・エラー2イベントは実受付未照合。保育column_cta修正(424fa1e)、Build #44204413441成功、公開site-smoke #44204448506再検査でコラムリンク・保育meta・でじるみ6施設MATCH。採用応募増と外部有効CVRは未判定。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-18-inquiry-pdca.md"
+    },
     {
       "date": "11/17",
       "title": "でじるみ6事業所の見学・相談CTAを生成元に同期しKPI更新",
@@ -917,57 +998,54 @@
     }
   ],
   "warnings": [
-    "11/16 GA4：会社116PV・39セッション・CTA16/独自フォーム開始7/成功1イベント、保育23PV・14セッション・CTA4/開始2/成功2、放デイ21PV・6セッション・CTA7/独自開始と成功は取得行なし。イベント件数を人数や外部有効問い合わせとみなさない。3サイト実受付未照合・CVR未算出。",
-    "11/16会社WordPressとでじるみ事業所ページに所有者の編集・確認が複数あり、内部アクセス除外は未確認。11/15比PV増を純粋な集客増と断定しない。",
-    "11/16 Cowork/所有者がでじるみ6事業所の見学・利用相談CTAとFAQを本番確認。11/17 mainで生成元同期01cff1c3、施設バナー独立許可6a6f44c、既存smoke検査1ea9d23。WordPress再配備なし。新commitのCI結果と最新公開GET未確認。D+7=11/23、D+14=11/30。",
-    "保育トップ新meta：build_site.pyとGitHub生成HTMLに新文言あり、Cloudflare Pagesの実配信は読取経路で未確認。効果D0は確定できない。",
-    "11/16 GA4流入元別セッションの合計は会社44対ホスト全39、保育15対14、放デイ7対6。スコープ不一致の原因未判定。流入構成比は算出しない。",
-    "11/16放デイCTA7回、GA4自動form_start1回、独自inquiry_form_startの行なし、送信成功行なし。採用CTA1を含むため利用検討7人の離脱と呼ばない。実受付未照合。",
-    "保育/放デイMake：11/14所有者画面Active、最新site-smoke既存ログはLive／Recipient delivery UNKNOWN。接続済みGmail11/10〜17に対象警告通知は見当たらないが正式通知先との照合未完了。別シナリオ5623382を混同しない。",
-    "会社CF7の件名・ご用件8区分・Bccは所有者変更あり、最新の真正メールで反映・分類・全数配送は未照合。本番試験送信禁止。",
-    "GSC確定は11/14 PTまで（11/15〜16の確定行なし）。11/08〜14確定7日：会社90/2147、保育13/527、放デイ4/147。GA4日付と同一母集団比較をしない。",
-    "GA4は11/01〜02欠測・11/03部分日、放デイ過去の日別一部行なし。日別ユーザーの単純合計で期間ユニーク数を算出しない。サイト間重複・内部アクセスの除外未判定。",
-    "11/09に滞留から復旧した外部実相談6件（保育5/放デイ1）は過去分、11/16の新規案件として再計上しない。",
-    "11/12保育HPのinquiry_submit_error1はエラー分類未取得。直近日に同イベント取得行が無いことだけで障害解消とは断定しない。",
-    "KPI管理画面のGitHub OAuth 404：コード変更とGET確認はあるが本人iPhone認証成功とWorkerでの管理画面表示は未確認。"
+    "11/17会社HP /contact/：GA4独自フォーム開始5、送信成功イベント4、送信エラーイベント2。エラーはCF7 invalid/spam/mail_failedのいずれかで原因区分未取得。4件の実問い合わせとも2人の離脱とも断定しない。",
+    "3サイトの外部有効問い合わせ・見学申込・利用相談・採用応募は匿名受付台帳と未照合。イベント成功回数は実案件ではなく、実受付CVRは未算出。",
+    "放デイ11/17は3セッション・4PV（前日21PV）。母数が小さく一日減少を施策失敗と判定しない。CTA2回、独自フォーム開始と成功の取得行なしを0件として扱わない。",
+    "11/18 site-smoke #44204448506 attempt2：保育トップmeta・保育コラム採用CTA・でじるみ6事業所CTA/FAQは公開GET一致。フォーム送信・担当受信・実応募の保証ではない。",
+    "Makeシナリオ6306695：Live/Recipient delivery UNKNOWN。既存CIは成功だがMake APIトークン未設定（Freeプラン）。接続Gmail該当警告0検索結果は正常の証明ではない。別のInstagramシナリオ5623382の警告を混ぜない。",
+    "GA4 11/01〜02欠測、11/03部分日、内部確認アクセス・ホスト間ユニーク重複未判定。11/17自然検索チャネル内訳は会社52対全50・保育18対全17と不一致、比率未算出。",
+    "GSC最新確定11/15 PT、11/16〜17確定未取得。検索クエリ本文は取得していない。GSCのPT日付をGA4のJST同日へ変換しない。",
+    "会社HPのCF7修正はCowork担当。11/18 Cowork向け文書は保存済みだが受領・調査実施未確認。コールセンタータイトル改修は未承認・未公開。",
+    "保育canonical/sitemapは11/18 site-smokeで公開135URL・サンプル一致、GSCインデックス登録状態とGoogle-selected canonicalは未取得。",
+    "管理KPI画面のiPhone本番GitHub OAuth認証と新データの表示成功は未確認。GitHubのデータ更新成功とWorker本番表示は区別する。"
   ],
   "ga4MTD": {
-    "period": "2026-11-03〜11-16（11/01〜02欠測、11/03部分日）",
+    "period": "2026-11-03〜11-17（11/01〜02欠測、11/03部分日）",
     "corp": [
-      312,
-      309,
-      400,
-      740
+      350,
+      346,
+      451,
+      833
     ],
     "hoiku": [
-      84,
-      58,
-      103,
-      157
+      97,
+      64,
+      120,
+      181
     ],
     "after": [
-      33,
-      18,
-      50,
-      84
+      35,
+      20,
+      53,
+      88
     ]
   },
   "gscSeven": {
-    "period": "2026-11-08〜11-14（PT、最新確定7日、順位は日別表示加重近似）",
+    "period": "2026-11-09〜11-15（PT、最新確定7日、順位は日別表示加重近似）",
     "corp": [
-      90,
-      2147,
-      7.06
+      94,
+      2159,
+      6.98
     ],
     "hoiku": [
-      13,
-      527,
-      10.67
+      14,
+      561,
+      10.79
     ],
     "after": [
       4,
-      147,
-      9.37
+      163,
+      9.24
     ]
   }
 }
