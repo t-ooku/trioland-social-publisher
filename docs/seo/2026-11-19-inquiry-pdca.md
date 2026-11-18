@@ -98,7 +98,7 @@
 
 ## 6. コミット・CI・本番・受信の切り分けと未完了
 
-- 最新mainの`AGENTS.md`、既存SEO方針、11/07・11/18日報、Issue #15/#16、Cowork ACK、公開ソースを読んでから作業。既存11/18 [site-smoke #44204448506 attempt2](https://github.com/t-ooku/trioland-social-publisher/actions/runs/44204448506) success、保育トップmeta、保育コラムCTA、でじるみ6事業所CTA/FAQの公開GET一致記録がある。**11/19の新しいCI成功・新たな本番デプロイは未検証**。
+- 最新mainの`AGENTS.md`、既存SEO方針、11/07・11/18日報、Issue #15/#16、Cowork ACK、公開ソースを読んでから作業。既存11/18 [site-smoke #44204448506 attempt2](https://github.com/t-ooku/trioland-social-publisher/actions/runs/44204448506) success、保育トップmeta、保育コラムCTA、でじるみ6事業所CTA/FAQの公開GET一致記録がある。**11/19 08:47 JST頃のKPIデータCI [#44423729017](https://github.com/t-ooku/trioland-social-publisher/actions/runs/44423729017) はsuccess**（dashboard/latest.jsonの構文・機密情報安全性・KPIログイン先保持を検証）。既存のsite-smoke最新確認 [#44235958669](https://github.com/t-ooku/trioland-social-publisher/actions/runs/44235958669) は11/18 13:14 JST頃success（保育駒沢CTA、保育トップmeta/コラムCTA、でじるみ6施設公開GET一致・sitemap135 URL検査PASS）。この実ログでもMake Live/Recipient deliveryはUNKNOWN。**11/19の新たなサイト本体デプロイ・iPhone認証成功・実メール送達成功は未確認**。
 - Make問い合わせシナリオ6306695は過去の所有者画面でActiveだったが、最新Queue・担当者受信は UNKNOWN。接続済みGmailで11/16〜19のMake該当警告、トリオキャリア問い合わせ通知を探したが今回の接続アカウントに該当メッセージは取得できなかった。正式な通知/受付箱と同一とは限らず正常判定はしない。
 - 今回は**公開サイト本文・フォーム・APIを変更していない**。コード修正より先にエラー原因確定が必要。実施はGA4/GSC再実測、駒沢D+7判定、既存Cowork指示書追記、日次台帳とKPI JSON更新。
 - 会社フォーム任意化：11/21（D+7）、でじるみmeta：11/22（D+7）、放デイAS-03・でじるみ施設CTA：11/23、駒沢大学園：11/26（D+14）、保育コラム採用リンク：11/25（D+7）。担当と事前定義に基づき継続。
