@@ -521,18 +521,19 @@ def p_facility(f):
     gal = "".join(f'<figure><img src="a/{p}" width="{w}" height="{h}" alt="{E(a)}" loading="lazy"><figcaption>{E(a)}</figcaption></figure>' for p, w, h, a in f["gallery"])
     if f.get("banner") and DG_FAC_OK: gal = f'<figure class="wide"><img src="a/{f["banner"]}" width="1200" height="300" alt="{E(f["name"])}のバナー" loading="lazy"></figure>' + gal
     # でじるみ6施設は2026-11-16に所有者が本番でCTAを上部に移し、アクセス下の重複ボタンを削除済み。
-    links = [] if f["biz"] == "digilumi" else [(f["site"], "公式ページ"), (f["gmap"], "Googleマップで開く")]
+    links = [] if f["biz"] == "digilumi" else [(f["gmap"], "Googleマップで開く")]
     if f.get("vacancy"): links.append((f["vacancy"], "空き状況"))
     if f.get("insta"): links.append((f["insta"], "Instagram"))
     linkh = "".join(f'<a class="btn" href="{E(u)}" target="_blank" rel="noopener">{t}</a>' for u, t in links)
-    dg_visit = '<a class="btn" href="/contact/#form" style="background:var(--ink);color:#fff">見学・利用を相談する</a>' if f["biz"] == "digilumi" else ""
+    dg_visit = '<a class="btn" href="/digilumi-contact/" style="background:var(--ink);color:#fff">見学・利用を相談する</a>' if f["biz"] == "digilumi" else ""
     dg_site = f'<a class="btn" href="{E(f["site"])}" target="_blank" rel="noopener">でじるみ公式の事業所ページ</a>' if f["biz"] == "digilumi" else ""
+    facility_site = f'<a class="btn" href="{E(f["site"])}" target="_blank" rel="noopener">公式ページ</a>' if f["biz"] != "digilumi" else ""
     rel = [x for x in F if x["biz"] == f["biz"] and x["k"] != f["k"]][:3] or [x for x in F if x["k"] != f["k"]][:3]
     near = sorted([x for x in F if x["k"] != f["k"]], key=lambda x: (x["lat"] - f["lat"]) ** 2 + (x["lng"] - f["lng"]) ** 2)[:3]
     faq = "".join(f'<details class="qa"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in f["faq"])
     body = f'''<section class="fhero"><div class="wrap fh-grid">
   <div class="rv"><span class="bz" style="--c:{b["color"]}">{b["label"]}</span><h1>{E(f["name"])}</h1><p class="addr">{E(f["addr"])}</p><p class="acc">{E(f["access"][0])}</p>
-    <div class="fh-btn">{dg_visit}<a class="btn" href="tel:{f["tel"].replace("-", "")}">TEL {f["tel"]}</a><a class="btn" href="{E(f["gmap"])}" target="_blank" rel="noopener">地図アプリで開く</a>{dg_site}</div></div>
+    <div class="fh-btn">{dg_visit}<a class="btn" href="tel:{f["tel"].replace("-", "")}">TEL {f["tel"]}</a><a class="btn" href="{E(f["gmap"])}" target="_blank" rel="noopener">地図アプリで開く</a>{facility_site}{dg_site}</div></div>
   <div class="ph rv">{dgart(f["name"], f["short"].replace("でじるみ", ""), "abs") if (f["biz"] == "digilumi" and not DG_FAC_OK) else f'<img src="a/{f["photo"]}" width="{f["photo_wh"][0]}" height="{f["photo_wh"][1]}" alt="{E(f["photo_alt"])}">'}</div>
 </div></section>{cr}
 <section class="wrap fbody">
