@@ -36,7 +36,7 @@ jobs:
           assert 'DG_OK = os.environ.get("TRIO_DG_PHOTOS", "1") == "1"' in p, 'approved temporary image default missing'
           assert 'DG_FAC_OK = os.environ.get("TRIO_DG_FAC", "1" if MODE == "proto" else "0") == "1"' in p, 'unapproved facility photo default changed'
           assert 'if f.get("banner") and DG_FAC_OK:' in p, 'facility banners must remain separately permission-gated'
-          assert 'href="/contact/#form"' in p and '見学・利用を相談する' in p, 'owner-approved facility consultation CTA missing'
+          assert 'href="/digilumi-contact/"' in p and '見学・利用を相談する' in p, 'owner-approved Digilumi dedicated consultation CTA missing'
           assert 'links = [] if f["biz"] == "digilumi"' in p, 'old duplicate Digilumi links could return'
           assert 'このページの「見学・利用を相談する」ボタンか、お電話でお問い合わせください。' in p, 'new FAQ answer missing'
           assert '無料見学・無料体験を随時受け付けています。でじるみ公式サイトの事業所ページからお問い合わせください。' not in p, 'outdated FAQ answer remains'
