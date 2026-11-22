@@ -148,6 +148,26 @@ jobs:
               echo "::warning::Corporate contact instructions may still mention a non-existent confirmation step."
             fi
           fi
+      - name: Digilumi dedicated consultation form availability (GET only; never submit)
+        shell: bash
+        run: |
+          # Existing corporate inquiry form 1166 is owned by WordPress/Cowork.
+          # Catch a silent 404 after page/theme edits without collecting or posting customer data.
+          url='https://www.triocareer.jp/digilumi-contact/'
+          code=$(curl -L -sS --max-time 25 -o /tmp/digilumi-contact-live.html -w '%{http_code}' "$url" || true)
+          echo "Dedicated Digilumi consultation GET status: ${code:-unknown}"
+          if [ "$code" = "200" ]; then
+            if grep -Eq 'wpcf7|ご希望の事業所|でじるみ.*見学.*利用' /tmp/digilumi-contact-live.html; then
+              echo 'Dedicated consultation page has form-related HTML (delivery NOT tested)'
+            else
+              echo '::warning::Dedicated consultation page returned 200 but expected form markers are absent. Check owner-approved page and browser rendering.'
+            fi
+          elif [ "$code" = "404" ] || [ "$code" = "410" ] || [[ "$code" =~ ^5[0-9][0-9]$ ]]; then
+            echo "::error::Digilumi consultation page is unavailable ($code); real leads may be lost."
+            exit 1
+          else
+            echo '::warning::Dedicated form live GET unverified (blocked/timeout/redirect/other); do not claim normal.'
+          fi
       - name: Hoiku canonical and sitemap agree with final Pages URLs (GET only)
         shell: bash
         run: |
