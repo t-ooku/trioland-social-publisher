@@ -493,7 +493,7 @@ def job_card(p, job):
   <div class="job-body">
     <div class="table-scroll"><table class="spec">{rows}</table></div>
     <div class="appeal" data-optional{"" if appeal else " hidden"}><b>職場からのひとこと</b><p class="pre" data-job="{p["key"]}" data-field="appeal">{esc(appeal)}</p></div>
-    <div class="actions"><a class="btn accent" href="/contact.html?kind=recruit&facility={p["key"]}">この求人に応募・問い合わせる</a><a class="btn outline" href="/{p["key"]}.html">事業所を見る</a></div>
+    <div class="actions"><a class="btn accent" href="/contact.html?kind=recruit&facility={p["key"]}#form">この求人に応募・問い合わせる</a><a class="btn outline" href="/{p["key"]}.html">事業所を見る</a></div>
   </div>
 </article>'''
 
@@ -983,7 +983,7 @@ def page_recruit():
     <div class="badge hot pulse">採用強化中</div>
     <h1>{bouncy("一緒に遊び、")}<br>{bouncy("一緒に育つ。")}</h1>
     <p class="lead">遊びの中にある成長を、支える仕事です。お子さまが夢中になれる時間をつくり、小さな「できた」を一緒に喜ぶ。ロップ（練馬区関町東）では保育士の正職員を、コンパスマイル落合南長崎（豊島区）ではパート・アルバイトのスタッフを募集しています。</p>
-    <div class="actions"><a class="btn accent wiggle" href="#jobs">募集中の求人を見る</a><a class="btn outline" href="/contact.html?kind=recruit">応募・問い合わせ</a></div>
+    <div class="actions"><a class="btn accent wiggle" href="#jobs">募集中の求人を見る</a><a class="btn outline" href="/contact.html?kind=recruit#form">応募・問い合わせ</a></div>
   </div>
   <div class="hero-media fan" aria-label="ロップの職員と子どもたち（お子さまのお顔はスタンプで隠しています）">
     <figure class="fan-item f1">{act_img("kart", lazy=False)}</figure>
