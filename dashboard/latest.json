@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-22",
-  "ga4Date": "2026-11-21",
-  "gscDate": "2026-11-19",
+  "updatedAt": "2026-11-23",
+  "ga4Date": "2026-11-22",
+  "gscDate": "2026-11-20",
   "ga4Timezone": "Asia/Tokyo",
   "gscTimezone": "America/Los_Angeles",
   "sites": [
@@ -412,27 +412,48 @@
         5
       ],
       "after": null
+    },
+    {
+      "date": "2026-11-22",
+      "corp": [
+        15,
+        11,
+        16,
+        24
+      ],
+      "hoiku": [
+        5,
+        5,
+        5,
+        5
+      ],
+      "after": [
+        2,
+        0,
+        2,
+        2
+      ]
     }
   ],
   "ga4Seven": {
-    "period": "2026-11-15〜11-21（JST、期間active/newはGA4から別取得。放デイ11/21取得行なし）",
+    "period": "2026-11-16〜11-22（JST、期間active/newはGA4で別集計。放デイ11/21日別取得行なし）",
     "corp": [
-      182,
-      163,
-      242,
-      445
+      183,
+      164,
+      240,
+      432
     ],
     "hoiku": [
       64,
-      40,
+      41,
       83,
-      115
+      109
     ],
     "after": [
-      24,
-      15,
-      31,
-      65
+      22,
+      12,
+      26,
+      55
     ]
   },
   "gscSeries": [
@@ -777,18 +798,36 @@
         34,
         9.0882
       ]
+    },
+    {
+      "date": "2026-11-20",
+      "corp": [
+        16,
+        225,
+        6.7289
+      ],
+      "hoiku": [
+        4,
+        97,
+        11.433
+      ],
+      "after": [
+        0,
+        36,
+        7.1667
+      ]
     }
   ],
   "events": {
-    "date": "2026-11-21",
+    "date": "2026-11-22",
     "corp": [
+      5,
       2,
-      null,
-      null,
+      2,
       null
     ],
     "hoiku": [
-      1,
+      null,
       null,
       null,
       null
@@ -819,25 +858,25 @@
       "id": "AFTER-GA4-MISSING-20261121",
       "site": "after",
       "priority": "P1",
-      "stage": "Plan",
-      "status": "11/21 JSTのhostname別GA4及びイベント取得行なし。0とは扱わず欠測/反映待ちを区別",
+      "stage": "Check",
+      "status": "11/22は放デイ2session/2PVの取得行あり、11/21のみ取得行なし。欠測または未反映原因は未判定",
       "title": "放デイのGA4日別取得行なしを調査",
-      "detail": "前日11/20は10PV/6sessionだが、11/21はGA4 hostnameおよびイベントの取得行がない。GSCは別暦日で11/19検索1クリック/34表示。アクセス皆無、計測停止、遅延のいずれも未証明。",
-      "next": "次の既存日報で11/21のGA4を再取得し、別hostname/日付/タグ/本番HTMLと既存計測結果を照合。行なしなら理由を記録し0で補完しない。",
+      "detail": "放デイ11/21 GA4 hostname別データ/イベント行なし。11/22 GA4にactive2、新規0、sessions2、PV2、成功等イベント行なし。11/21を0補完して比較しない。",
+      "next": "Codexが既存タグ発火・日別計測/反映遅延/ホスト帰属を追加確認。次回も同一日付で再取得し、行なしを補完しない。",
       "owner": "Codex（計測）／GPT（検証）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-22-inquiry-pdca.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-23-inquiry-pdca.md"
     },
     {
       "id": "DG-FORM-LIVE-GET-20261122",
       "site": "corp",
       "priority": "P1",
-      "stage": "Check",
-      "status": "既存site-smokeへGET監視を追加しmain b7a0ca4に保存。新CI/本番GET実行結果は未確認",
+      "stage": "Act",
+      "status": "11/22既存site-smoke #44979039651 success。でじるみ専用フォームGET HTTP200・フォーム関連HTMLあり。送信/実受信未確認",
       "title": "でじるみ専用見学・利用相談フォームの公開消失を監視",
       "detail": "本番所有者スマホ11/21で施設ページCTAから/digilumi-contact/のフォーム表示を確認済み。経路が将来404・410・5xxにならないよう新たなスケジュールを増やさずGET監視。200時はフォーム関連HTML、403/遮断はUNKNOWN警告。送信は行わない。",
-      "next": "既存のsite-smoke新しいCIログと公開HTTPを確認。失敗時はWordPress/Cowork担当と原因切分け。",
+      "next": "同じ既存site-smokeでGET監視を維持。404/5xxの実エラーなら直ちに担当へ。勝手に送信試験/再公開しない。",
       "owner": "GPT（検査追加）／Codex（CI・本番追跡）／Cowork（WordPress所有者）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/b7a0ca4731933ae0e432ea014340c6bf8daad1e5"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/44979039651"
     },
     {
       "id": "DG-META-20261115",
@@ -904,12 +943,12 @@
       "site": "corp",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/18既存site-smoke #44204448506 attempt2成功・6事業所公開GET/FAQ一致、11/16公開D0、実受付は未照合",
+      "status": "D+7 11/23比較：6施設ページPVは前7日44→後7日68、専用CF7ページ5PV。内部編集閲覧未除外・施設別実受付未照合で効果未判定",
       "title": "でじるみ6事業所の見学・利用相談CTAを生成元へ同期",
-      "detail": "11/16 Cowork/所有者が6事業所の見学・利用相談CTAから会社HP /contact/#formへの案内とFAQ表示を本番で確認。11/17 mainで生成元を同期（01cff1c3）、事業紹介7画像の暫定許可と未承認施設バナーを分離（6a6f44c）、既存site-smokeに構文・旧文言回帰検査追加（1ea9d23）。本日の新WP再配備・GET・CIの実成功は未確認。",
-      "next": "11/23 D+7と11/30 D+14で同じ施設別見学CTAの実相談を匿名照合。WordPressで重複編集をしない。",
+      "detail": "11/09〜15と11/16〜22（JST）の同曜日7日：6事業所ページ合計44→68PV（+24、約54.5%）。新規/digilumi-contact/は11/20〜21の計5PV。11/19に専用CF7 1166設置。イベントと自然受信の正味照合なし。CI #44979039651 successで6施設CTAと専用フォームHTTP200をGET確認（実送信なし）。",
+      "next": "11/30 D+14。同じ期間の実受付・施設区分と内部流入除外の可否を匿名で調べる。WPは評価中のため二重変更しない。",
       "owner": "Cowork/所有者（11/16実公開）／GPT（11/17生成元修正）／Codex（GET・CI・公開検証）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/01cff1c3e1cfe7cd3443c354ab3bc2b38193b09b"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-23-inquiry-pdca.md"
     },
     {
       "id": "CORP-WP-SOURCE-SYNC-20261116",
@@ -940,24 +979,24 @@
       "site": "all",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/21 GA4：会社38PV/CTA2、保育5PV/CTA1、放デイ全指標取得行なし。真正な外部実受付CVRは3サイト未算出",
+      "status": "11/22 GA4：会社24PV/CTA5/フォーム開始2/成功2イベント、保育5PV、放デイ2PV。3サイト外部有効受付CVRは未照合・未算出",
       "title": "3サイトPV・CTR・実問い合わせCVRの目的別PDCA",
-      "detail": "GA4 11/17：会社50セッション93PV／保育17・24PV／放デイ3・4PV。GSC確定11/15：会社20/334（5.99%）、保育3/101（2.97%）、放デイ0/28。送信成功は会社4イベントのみ取得、外部有効件数・セッション帰属未照合。",
-      "next": "11/23放デイAS-03 D+14・DG6施設CTA D+7、11/25保育meta/採用導線、11/28会社CF7 D+14。放デイ11/21の欠測/反映待ちを追う。",
+      "detail": "確定GSC 11/20 PT：会社16/225 CTR7.11%、保育4/97 CTR4.12%、放デイ0/36。GA4 11/22：会社16session24PV、保育5session5PV、放デイ2session2PV。受信実例は11/21以前の報告であり、11/22の外部有効実案件に計上しない。",
+      "next": "11/25保育meta/採用CTA、11/26駒沢園、11/28会社CF7、11/29でじるみmeta、11/30でじるみ6施設CTAの同曜日・同定義評価。",
       "owner": "GPT（成果評価）／Cowork（UX）／Codex（測定）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-16-inquiry-pdca.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-23-inquiry-pdca.md"
     },
     {
       "id": "GROWTH-CALLCENTER-CTR-20261115",
       "site": "corp",
       "priority": "P1",
       "stage": "Plan",
-      "status": "11/13〜19 PT：コールセンター545表示0クリック・平均8.07位。タイトル案未承認で未変更",
+      "status": "会社コールセンターはGSC 11/16〜20 PT 430表示0クリック。検索タイトル変更は未承認・未実装",
       "title": "会社事業ページの検索CTR改善",
-      "detail": "検索クエリ本文未取得。でじるみトップは同じ確定7日841表示9クリック（CTR1.07%）で、11/15公開メタの単独効果はまだ未判定。",
-      "next": "Coworkは現行サービス内容・タイトル案と所有者承認の有無を確認。既存改修が重複しない条件で検索結果文言1点のみ変更→D0確定。",
+      "detail": "公開ページの現行タイトルは『電話代行・コールセンター｜受注・予約・テレマーケティング｜トリオキャリア』。GSCページ別11/16〜20の5日で430表示0クリック。検索クエリ本文なし、検索意図原因は仮説。テーマ同期未完了・所有者承認なし。",
+      "next": "Coworkが承認済みの文字列・改修経路を確認するまでWP改修不可。重複施策を行わない。",
       "owner": "Cowork（WordPress）／GPT（生成元の整合）／Codex（実測・公開監査）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/handoff/2026-11-15-cowork-shuro-kpi.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-23-inquiry-pdca.md"
     },
     {
       "id": "HOIKU-ERROR-20261112",
@@ -1000,24 +1039,24 @@
       "site": "all",
       "priority": "P0",
       "stage": "Check",
-      "status": "11/21 Cowork/所有者が会社CF7 234の自然問い合わせBcc受信1例、保育Make梅ヶ丘宛て＋CCの自然メール2件を確認。受付日・全件照合は未確認",
+      "status": "11/22会社GA4成功2イベント・外部正味受信未照合。過去の自然受信実例はあるが全件配送と同日CVRは不明。Make Live/Recipient UNKNOWN",
       "title": "問い合わせメール配送と匿名受付の監視",
       "detail": "会社CF7 234の実問い合わせBccが所有者の会社受信箱に届いた記録あり。保育Makeの梅ヶ丘園宛て・CC送付の自然発生した2件は所有者の送信済み記録あり。これらはイベント・同期間全件の受信保証ではなく、Bcc施設振り分け/CF7 1166/Make Queue/担当者全件配送は未照合。PIIは保存しない。",
-      "next": "自然発生の追加案件で施設別・サービス別の匿名到達を記録しGA4と同期間照合。APIなしFree Makeはライブ状態UNKNOWN、既存Gmailのエラー通知のみ補助。",
+      "next": "既存受信権限で匿名の自然発生案件の種類・受付日・内部スパム根拠を別に照合。Make Freeでは追加API契約/本番試験なし。",
       "owner": "Cowork（CF7/受信管理）／Codex（既存監視）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/43776760917"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-23-inquiry-pdca.md"
     },
     {
       "id": "AS-03",
       "site": "after",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/16 21PV・CTA7・フォーム自動開始1・独自開始と成功の行なし／施設別実受付未照合・効果未判定",
+      "status": "D+14 11/23：現行公開リンク/施設事前選択コードは確認、効果未判定（11月初旬欠測・11/21放デイGA4行なし・実受付未照合）",
       "title": "空き状況から施設別の見学相談へ",
-      "detail": "D0=11/09。11/09〜15 GA4放デイ32sessions/43PV、/contact 12PV、/lopp4PV、/compass5PV、施設ページCTA各1、フォーム開始6・成功5イベント。施設別の外部有効相談・AS-03由来は未確認。11/02〜08は一部データ欠測のため同一定義の比較不可。",
-      "next": "11/23 D+14に施設別の外部実相談と同曜日構成のデータを比較。新しい放デイCTAを重複実装しない。",
+      "detail": "11/16〜22の放デイ26session/55PV/CTA11イベント/独自開始1/成功行なし。11/09開始前にGA4欠測・11/21日別行なしがあり、同曜日14日の完全比較不可。公開availabilityはlopp/compass別リンク、フォームJSは?facilityを選択に反映するソースあり。11/23既存site-smokeにロップ個別CTAとフォーム選択肢の回帰検査を追加（main 0b2b679、CI判定待ち）。実ブラウザJSと送信は未確認。",
+      "next": "既存CIで施設リンク・選択肢の回帰検証を完了し、11/28改めて欠測状況・施設別匿名相談受付を確認。新しいCTAを重ねない。",
       "owner": "GPT（効果評価）／Codex（計測）／Cowork（UX）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-16-inquiry-pdca.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/0b2b6790e4673691d5e4ba79e5fb63a09f8cdb0b"
     },
     {
       "id": "AS-01",
@@ -1048,12 +1087,12 @@
       "site": "hoiku",
       "priority": "P2",
       "stage": "Check",
-      "status": "11/18公開sitemap135 URL/canonicalサンプル検査PASS、GSCインデックス評価は未判定",
+      "status": "11/23 D+14：既存smokeでsitemap135 URL・canonicalサンプルPASS、GSC Page Indexing例URL/Google-selected canonical未取得で効果未判定",
       "title": "保育SEOのcanonical・sitemap",
       "detail": "11/09 D0。現行GSCでは11/13 PTまでしか確定しておらず、11/16の登録状態を評価できない。robots/sitemap/旧URL転送とGoogle index済み件数は別。",
-      "next": "11/23 D+14、12/07 D+28に対象URLのGSC検索露出・Google-selected canonicalを正式UIで確認。",
+      "next": "12/07 D+28に同URLの正式GSC Indexing例URLと検索露出/クリックを比較。正常な旧URL転送は維持する。",
       "owner": "Codex（GET・Indexing）／GPT（指標）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-09-indexing-notifications-pdca.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/44979039651"
     },
     {
       "id": "CORP-KOMAZAWA-CV",
@@ -1093,6 +1132,12 @@
     }
   ],
   "history": [
+    {
+      "date": "11/23",
+      "title": "でじるみ施設CTA D+7・放デイAS-03 D+14を評価し、施設別フォーム回帰検査を強化",
+      "result": "GA4 11/22会社24PV・保育5PV・放デイ2PV。GSC確定11/20会社16/225・保育4/97・放デイ0/36。でじるみ6施設ページ44→68PV（同曜日7日）だが外部実相談未照合で効果未判定。放デイAS-03も欠測で未判定。既存site-smokeにロップ個別リンク・希望施設選択肢のGET検査を追加 main 0b2b679。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-23-inquiry-pdca.md"
+    },
     {
       "date": "11/22",
       "title": "PV/CTR実測・でじるみmeta D+7途中評価・専用見学フォームGET検査を追加",
@@ -1221,55 +1266,55 @@
     }
   ],
   "warnings": [
-    "11/21 GA4：会社38PV/19session/CTA2、保育5PV/5session/CTA1。放デイはGA4日別・イベントとも取得行なし＝アクセス0ではなく欠測原因未判定。",
-    "11/21 GA4の独自フォーム開始・成功イベントは会社/保育とも行なし。全サイトで実外部有効問い合わせとセッションのひも付け未照合、真のCVR未算出。",
-    "11/21 Cowork/所有者記録：会社CF7 234のBccに自然問い合わせ1例、保育Makeの梅ヶ丘宛て＋CCの実メール2件を確認。ただし実発生日・全件配送・同一GA4イベントの照合未確認。当日分の外部有効件数に算入しない。",
-    "でじるみmeta D+7：GSC確定は11/19 PTまで。11/08〜12と11/15〜19同曜日5日比較：4/611→6/697、CTR0.65→0.86%、平均順位7.80→6.60。因果未判定、完全7日は未取得。",
-    "本日の既存site-smoke改善 b7a0ca4：でじるみ専用フォーム/digilumi-contact/のGET監視追加。main反映済みだが新CI実行結果・本番GETは未確認、メール配送の保証はしない。",
+    "11/22 GA4：会社24PV/16session/CTA5・独自フォーム開始2・成功イベント2、保育5PV/5session、放デイ2PV/2session。GA4放デイ11/21は取得行なし（0ではない）。",
+    "11/22の外部有効問い合わせ・見学申込・利用相談・採用応募は受付台帳と匿名照合できず、全サイトで真のCVR未算出。成功イベントを実件に加算しない。",
+    "11/23でじるみ6施設CTA D+7：同じ曜日7日で施設ページ44→68PV、専用相談ページ5PV。ただし編集閲覧混入・改修重複の可能性、実有効受付未照合につき効果未判定。",
+    "11/23放デイAS-03 D+14：サイト公開の施設別CTAとJS事前選択の存在を確認したが、GA4欠測・実受付未照合で効果未判定。既存site-smoke main 0b2b679で施設/フォームの回帰検査強化、CI結果は後続確認。",
+    "11/22既存smoke #44979039651 success：でじるみ専用相談フォームGET200・フォームHTMLあり、保育sitemap135 URLとcanonicalサンプルPASS。Make Live/Recipient UNKNOWN。",
     "Make 6306695ライブQueue・全件担当受信はUNKNOWN。11/15以降の接続済みGmailでMake警告該当メール検索0件だが正式通知先未照合。FreeのAPIトークン契約は要求しない。",
     "会社CF7 11/17送信エラー2回・11/18に1回の原因区分invalid/spam/mail_failedは未取得。Flamingo非対応のため既存保存ログ不足、無断の本番テスト送信は禁止。",
     "会社WordPressテーマ1.0.7とGitHub JS/CSSの完全同期は未完了。旧ソース再生成・上書きはしない。",
-    "11/01〜02 GA4欠測・11/03部分日。11/21放デイ欠測。GSCはPT確定11/19、GA4はJST11/21で同日比較をしない。GA4内部アクセス・サイト間重複は未判定。",
+    "11/01〜02 GA4欠測・11/03部分日。放デイ11/21は日別取得行なし、11/22は2PV。GSC最新確定11/20 PT、GA4前日11/22 JST。GA4内部アクセス除外・サイト間ユーザー重複は未判定。",
     "11/21 Cowork記録：放デイGSCインデックス登録済22、sitemap20中18登録。正式URL別状態は11/28に再確認。インデックス通知ゼロを目標にしない。",
     "管理者KPIのiPhoneでの認証成功とWorker最新表示は未確認。GitHubデータ反映とWorker公開表示を区別。"
   ],
   "ga4MTD": {
-    "period": "2026-11-03〜11-21（11/01〜02欠測、11/03部分日、放デイ11/21取得行なし）",
+    "period": "2026-11-03〜11-22（11/01〜02欠測、11/03部分日、放デイ11/21日別取得行なし）",
     "corp": [
-      440,
-      435,
-      585,
-      1032
+      451,
+      446,
+      601,
+      1056
     ],
     "hoiku": [
-      135,
-      91,
-      167,
-      238
+      140,
+      96,
+      172,
+      243
     ],
     "after": [
-      48,
+      49,
       30,
-      68,
-      116
+      70,
+      118
     ]
   },
   "gscSeven": {
-    "period": "2026-11-13〜11-19（PT、確定7日／順位は日別表示加重近似）",
+    "period": "2026-11-14〜11-20（PT、確定7日、平均順位は日別表示加重近似）",
     "corp": [
-      118,
-      2138,
-      6.7137
+      124,
+      2147,
+      6.7173
     ],
     "hoiku": [
-      18,
-      720,
-      11.0139
+      21,
+      746,
+      10.7802
     ],
     "after": [
       6,
-      215,
-      9.5163
+      227,
+      9.0969
     ]
   }
 }
