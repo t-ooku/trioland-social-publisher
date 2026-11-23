@@ -1051,12 +1051,12 @@
       "site": "after",
       "priority": "P1",
       "stage": "Check",
-      "status": "D+14 11/23：現行公開リンク/施設事前選択コードは確認、効果未判定（11月初旬欠測・11/21放デイGA4行なし・実受付未照合）",
+      "status": "11/23 D+14効果未判定（GA4欠測・外部実相談未照合）。追加した施設選択回帰GET検査 CI #45089003157 success。",
       "title": "空き状況から施設別の見学相談へ",
-      "detail": "11/16〜22の放デイ26session/55PV/CTA11イベント/独自開始1/成功行なし。11/09開始前にGA4欠測・11/21日別行なしがあり、同曜日14日の完全比較不可。公開availabilityはlopp/compass別リンク、フォームJSは?facilityを選択に反映するソースあり。11/23既存site-smokeにロップ個別CTAとフォーム選択肢の回帰検査を追加（main 0b2b679、CI判定待ち）。実ブラウザJSと送信は未確認。",
+      "detail": "11/16〜22の放デイ26session/55PV/CTA11イベント/独自開始1/成功行なし。11/09開始前にGA4欠測・11/21日別行なしがあり、同曜日14日の完全比較不可。公開availabilityはlopp/compass別リンク、フォームJSは?facilityを選択に反映するソースあり。11/23既存site-smokeにロップ個別CTAとフォーム選択肢の回帰検査を追加（main 0b2b679、CI #45089003157 success（GET検査））。実ブラウザJSと送信は未確認。",
       "next": "既存CIで施設リンク・選択肢の回帰検証を完了し、11/28改めて欠測状況・施設別匿名相談受付を確認。新しいCTAを重ねない。",
       "owner": "GPT（効果評価）／Codex（計測）／Cowork（UX）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/0b2b6790e4673691d5e4ba79e5fb63a09f8cdb0b"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/45089003157"
     },
     {
       "id": "AS-01",
@@ -1135,7 +1135,7 @@
     {
       "date": "11/23",
       "title": "でじるみ施設CTA D+7・放デイAS-03 D+14を評価し、施設別フォーム回帰検査を強化",
-      "result": "GA4 11/22会社24PV・保育5PV・放デイ2PV。GSC確定11/20会社16/225・保育4/97・放デイ0/36。でじるみ6施設ページ44→68PV（同曜日7日）だが外部実相談未照合で効果未判定。放デイAS-03も欠測で未判定。既存site-smokeにロップ個別リンク・希望施設選択肢のGET検査を追加 main 0b2b679。",
+      "result": "GA4 11/22会社24PV・保育5PV・放デイ2PV。GSC確定11/20会社16/225・保育4/97・放デイ0/36。でじるみ6施設ページ44→68PV（同曜日7日）だが外部実相談未照合で効果未判定。放デイAS-03も欠測で未判定。既存site-smokeにロップ個別リンク・希望施設選択肢のGET検査を追加 main 0b2b679。 site-smoke #45089003157 success（公開GET/施設選択ソース検査）、KPI CI #45089175152 success。Worker認証表示と実案件CVRは未確認。",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-23-inquiry-pdca.md"
     },
     {
@@ -1269,7 +1269,7 @@
     "11/22 GA4：会社24PV/16session/CTA5・独自フォーム開始2・成功イベント2、保育5PV/5session、放デイ2PV/2session。GA4放デイ11/21は取得行なし（0ではない）。",
     "11/22の外部有効問い合わせ・見学申込・利用相談・採用応募は受付台帳と匿名照合できず、全サイトで真のCVR未算出。成功イベントを実件に加算しない。",
     "11/23でじるみ6施設CTA D+7：同じ曜日7日で施設ページ44→68PV、専用相談ページ5PV。ただし編集閲覧混入・改修重複の可能性、実有効受付未照合につき効果未判定。",
-    "11/23放デイAS-03 D+14：サイト公開の施設別CTAとJS事前選択の存在を確認したが、GA4欠測・実受付未照合で効果未判定。既存site-smoke main 0b2b679で施設/フォームの回帰検査強化、CI結果は後続確認。",
+    "11/23放デイAS-03 D+14：サイト公開の施設別CTAとJS事前選択の存在を確認したが、GA4欠測・実受付未照合で効果未判定。既存site-smoke main 0b2b679で施設/フォームの回帰検査強化、既存site-smoke #45089003157 success（GETのみ）。",
     "11/22既存smoke #44979039651 success：でじるみ専用相談フォームGET200・フォームHTMLあり、保育sitemap135 URLとcanonicalサンプルPASS。Make Live/Recipient UNKNOWN。",
     "Make 6306695ライブQueue・全件担当受信はUNKNOWN。11/15以降の接続済みGmailでMake警告該当メール検索0件だが正式通知先未照合。FreeのAPIトークン契約は要求しない。",
     "会社CF7 11/17送信エラー2回・11/18に1回の原因区分invalid/spam/mail_failedは未取得。Flamingo非対応のため既存保存ログ不足、無断の本番テスト送信は禁止。",
