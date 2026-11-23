@@ -482,7 +482,7 @@ def p_biz():
         ["学習費用0円", "無料見学・体験", "各事業所 定員20名"],
         '<a class="btn" href="https://digilumi.jp/" target="_blank" rel="noopener">でじるみ公式サイト <span class="u">digilumi.jp</span></a>',
         f'<div class="sub-h">学べること</div><div class="menus">{menus}</div>')
-    biz_page("call", "コールセンター事業｜電話代行・テレマーケティング｜トリオキャリア",
+    biz_page("call", "電話代行・コールセンター｜受注・予約・テレマーケティング｜トリオキャリア",
         "トリオキャリアのコールセンター事業。電話代行・電話秘書（月額15,000円〜）、コールセンター、バーチャルオフィス、テレマーケティング、メール・FAX一斉送信に対応します。",
         '<img src="a/t-call-2.webp" width="900" height="600" alt="電話で対応するスタッフ" loading="lazy">',
         "トリオキャリアの原点。電話とメールで、企業様の問題解決と目標達成をお手伝いします。迅速・丁寧・正確な対応で、お客様の「信頼」につなげます。",
