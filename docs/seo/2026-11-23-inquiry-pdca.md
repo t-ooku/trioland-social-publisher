@@ -100,3 +100,9 @@ GA4 property 562097032、過去に確認済みのAsia/Tokyo（本日プロパテ
 - **Act**：でじるみ6施設のPV増は**継続・効果未判定**（D+14 11/30）、放デイAS-03も**継続・効果未判定**（欠測/実受付未照合、11/28 Indexing/次期データ監視）。11/25保育トップmeta D+7・採用CTA D+7、11/26駒沢園希望園引継ぎD+14、11/28会社フォームD+14、11/29でじるみmeta D+14、12/07保育canonical D+28。データ欠測や事業者権限で検証不可なら「担当・阻害要因・次の条件」を明記し、スパム・重複の未確認除外はしない。
 
 GitHub公開リポジトリには匿名の数字と公開URLだけを保存。個人情報、顧客の文面、認証秘密、検索クエリは収録しない。**Cowork指示書保存≠受領、main反映≠CI/デプロイ/本番稼働、送信成功イベント≠実受付**。
+
+## 6. 11/23 公開GET・CIの完了追記
+
+- **施設選択の回帰検査を含む既存site-smoke**：main commit `0b2b6790e4673691d5e4ba79e5fb63a09f8cdb0b` の [run #45089003157](https://github.com/t-ooku/trioland-social-publisher/actions/runs/45089003157) が **success**。公開ページGETにおける2施設相談リンク、ロップ個別リンク、フォーム内施設選択肢・事前選択JSの存在を検証。ただし、ブラウザでのJS実行、実申込や担当受信はテストしていない。
+- **KPI安全検査**：11/23 GA4/GSC・PDCAを更新した `dashboard/latest.json` の commit `9c7a280016355c63879082458cefe0ae5fd2ca92` に対応する [run #45089175152](https://github.com/t-ooku/trioland-social-publisher/actions/runs/45089175152) が **success**。GitHubでのデータ検証成功はWorkerのログイン後表示・本人iPhone認証成功の証明ではない。
+- 11/22実行 [run #44979039651](https://github.com/t-ooku/trioland-social-publisher/actions/runs/44979039651) もsuccessで、でじるみ専用フォームの公開GET200と保育sitemap135 URL・canonicalサンプル整合を確認。Makeのライブ稼働・実メール配送はUNKNOWNのまま。
