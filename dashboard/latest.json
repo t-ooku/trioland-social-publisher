@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-24",
-  "ga4Date": "2026-11-23",
-  "gscDate": "2026-11-21",
+  "updatedAt": "2026-11-25",
+  "ga4Date": "2026-11-24",
+  "gscDate": "2026-11-22",
   "ga4Timezone": "Asia/Tokyo",
   "gscTimezone": "America/Los_Angeles",
   "sites": [
@@ -449,27 +449,48 @@
         8
       ],
       "after": null
+    },
+    {
+      "date": "2026-11-24",
+      "corp": [
+        29,
+        26,
+        35,
+        84
+      ],
+      "hoiku": [
+        6,
+        6,
+        6,
+        6
+      ],
+      "after": [
+        3,
+        1,
+        3,
+        3
+      ]
     }
   ],
   "ga4Seven": {
-    "period": "2026-11-17〜11-23（JST、期間active/newはGA4別集計。放デイ11/21・23日別取得行なし）",
+    "period": "2026-11-18〜11-24（JST、期間active/new別集計、放デイ11/21・23日別行なし）",
     "corp": [
-      170,
-      150,
-      217,
-      342
+      160,
+      139,
+      202,
+      333
     ],
     "hoiku": [
-      63,
+      56,
       42,
-      76,
-      94
+      65,
+      76
     ],
     "after": [
       20,
-      12,
+      11,
       20,
-      34
+      33
     ]
   },
   "gscSeries": [
@@ -850,24 +871,42 @@
         35,
         21
       ]
+    },
+    {
+      "date": "2026-11-22",
+      "corp": [
+        8,
+        207,
+        6.5121
+      ],
+      "hoiku": [
+        4,
+        96,
+        14.25
+      ],
+      "after": [
+        0,
+        29,
+        9.2069
+      ]
     }
   ],
   "events": {
-    "date": "2026-11-23",
+    "date": "2026-11-24",
     "corp": [
-      1,
-      null,
-      null,
+      4,
+      6,
+      6,
       null
     ],
     "hoiku": [
-      2,
-      1,
-      1,
+      null,
+      null,
+      null,
       null
     ],
     "after": [
-      null,
+      1,
       null,
       null,
       null
@@ -884,10 +923,22 @@
   },
   "make": {
     "status": "unknown",
-    "detail": "11/24接続Gmailの11/15以降対象Make通知検索は該当なし。正式通知先と全件配送は未照合。既存11/23 site-smokeジョブ成功、実稼働・Queue・担当受信UNKNOWN。",
+    "detail": "11/25接続Gmail（11/15以降）の対象警告検索該当なし。正式通知先・実行履歴・Queue・担当受信UNKNOWN。最新site-smoke実ログ未取得。",
     "ci": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/45089003157"
   },
   "pdca": [
+    {
+      "id": "HOIKU-COLUMN-INDEX-CTA-20261125",
+      "site": "hoiku",
+      "priority": "P1",
+      "stage": "Do",
+      "status": "生成元main 881f641再取得確認。CI・生成HTML・本番未確認",
+      "title": "求人コラム一覧の園見学CTAを採用フォームへ",
+      "detail": "Cowork 11/23 ACK、/column の本文ボタンだけ /contact.html→/recruit.html#form。変更前11/18〜24一覧PV取得行なし。項目/受信先は不変。",
+      "next": "CI/公開GETでリンクと採用フォームidを確認しD0確定。D+7/14で同ページPV/CTA/実応募を追跡。",
+      "owner": "Codex",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/commit/881f64128c602acd91a397fd1e9658772b27e303"
+    },
     {
       "id": "COWORK-QUEUED-20261124",
       "site": "all",
@@ -905,10 +956,10 @@
       "site": "after",
       "priority": "P1",
       "stage": "Do",
-      "status": "生成元main反映済み 4d867cc／CI・新生成HTML・本番未確認",
+      "status": "11/24 Cowork ACKで公開3リンク#formを確認との記録。自分の公開ページGET済、リンク先・CI未確認",
       "title": "放デイ採用応募ボタンからフォーム位置へ直接遷移",
       "detail": "11/21 Cowork案を実装。既存のkind=recruitとfacilityを保持したまま3CTAに#form。変更前11/17〜23採用ページ3PV、CTA取得行なし。受付項目とAS-03利用導線は変更なし。",
-      "next": "ビルド・生成物・公開GETの3リンクとcontact id=formを検証。D0を公開確認日としD+7/14比較。",
+      "next": "Codexの公開GETで3リンクとcontact id=formを検証、D0を確定し7/14日。コラム13ページ案は順番待ち。",
       "owner": "Codex / GPT",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-24-inquiry-pdca.md"
     },
@@ -917,10 +968,10 @@
       "site": "after",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/21・23の日別再取得行なし、11/22は2PV。11/23サイト検査GA4タグGETステップ成功。原因不明",
+      "status": "11/21・23再取得でも日別行なし、11/24は3PV/3sessions。原因未確定",
       "title": "放デイのGA4日別取得行なしを調査",
       "detail": "放デイ11/21 GA4 hostname別データ/イベント行なし。11/22 GA4にactive2、新規0、sessions2、PV2、成功等イベント行なし。11/21を0補完して比較しない。",
-      "next": "11/25に両日再取得。ブラウザ連携が使える場合のみ実タグ発火を確認（本番試験送信禁止）。11/28 AS-03再評価。",
+      "next": "実ブラウザタグ確認は本番試験送信なし。11/28 AS-03再評価。",
       "owner": "Codex（計測）／GPT（検証）",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-24-inquiry-pdca.md"
     },
@@ -965,12 +1016,12 @@
       "site": "hoiku",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/16実装・11/18初回公開meta一致確認（D0=11/18）",
+      "status": "D+7途中：GSC確定同曜日5日取得行39表示1クリック→30表示0クリック。前期間11/14行なし、後7日未確定・効果未判定",
       "title": "保育トップの保護者向け検索説明文",
       "detail": "11/16更新meta descriptionは11/18 site-smoke #44204448506 attempt2の公開GETで一致。GSC11/09〜15の保育トップ65表示1クリック（CTR1.54%）、平均5.66位。変更後の検索CTR効果は未判定。",
-      "next": "11/25・12/02・12/16に同じURL・確定GSC期間・検索クリック/表示/順位で比較。期間不足や別要因があれば効果未判定。",
+      "next": "確定7日が揃ってから再評価、12/02 D+14、12/16 D+28。再編集しない。",
       "owner": "Codex（公開確認）／Cowork（文案）／GPT（PDCA）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/actions/runs/44204448506"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-25-inquiry-pdca.md"
     },
     {
       "id": "CORP-CF7-ERROR-20261118",
@@ -989,12 +1040,12 @@
       "site": "hoiku",
       "priority": "P1",
       "stage": "Check",
-      "status": "修正main/Build成功/公開GET MATCH（D0=11/18）・効果未判定",
+      "status": "D+7取得行：対象6記事14→5PV、実応募/採用CTA分類未照合・効果未判定",
       "title": "保育コラムの採用前見学CTAのリンク不具合を修正",
       "detail": "旧href=#formは記事内に対応するform IDがなく、採用前見学が開けない状態。build_site.py column_ctaだけ/recruit.html#formへ修正。11/18 Build site #44204413441 success、site-smoke #44204448506 attempt2で新リンクと実フォームを公開GET確認。11/11〜17の既存コラム個別ページ5本で計14PV、残り1本は取得行なし。採用有効実受付は未照合。",
-      "next": "11/25(D+7)・12/02(D+14)、記事別PV、採用CTA、nursery_recruitフォーム開始/成功、匿名の実応募で効果判定。件数が少なければ未判定を維持。",
+      "next": "12/02 D+14。同じ6記事、一覧改修は別施策として扱う。",
       "owner": "GPT（修正）／Codex（既存Buildと公開検査）／Cowork（実機UX・結果）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-18-inquiry-pdca.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-25-inquiry-pdca.md"
     },
     {
       "id": "DG-FACILITY-CTA-SYNC-20261117",
@@ -1037,12 +1088,12 @@
       "site": "all",
       "priority": "P1",
       "stage": "Check",
-      "status": "11/23会社26PV/CTA1、保育8PV/CTA2/開始1/成功1イベント、放デイ全指標行なし。実CVR未算出",
+      "status": "11/24会社84PV/成功6、保育6PV、放デイ3PV、でじるみ16PV。実受付未照合・CVR未算出",
       "title": "3サイトPV・CTR・実問い合わせCVRの目的別PDCA",
       "detail": "確定GSC 11/20 PT：会社16/225 CTR7.11%、保育4/97 CTR4.12%、放デイ0/36。GA4 11/22：会社16session24PV、保育5session5PV、放デイ2session2PV。受信実例は11/21以前の報告であり、11/22の外部有効実案件に計上しない。",
-      "next": "11/25保育トップmeta/コラム採用CTA、11/26駒沢、11/28会社CF7/放デイAS-03、11/29でじるみmeta/コールセンター、11/30でじるみ6施設。",
+      "next": "11/26駒沢、11/28 CF7/放デイ、11/29でじるみmeta/コールセンター、11/30施設。",
       "owner": "GPT（成果評価）／Cowork（UX）／Codex（測定）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-24-inquiry-pdca.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-25-inquiry-pdca.md"
     },
     {
       "id": "GROWTH-CALLCENTER-CTR-20261115",
@@ -1097,10 +1148,10 @@
       "site": "all",
       "priority": "P0",
       "stage": "Check",
-      "status": "11/23保育成功1イベント、外部受付未照合。Make通知検索該当なし・全件配送UNKNOWN",
+      "status": "会社11/24成功6イベント、外部有効受付未照合。Make警告検索該当なし・全件配送UNKNOWN",
       "title": "問い合わせメール配送と匿名受付の監視",
       "detail": "会社CF7 234の実問い合わせBccが所有者の会社受信箱に届いた記録あり。保育Makeの梅ヶ丘園宛て・CC送付の自然発生した2件は所有者の送信済み記録あり。これらはイベント・同期間全件の受信保証ではなく、Bcc施設振り分け/CF7 1166/Make Queue/担当者全件配送は未照合。PIIは保存しない。",
-      "next": "既存自然受信・正規ログを匿名分類。ブラウザ連携不可、追加契約・本番送信なし。",
+      "next": "正規匿名受付集計と自然受信の照合。既存WP/Makeの読取のみ。",
       "owner": "Cowork（CF7/受信管理）／Codex（既存監視）",
       "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-24-inquiry-pdca.md"
     },
@@ -1181,15 +1232,21 @@
       "site": "corp",
       "priority": "P1",
       "stage": "Plan",
-      "status": "11/17〜23会社内数：事業トップ50PV、6施設54PV、専用フォーム5PV・開始2・成功/エラー行なし。外部有効受付未照合",
+      "status": "会社内数8ページ：11/24 16PV、前日5、7日100、当月取得262。GSCページ別7日23/1118=2.06%、トップ10/850=1.18%。実受付未照合",
       "title": "会社HPの就労B型KPIを別枠で評価",
-      "detail": "専用 /digilumi-contact/ をページパス別GA4で分離。通常 /contact/ は開始17・成功12・エラー3。form_typeの直接取得ではない。会社合計へ加算しない。",
-      "next": "11/30の施設別評価で外部有効受付を匿名照合。専用フォーム2開始と成功行なしから2人離脱とは断定しない。",
+      "detail": "segments.digilumiに4区分用集計を保存。3ホスト合計に加算しない。フィルタ結果のページ別ユーザー/セッションは重複排除不可でnull。既存Worker画面は3サイト表示、4区分UI未確認。",
+      "next": "11/30施設別評価。Codexが4区分の画面と二重加算防止を実装/検証。",
       "owner": "Codex（画面・計測）／Cowork（用件・動線）",
-      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-24-inquiry-pdca.md"
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-25-inquiry-pdca.md"
     }
   ],
   "history": [
+    {
+      "date": "11/25",
+      "title": "4区分KPIと保育採用導線の改善",
+      "result": "会社84PV/成功6イベント、保育6PV、放デイ3PV、でじるみ16PV/当月262PV。保育コラム一覧CTAの生成元修正881f641、CI/公開未確認。保育トップ・コラムD+7効果未判定。",
+      "link": "https://github.com/t-ooku/trioland-social-publisher/blob/main/docs/seo/2026-11-25-inquiry-pdca.md"
+    },
     {
       "date": "11/24",
       "title": "コールセンター公開状態訂正・採用CTA修正・でじるみ7日再評価",
@@ -1330,7 +1387,7 @@
     }
   ],
   "warnings": [
-    "11/24：GA4 11/23放デイ行なし、11/21も再取得行なし。内部アクセス未除外・外部有効受付未照合。GSC最新確定11/21 PT。放デイ採用CTA生成元main反映、CI/公開未確認。",
+    "11/25：GA4 11/24 JST、GSC 11/22 PT。外部実受付・内部閲覧未照合、放デイ11/21・23行なし。でじるみは会社HP内数、ページ別GSCでありプロパティ総数と重複加算禁止。管理画面4区分表示未実装確認・Worker認証表示未確認。",
     "11/22 GA4：会社24PV/16session/CTA5・独自フォーム開始2・成功イベント2、保育5PV/5session、放デイ2PV/2session。GA4放デイ11/21は取得行なし（0ではない）。",
     "11/22の外部有効問い合わせ・見学申込・利用相談・採用応募は受付台帳と匿名照合できず、全サイトで真のCVR未算出。成功イベントを実件に加算しない。",
     "11/23でじるみ6施設CTA D+7：同じ曜日7日で施設ページ44→68PV、専用相談ページ5PV。ただし編集閲覧混入・改修重複の可能性、実有効受付未照合につき効果未判定。",
@@ -1344,42 +1401,216 @@
     "管理者KPIのiPhoneでの認証成功とWorker最新表示は未確認。GitHubデータ反映とWorker公開表示を区別。"
   ],
   "ga4MTD": {
-    "period": "2026-11-03〜11-23（JST、11/01〜02欠測・11/03部分日、放デイ11/21・23等日別取得行なし）",
+    "period": "2026-11-03〜11-24（JST、11/01〜02欠測、11/03部分日、放デイ11/21・23行なし）",
     "corp": [
-      464,
-      459,
-      617,
-      1082
+      491,
+      485,
+      653,
+      1166
     ],
     "hoiku": [
-      145,
-      100,
-      179,
-      251
+      151,
+      106,
+      185,
+      257
     ],
     "after": [
-      49,
-      30,
-      70,
-      118
+      52,
+      31,
+      73,
+      121
     ]
   },
   "gscSeven": {
-    "period": "2026-11-15〜11-21（PT、確定7日、平均順位は日別表示加重近似）",
+    "period": "2026-11-16〜11-22（PT、確定7日、順位は表示加重近似）",
     "corp": [
-      120,
-      2107,
-      6.6915
+      108,
+      1980,
+      6.7783
     ],
     "hoiku": [
-      19,
-      758,
-      11.4077
+      20,
+      753,
+      11.9482
     ],
     "after": [
       5,
-      243,
-      10.3827
+      244,
+      10.6066
     ]
+  },
+  "segments": {
+    "digilumi": {
+      "name": "でじるみ（会社HP内数）",
+      "parent": "corp",
+      "scope": "事業トップ・6施設・専用相談フォームの8ページ（末尾スラッシュ有無を含む、記事・カテゴリは除外）。GA4ページ別PV、GSCページ別表示加重集計。会社HPとの二重加算禁止。ページ別ユーザー/セッションは重複排除不可でnull。",
+      "ga4Series": [
+        {
+          "date": "2026-11-03",
+          "pv": 2
+        },
+        {
+          "date": "2026-11-04",
+          "pv": 11
+        },
+        {
+          "date": "2026-11-05",
+          "pv": 9
+        },
+        {
+          "date": "2026-11-06",
+          "pv": 7
+        },
+        {
+          "date": "2026-11-07",
+          "pv": 2
+        },
+        {
+          "date": "2026-11-08",
+          "pv": 8
+        },
+        {
+          "date": "2026-11-09",
+          "pv": 13
+        },
+        {
+          "date": "2026-11-10",
+          "pv": 12
+        },
+        {
+          "date": "2026-11-11",
+          "pv": 11
+        },
+        {
+          "date": "2026-11-12",
+          "pv": 11
+        },
+        {
+          "date": "2026-11-13",
+          "pv": 9
+        },
+        {
+          "date": "2026-11-14",
+          "pv": 9
+        },
+        {
+          "date": "2026-11-15",
+          "pv": 3
+        },
+        {
+          "date": "2026-11-16",
+          "pv": 30
+        },
+        {
+          "date": "2026-11-17",
+          "pv": 25
+        },
+        {
+          "date": "2026-11-18",
+          "pv": 16
+        },
+        {
+          "date": "2026-11-19",
+          "pv": 18
+        },
+        {
+          "date": "2026-11-20",
+          "pv": 18
+        },
+        {
+          "date": "2026-11-21",
+          "pv": 22
+        },
+        {
+          "date": "2026-11-22",
+          "pv": 5
+        },
+        {
+          "date": "2026-11-23",
+          "pv": 5
+        },
+        {
+          "date": "2026-11-24",
+          "pv": 16
+        }
+      ],
+      "ga4Seven": {
+        "period": "2026-11-18〜24 JST",
+        "pv": 100,
+        "active": null,
+        "new": null,
+        "sessions": null
+      },
+      "ga4MTD": {
+        "period": "2026-11-03〜24 JST（部分月）",
+        "pv": 262,
+        "active": null,
+        "new": null,
+        "sessions": null
+      },
+      "gscSeries": [
+        {
+          "date": "2026-11-16",
+          "clicks": 4,
+          "impressions": 182,
+          "position": 6.038437362637363
+        },
+        {
+          "date": "2026-11-17",
+          "clicks": 2,
+          "impressions": 180,
+          "position": 6.583306666666667
+        },
+        {
+          "date": "2026-11-18",
+          "clicks": 4,
+          "impressions": 183,
+          "position": 6.5791978142076495
+        },
+        {
+          "date": "2026-11-19",
+          "clicks": 3,
+          "impressions": 197,
+          "position": 6.852775634517766
+        },
+        {
+          "date": "2026-11-20",
+          "clicks": 5,
+          "impressions": 148,
+          "position": 7.040541891891891
+        },
+        {
+          "date": "2026-11-21",
+          "clicks": 2,
+          "impressions": 86,
+          "position": 6.872063953488372
+        },
+        {
+          "date": "2026-11-22",
+          "clicks": 3,
+          "impressions": 142,
+          "position": 6.5563704225352115
+        }
+      ],
+      "gscSeven": {
+        "period": "2026-11-16〜22 PT",
+        "clicks": 23,
+        "impressions": 1118,
+        "position": 6.620736225402504
+      },
+      "events": {
+        "date": "2026-11-24",
+        "cta": 2,
+        "start": null,
+        "success": null,
+        "external": null
+      },
+      "eventSeven": {
+        "cta": 2,
+        "start": 2,
+        "success": null,
+        "external": null
+      }
+    }
   }
 }
