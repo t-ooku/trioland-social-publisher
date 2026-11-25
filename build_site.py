@@ -1346,7 +1346,7 @@ def page_column():
   </div>
   <div class="actions">
     <a class="btn pink" href="/recruit.html">採用情報を見る</a>
-    <a class="btn outline" href="/contact.html">園見学から相談する</a>
+    <a class="btn outline" href="/recruit.html#form">園見学から相談する</a>
   </div>
 </section>
 
