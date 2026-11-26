@@ -10,7 +10,7 @@
 
 ## ID・パスワードへの切替
 
-- Cloudflare Workersの `trioland-social-publisher` → Settings → Variables and Secrets に `ADMIN_LOGIN_ID` と `ADMIN_LOGIN_PASSWORD` をSecretとして設定する。パスワードは20文字以上、既存の `ADMIN_TOKEN` と異なる強い値とする。GitHubやチャットに値を記載しない。
+- Cloudflare Workersの `trioland-social-publisher` → Settings → Variables and Secrets に `ADMIN_LOGIN_ID` と `ADMIN_LOGIN_PASSWORD` をSecretとして設定する。パスワードは8文字以上、既存の `ADMIN_TOKEN` と異なる強い値とする。GitHubやチャットに値を記載しない。
 - 両方設定済みなら管理画面のフォームはID・パスワード方式になり、従来の管理コード単独ではログインできない。両方未設定なら移行前の管理コード方式を維持し、片方だけ又は不正な設定の場合は503で拒否する。
 - 既存の `ADMIN_TOKEN` は投稿管理APIと試行制限に必要なので変更・削除しない。GitHubログインは予備として維持する。共有管理セッションを利用するためSNS管理にも同じログインが適用される。
 - デプロイ後、本人がブラウザから正規ID・PWでログインし、KPIへ戻ることを確認する。誤ID・誤PW・旧管理コード・CSRF不正・試行制限はテスト環境で検証する。秘密の値はログに残さない。
