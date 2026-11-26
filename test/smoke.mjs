@@ -126,3 +126,6 @@ const result = existsSync(esbuild)
 
 assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 console.log("smoke tests passed");
+
+assert.match(source, /password\.length >= 8 && password\.length <= 4096/);
+assert.match(source, /name="password" minlength="8"/);
