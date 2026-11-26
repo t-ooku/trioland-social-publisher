@@ -559,7 +559,7 @@ function adminLoginMode(env) {
   const id = String(env.ADMIN_LOGIN_ID || "");
   const password = String(env.ADMIN_LOGIN_PASSWORD || "");
   if (!id && !password) return "legacy";
-  return id.length > 0 && id.length <= 128 && password.length >= 20 && password.length <= 4096 && env.ADMIN_TOKEN && !constantTimeEqual(password, String(env.ADMIN_TOKEN)) ? "password" : "unavailable";
+  return id.length > 0 && id.length <= 128 && password.length >= 8 && password.length <= 4096 && env.ADMIN_TOKEN && !constantTimeEqual(password, String(env.ADMIN_TOKEN)) ? "password" : "unavailable";
 }
 
 function renderAdminAccess(destination, errorMessage = "", status = 200, env = {}) {
@@ -568,7 +568,7 @@ function renderAdminAccess(destination, errorMessage = "", status = 200, env = {
   const screen = isKpi ? "KPI・PDCA" : "SNS管理";
   const mode = adminLoginMode(env);
   const heading = mode === "legacy" ? "管理コードでログイン" : "ID・パスワードでログイン";
-  const fields = mode === "legacy" ? `<label>管理コード<input class="secret-input" type="password" name="adminToken" minlength="20" maxlength="4096" autocomplete="current-password" required autofocus></label>` : `<label>ログインID<input class="secret-input" type="text" name="loginId" maxlength="128" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus></label><label>パスワード<input class="secret-input" type="password" name="password" minlength="20" maxlength="4096" autocomplete="current-password" required></label>`;
+  const fields = mode === "legacy" ? `<label>管理コード<input class="secret-input" type="password" name="adminToken" minlength="20" maxlength="4096" autocomplete="current-password" required autofocus></label>` : `<label>ログインID<input class="secret-input" type="text" name="loginId" maxlength="128" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus></label><label>パスワード<input class="secret-input" type="password" name="password" minlength="8" maxlength="4096" autocomplete="current-password" required></label>`;
   const suffix = isKpi ? "?return_to=/admin/kpi" : "";
   const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド ${screen}</title><style>${adminStyles()}.secret-input{display:block;width:100%;margin-top:7px;border:1px solid #cbd7d5;border-radius:10px;padding:11px;font:inherit}.login-options{display:grid;gap:12px}.subtle-link{color:var(--brand);font-size:13px}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>${heading}</h1><p>管理者用の認証情報を入力してください。認証情報はURL・Cookie・保存データ・ログには残しません。</p>${errorMessage ? `<div class="notice error">${escapeHtml(errorMessage)}</div>` : ""}<form method="post" action="/admin/access${suffix}" class="stack"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}">${fields}<button type="submit">${screen}を開く</button></form><p class="help">認証後は、このブラウザだけに8時間有効な安全な管理セッションを発行します。HOSHILUには接続しません。</p><a class="subtle-link" href="/admin/login${suffix}">GitHubログイン（予備）</a></section></main></body></html>`;
   const headers = securityHeaders(setStrictCookie(ADMIN_ACCESS_CSRF_COOKIE, csrf, ADMIN_ACCESS_CSRF_TTL_SECONDS));
