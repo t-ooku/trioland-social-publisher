@@ -35,7 +35,7 @@
         "description": "管理画面専用ログインID（Cloudflare Secret）"
       },
       "ADMIN_LOGIN_PASSWORD": {
-        "description": "管理画面専用の20文字以上の強いパスワード（ADMIN_TOKENとは別のCloudflare Secret）"
+        "description": "管理画面専用の8文字以上の強いパスワード（ADMIN_TOKENとは別のCloudflare Secret）"
       }
     }
   },
