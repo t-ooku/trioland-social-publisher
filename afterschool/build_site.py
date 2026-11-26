@@ -1153,7 +1153,7 @@ def column_cta():
   <div class="kicker">RECRUIT</div>
   <h2>一緒に遊び、一緒に育つ仲間を募集しています</h2>
   <p>ロップ（練馬区関町東・武蔵関駅徒歩約3分）とコンパスマイル落合南長崎（豊島区・落合南長崎駅徒歩約5分）で職員を募集中。募集要項は応募時点の最新の内容を採用情報ページでご確認ください。見学だけのお問い合わせも歓迎しています。</p>
-  <div class="actions"><a class="btn accent wiggle" href="/recruit.html">採用情報を見る</a><a class="btn outline" href="/contact.html?kind=recruit">見学・応募の問い合わせ</a></div>
+  <div class="actions"><a class="btn accent wiggle" href="/recruit.html">採用情報を見る</a><a class="btn outline" href="/contact.html?kind=recruit#form">見学・応募の問い合わせ</a></div>
 </div>'''
 
 
