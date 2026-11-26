@@ -401,7 +401,7 @@ async function handleAdminRequest(request, env) {
   const destination = adminDestination(url.searchParams.get("return_to"));
   if (request.method === "GET" && url.pathname === "/admin/access") {
     const session = await getAdminSession(request, env);
-    return session ? redirect(destination) : renderAdminAccess(destination);
+    return session ? redirect(destination) : renderAdminAccess(destination, "", 200, env);
   }
   if (request.method === "POST" && url.pathname === "/admin/access") {
     return completeAdminAccess(request, env, destination);
@@ -555,12 +555,22 @@ async function startAdminLogin(env, destination) {
   return redirect(github.toString(), setCookie(ADMIN_STATE_COOKIE, state, 600));
 }
 
-function renderAdminAccess(destination, errorMessage = "", status = 200) {
+function adminLoginMode(env) {
+  const id = String(env.ADMIN_LOGIN_ID || "");
+  const password = String(env.ADMIN_LOGIN_PASSWORD || "");
+  if (!id && !password) return "legacy";
+  return id.length > 0 && id.length <= 128 && password.length >= 8 && password.length <= 4096 && env.ADMIN_TOKEN && !constantTimeEqual(password, String(env.ADMIN_TOKEN)) ? "password" : "unavailable";
+}
+
+function renderAdminAccess(destination, errorMessage = "", status = 200, env = {}) {
   const csrf = randomToken();
   const isKpi = destination === "/admin/kpi";
   const screen = isKpi ? "KPI・PDCA" : "SNS管理";
+  const mode = adminLoginMode(env);
+  const heading = mode === "legacy" ? "管理コードでログイン" : "ID・パスワードでログイン";
+  const fields = mode === "legacy" ? `<label>管理コード<input class="secret-input" type="password" name="adminToken" minlength="20" maxlength="4096" autocomplete="current-password" required autofocus></label>` : `<label>ログインID<input class="secret-input" type="text" name="loginId" maxlength="128" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus></label><label>パスワード<input class="secret-input" type="password" name="password" minlength="8" maxlength="4096" autocomplete="current-password" required></label>`;
   const suffix = isKpi ? "?return_to=/admin/kpi" : "";
-  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド ${screen}</title><style>${adminStyles()}.secret-input{display:block;width:100%;margin-top:7px;border:1px solid #cbd7d5;border-radius:10px;padding:11px;font:inherit}.login-options{display:grid;gap:12px}.subtle-link{color:var(--brand);font-size:13px}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>管理コードでログイン</h1><p>Cloudflareに保存済みのトリオランド専用管理コードを入力してください。コードはURL・Cookie・保存データ・ログには残しません。</p>${errorMessage ? `<div class="notice error">${escapeHtml(errorMessage)}</div>` : ""}<form method="post" action="/admin/access${suffix}" class="stack" autocomplete="off"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"><label>管理コード<input class="secret-input" type="password" name="adminToken" minlength="20" maxlength="4096" autocomplete="new-password" required autofocus></label><button type="submit">${screen}を開く</button></form><p class="help">認証後は、このブラウザだけに8時間有効な安全な管理セッションを発行します。HOSHILUには接続しません。</p><a class="subtle-link" href="/admin/login${suffix}">GitHubログイン（予備）</a></section></main></body></html>`;
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド ${screen}</title><style>${adminStyles()}.secret-input{display:block;width:100%;margin-top:7px;border:1px solid #cbd7d5;border-radius:10px;padding:11px;font:inherit}.login-options{display:grid;gap:12px}.subtle-link{color:var(--brand);font-size:13px}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>${heading}</h1><p>管理者用の認証情報を入力してください。認証情報はURL・Cookie・保存データ・ログには残しません。</p>${errorMessage ? `<div class="notice error">${escapeHtml(errorMessage)}</div>` : ""}<form method="post" action="/admin/access${suffix}" class="stack"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}">${fields}<button type="submit">${screen}を開く</button></form><p class="help">認証後は、このブラウザだけに8時間有効な安全な管理セッションを発行します。HOSHILUには接続しません。</p><a class="subtle-link" href="/admin/login${suffix}">GitHubログイン（予備）</a></section></main></body></html>`;
   const headers = securityHeaders(setStrictCookie(ADMIN_ACCESS_CSRF_COOKIE, csrf, ADMIN_ACCESS_CSRF_TTL_SECONDS));
   headers["referrer-policy"] = "same-origin";
   return new Response(body, {
@@ -570,30 +580,47 @@ function renderAdminAccess(destination, errorMessage = "", status = 200) {
 }
 
 async function completeAdminAccess(request, env, destination) {
-  if (!env.ADMIN_TOKEN) return renderAdminAccess(destination, "管理コード認証が設定されていません。", 503);
-  if (!sameOrigin(request, env)) return renderAdminAccess(destination, "このページからもう一度ログインしてください。", 403);
+  const mode = adminLoginMode(env);
+  if (!env.ADMIN_TOKEN || mode === "unavailable") return renderAdminAccess(destination, "ログイン認証が設定されていません。", 503, env);
+  if (!sameOrigin(request, env)) return renderAdminAccess(destination, "このページからもう一度ログインしてください。", 403, env);
 
   const form = await request.formData();
   const csrfForm = String(form.get("csrf") || "");
   const csrfCookie = readCookie(request, ADMIN_ACCESS_CSRF_COOKIE);
   if (!csrfForm || !csrfCookie || !constantTimeEqual(csrfForm, csrfCookie)) {
-    return renderAdminAccess(destination, "ログイン画面の有効期限が切れました。もう一度入力してください。", 400);
+    return renderAdminAccess(destination, "ログイン画面の有効期限が切れました。もう一度入力してください。", 400, env);
   }
 
   const rateKey = await adminAccessRateKey(request, env);
   const rate = await readAdminAccessRate(env, rateKey);
   if (rate.attempts >= ADMIN_ACCESS_MAX_FAILURES && rate.expiresAt > Date.now()) {
-    return renderAdminAccess(destination, "ログイン試行が上限に達しました。15分後にもう一度お試しください。", 429);
+    return renderAdminAccess(destination, "ログイン試行が上限に達しました。15分後にもう一度お試しください。", 429, env);
   }
 
-  const suppliedToken = String(form.get("adminToken") || "");
-  const suppliedHash = await sha256Hex(suppliedToken);
-  const expectedHash = await sha256Hex(String(env.ADMIN_TOKEN));
-  if (!constantTimeEqual(suppliedHash, expectedHash)) {
+  let valid = false;
+  if (mode === "password") {
+    const suppliedId = String(form.get("loginId") || "");
+    const suppliedPassword = String(form.get("password") || "");
+    if (suppliedId.length <= 128 && suppliedPassword.length <= 4096) {
+      const [idHash, expectedIdHash, passwordHash, expectedPasswordHash] = await Promise.all([
+        sha256Hex(suppliedId), sha256Hex(String(env.ADMIN_LOGIN_ID)),
+        sha256Hex(suppliedPassword), sha256Hex(String(env.ADMIN_LOGIN_PASSWORD)),
+      ]);
+      const idMatches = constantTimeEqual(idHash, expectedIdHash);
+      const passwordMatches = constantTimeEqual(passwordHash, expectedPasswordHash);
+      valid = idMatches && passwordMatches;
+    }
+  } else {
+    const suppliedToken = String(form.get("adminToken") || "");
+    const suppliedHash = await sha256Hex(suppliedToken);
+    const expectedHash = await sha256Hex(String(env.ADMIN_TOKEN));
+    valid = constantTimeEqual(suppliedHash, expectedHash);
+  }
+  if (!valid) {
     const attempts = await recordAdminAccessFailure(env, rateKey, rate);
     return attempts >= ADMIN_ACCESS_MAX_FAILURES
-      ? renderAdminAccess(destination, "ログイン試行が上限に達しました。15分後にもう一度お試しください。", 429)
-      : renderAdminAccess(destination, "管理コードを確認できませんでした。", 401);
+      ? renderAdminAccess(destination, "ログイン試行が上限に達しました。15分後にもう一度お試しください。", 429, env)
+      : renderAdminAccess(destination, "ログイン情報を確認できませんでした。", 401, env);
   }
 
   await env.AUTH_KV.delete(rateKey);
@@ -601,7 +628,7 @@ async function completeAdminAccess(request, env, destination) {
   await env.AUTH_KV.put(`admin-session:${sessionToken}`, JSON.stringify({
     login: String(env.ALLOWED_GITHUB_LOGIN || "t-ooku"),
     githubId: null,
-    authMethod: "admin_token",
+    authMethod: mode === "password" ? "admin_password" : "admin_token",
     csrf: randomToken(),
     createdAt: Date.now(),
   }), { expirationTtl: ADMIN_SESSION_TTL_SECONDS });
@@ -1131,11 +1158,12 @@ function makeAdminStyles() {
 }
 
 function renderAdminLogin() {
-  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド SNS管理</title><style>${adminStyles()}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>SNS管理</h1><p>大久津さん専用の承認・投稿画面です。管理コードで本人確認して開始できます。</p><a class="button" href="/admin/access">管理コードでログイン</a><p class="help"><a href="/admin/login">GitHubログイン（予備）</a><br>Instagram・Cloudflare専用基盤のみを使用し、HOSHILUには接続しません。</p></section></main></body></html>`;
+  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>トリオランド SNS管理</title><style>${adminStyles()}</style></head><body class="login"><main><section><span class="eyebrow">TRIOLAND KOMAZAWA</span><h1>SNS管理</h1><p>大久津さん専用の承認・投稿画面です。管理者認証で本人確認して開始できます。</p><a class="button" href="/admin/access">管理者ログイン</a><p class="help"><a href="/admin/login">GitHubログイン（予備）</a><br>Instagram・Cloudflare専用基盤のみを使用し、HOSHILUには接続しません。</p></section></main></body></html>`;
   return new Response(body, { headers: securityHeaders() });
 }
 
 function adminIdentity(session) {
+  if (session.authMethod === "admin_password") return "ID・パスワードで本人確認済み";
   return session.authMethod === "admin_token"
     ? "管理コードで本人確認済み"
     : `GitHub @${session.login}`;

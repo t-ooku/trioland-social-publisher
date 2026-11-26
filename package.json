@@ -30,6 +30,12 @@
       },
       "GITHUB_CLIENT_SECRET": {
         "description": "GitHub OAuth AppのClient secret。公開しないでください。"
+      },
+      "ADMIN_LOGIN_ID": {
+        "description": "管理画面専用ログインID（Cloudflare Secret）"
+      },
+      "ADMIN_LOGIN_PASSWORD": {
+        "description": "管理画面専用の8文字以上の強いパスワード（ADMIN_TOKENとは別のCloudflare Secret）"
       }
     }
   },
