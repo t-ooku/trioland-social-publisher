@@ -28,7 +28,13 @@ assert.match(source, /hmacHex\(env\.ADMIN_TOKEN, `admin-access\\n\$\{address\}`\
 assert.match(source, /ADMIN_ACCESS_MAX_FAILURES = 5/);
 assert.match(source, /attempts >= ADMIN_ACCESS_MAX_FAILURES[\s\S]{0,180}429/);
 assert.match(source, /expirationTtl: ADMIN_ACCESS_RATE_TTL_SECONDS/);
-assert.match(source, /authMethod: "admin_token"/);
+assert.match(source, /authMethod: mode === "password" \? "admin_password" : "admin_token"/);
+assert.match(source, /name="loginId"[^>]*autocomplete="username"/);
+assert.match(source, /name="password"[^>]*autocomplete="current-password"/);
+assert.match(source, /valid = idMatches && passwordMatches/);
+assert.match(source, /if \(!env\.ADMIN_TOKEN \|\| mode === "unavailable"\)/);
+assert.match(source, /if \(!id && !password\) return "legacy"/);
+assert.match(source, /!constantTimeEqual\(password, String\(env\.ADMIN_TOKEN\)\)/);
 assert.match(source, /setCookie\(ADMIN_SESSION_COOKIE, sessionToken, ADMIN_SESSION_TTL_SECONDS\)/);
 assert.match(source, /clearCookie\(ADMIN_ACCESS_CSRF_COOKIE\)/);
 assert.match(source, /管理コードで本人確認済み/);
@@ -63,6 +69,7 @@ assert.match(source, /const container = await metaJson[\s\S]{0,180}await waitUnt
 assert.doesNotMatch(source, /if \(type === "REELS"\) await waitUntilFinished/);
 assert.match(source, /#トリオランド #駒沢大学駅 #三軒茶屋駅 #保育士募集 #園児募集/);
 assert.doesNotMatch(source, /ADMIN_TOKEN[^\n]*<input/i);
+assert.doesNotMatch(source, /name="password"[^>]*value=/i);
 assert.match(source, /url\.pathname === "\/admin\/make"/);
 assert.match(source, /url\.pathname === "\/admin\/make\/token"/);
 assert.match(source, /url\.pathname === "\/admin\/make\/diagnose"/);
