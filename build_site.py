@@ -693,7 +693,7 @@ def page_index():
 
 def page_nursery(p, path, kicker, h1, intro, features, local_text, active):
     ld = [nursery_ld(p, path), crumbs([("トリオランド", "/"), (p["name"], path)])]
-    visit_href = "/contact.html?destination=komazawa#form" if p is KOMA else "/contact.html"
+    visit_href = "/contact.html?destination=komazawa#form" if p is KOMA else "/contact.html?destination=umegaoka#form"
     feat = "".join(f'<div class="card"><span class="num">{i+1}</span><h3>{t}</h3><p>{d}</p></div>'
                    for i, (t, d) in enumerate(features))
     return head(
